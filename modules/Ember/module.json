@@ -1,0 +1,16 @@
+{
+    "alias": "ember",
+    "name": "Ember theme",
+    "version":"1.4",
+    "description": "",
+    "isTemplateModule":true,
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Ember\\Providers\\Main"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

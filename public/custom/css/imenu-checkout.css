@@ -1,0 +1,236 @@
+/* ============================================================================
+   imenu — إعادة تصميم صفحة الطلب (الاتجاه A · أزرق نظيف)
+   ----------------------------------------------------------------------------
+   ملف تصميم drop-in. يُحمَّل بعد custom.css مباشرةً.
+   كل القواعد محصورة داخل .imenu-rd حتى لا تؤثر على بقية الموقع.
+   لتفعيله: أضف class="imenu-rd" على عنصر <section class="section bg-secondary">
+   في ملف resources/views/cart.blade.php
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+.imenu-rd{
+  /* ===== رموز الهوية (الاتجاه A) ===== */
+  --im-primary:#2f6fed;
+  --im-primary-soft:#e7f0ff;
+  --im-on-primary:#ffffff;
+  --im-page:#eef1f6;
+  --im-card:#ffffff;
+  --im-field:#f1f4f9;
+  --im-ink:#1b2430;
+  --im-muted:#7b8696;
+  --im-line:#e4e9f0;
+  --im-ok:#1f9d5b;
+  --im-ok-bg:#e3f6ec;
+  --im-danger:#e3342f;
+  --im-r-out:18px;
+  --im-r-in:13px;
+  --im-cta-r:16px;
+
+  direction:rtl;
+  text-align:right;
+  background:var(--im-page)!important;
+  color:var(--im-ink);
+  font-family:'Tajawal','Nunito',sans-serif;
+  padding-bottom:96px;            /* مساحة لشريط التأكيد الثابت */
+  font-size:15px;
+  line-height:1.6;
+}
+.imenu-rd *{box-sizing:border-box;}
+
+/* ===== الحاوية ومسافات الأعمدة ===== */
+.imenu-rd .container{max-width:720px;}
+.imenu-rd .row{margin-left:0;margin-right:0;}
+.imenu-rd .col-md-7,
+.imenu-rd .col-md-5{padding-left:0;padding-right:0;}
+
+/* ===== الكروت العامة ===== */
+.imenu-rd .card,
+.imenu-rd .cards{
+  background:var(--im-card)!important;
+  border:1px solid #eaeef4!important;
+  border-radius:var(--im-r-out)!important;
+  box-shadow:0 1px 2px rgba(20,40,80,.04)!important;
+  margin-bottom:12px!important;
+  overflow:hidden;
+}
+/* إلغاء حشوة قالب Argon السالبة والصورة العلوية */
+.imenu-rd .mt--300{margin-top:0!important;}
+.imenu-rd .section-profile-cover,
+.imenu-rd .separator-skew{display:none!important;}
+.imenu-rd .card-profile{margin-top:0!important;}
+.imenu-rd .px-4{padding-left:16px!important;padding-right:16px!important;}
+.imenu-rd .mt-5{margin-top:0!important;padding-top:14px;}
+
+/* ===== العناوين داخل الكروت ===== */
+.imenu-rd h3{
+  font-size:17px!important;font-weight:800!important;color:var(--im-ink)!important;
+  margin:0 0 4px!important;padding:0!important;line-height:1.3!important;
+}
+.imenu-rd h3 .font-weight-light{display:none;}
+.imenu-rd .border-top{border-top:1px solid var(--im-line)!important;padding-top:12px;}
+
+/* ===== قائمة الأصناف ===== */
+.imenu-rd #cartList{border-top:1px solid var(--im-line);}
+.imenu-rd .items{padding:14px 0!important;border-bottom:1px solid var(--im-line);overflow:hidden;}
+.imenu-rd .items:last-child{border-bottom:none;}
+/* الصف: صورة على اليمين، أزرار على اليسار، النص بينهما (تمركز مطلق موثوق) */
+.imenu-rd .info-block{
+  position:relative;display:block!important;float:none!important;
+  min-height:64px;padding-right:78px;padding-left:126px;
+}
+.imenu-rd .square-box{
+  position:absolute!important;right:0;top:50%;transform:translateY(-50%);
+  float:none!important;margin:0!important;width:64px;height:64px;
+}
+.imenu-rd .square-box figure{margin:0!important;padding:0!important;background:transparent!important;}
+.imenu-rd .productImage{
+  width:64px!important;height:64px!important;border-radius:var(--im-r-in)!important;
+  object-fit:cover;background:var(--im-field);display:block;
+}
+.imenu-rd .product-item_title{
+  font-size:14.5px;font-weight:700;color:var(--im-ink);margin:0;line-height:1.3;
+}
+.imenu-rd .product-item_quantity{
+  font-size:13px;color:var(--im-muted);margin:3px 0 0;
+}
+/* أزرار الكمية (+ / − / حذف) — مثبّتة على يسار الصف */
+.imenu-rd .info-block .row{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  display:inline-flex!important;flex-wrap:nowrap;gap:4px;margin:0!important;
+  background:var(--im-field);border-radius:999px;padding:4px;width:auto;
+}
+.imenu-rd .btn-cart-radius,
+.imenu-rd .btn-outline-primary.btn-icon{
+  width:32px;height:32px;border-radius:999px!important;
+  border:none!important;background:#fff!important;color:var(--im-ink)!important;
+  display:inline-flex;align-items:center;justify-content:center;padding:0!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);margin:0!important;
+}
+.imenu-rd .btn-cart-radius:hover{background:#fff!important;}
+.imenu-rd .btn-cart-icon i{font-size:12px;}
+/* الزر الأوسط (+) باللون الأساسي — incQuantity هو الزر الثاني في الصف */
+.imenu-rd .info-block .row .btn-cart-radius:nth-child(2){
+  background:var(--im-primary)!important;color:#fff!important;box-shadow:none;
+}
+.imenu-rd .info-block .row .btn-cart-radius:nth-child(2) i{color:#fff!important;}
+/* زر الحذف — أيقونة حمراء */
+.imenu-rd .info-block .row .btn-cart-radius:nth-child(3) i{color:var(--im-danger)!important;}
+
+/* ===== ملخص الأسعار ===== */
+.imenu-rd .card-stats{
+  background:var(--im-card)!important;border:1px solid #eaeef4!important;
+  box-shadow:none!important;border-radius:var(--im-r-out)!important;
+}
+.imenu-rd #totalPrices .ammount{float:none;font-weight:800;margin-right:6px;}
+.imenu-rd #totalPrices strong{font-weight:800;}
+
+/* ===== أنواع الطلب + خيارات الدفع — بطاقات راديو ===== */
+.imenu-rd .custom-control{
+  position:relative;padding:0!important;margin-bottom:10px;min-height:auto;
+}
+/* البطاقة نفسها هي الـ label وتملأ العرض كاملًا — يضمن استقرار النقطة على اليمين */
+.imenu-rd .custom-radio .custom-control-label,
+.imenu-rd .custom-checkbox .custom-control-label{
+  display:block;width:100%;cursor:pointer;margin:0;
+  background:var(--im-field);border:1.5px solid transparent;border-radius:var(--im-r-in);
+  min-height:50px;padding:13px 48px 13px 16px;
+  font-size:14.5px;font-weight:700;color:var(--im-ink);line-height:1.45;
+}
+.imenu-rd .custom-control-input:checked ~ .custom-control-label{
+  background:var(--im-primary-soft);border-color:var(--im-primary);
+}
+/* دائرة الراديو على يمين البطاقة */
+.imenu-rd .custom-control-label::before{
+  right:15px!important;left:auto!important;top:50%!important;
+  width:22px;height:22px;border-radius:999px;
+  border:2px solid var(--im-line);background:#fff;transform:translateY(-50%);
+}
+.imenu-rd .custom-checkbox .custom-control-label::before{border-radius:6px!important;}
+.imenu-rd .custom-control-input:checked ~ .custom-control-label::before{
+  background:var(--im-primary)!important;border-color:var(--im-primary)!important;
+}
+/* النقطة البيضاء داخل دائرة الراديو */
+.imenu-rd .custom-radio .custom-control-label::after{
+  right:22px!important;left:auto!important;top:50%!important;
+  width:8px;height:8px;border-radius:999px;background:#fff none!important;
+  background-image:none!important;transform:translateY(-50%);content:'';opacity:0;
+}
+.imenu-rd .custom-radio .custom-control-input:checked ~ .custom-control-label::after{opacity:1;}
+/* علامة صح للـ checkbox فوق المربع */
+.imenu-rd .custom-checkbox .custom-control-label::after{
+  right:15px!important;left:auto!important;top:50%!important;
+  width:22px;height:22px;transform:translateY(-50%);
+}
+
+/* ===== الحقول والقوائم المنسدلة ===== */
+.imenu-rd .form-control,
+.imenu-rd select.form-control,
+.imenu-rd textarea.form-control,
+.imenu-rd .select2-container--default .select2-selection--single{
+  background:var(--im-field)!important;border:none!important;
+  border-radius:var(--im-r-in)!important;color:var(--im-ink)!important;
+  font-family:inherit;font-size:15px;font-weight:600;min-height:48px;padding:12px 14px;
+}
+.imenu-rd label{font-weight:700;color:var(--im-ink);font-size:13.5px;}
+
+/* ===== الكوبون — حقل + زر في سطر واحد ===== */
+.imenu-rd .p-4.bg-secondary{background:transparent!important;padding:14px 0 0!important;}
+.imenu-rd .p-4.bg-secondary .row{
+  display:flex!important;flex-wrap:nowrap;gap:10px;align-items:center;margin:0!important;
+}
+.imenu-rd .p-4.bg-secondary .col-md-7{flex:1 1 auto;padding:0!important;}
+.imenu-rd .p-4.bg-secondary .col-md-5{flex:0 0 auto;width:auto;padding:0!important;}
+.imenu-rd #promo_code_btn{
+  background:var(--im-primary)!important;border:none!important;color:#fff!important;
+  border-radius:var(--im-r-in)!important;font-weight:800;height:48px;padding:0 22px;white-space:nowrap;
+}
+.imenu-rd #promo_code_succ{color:var(--im-ok)!important;}
+.imenu-rd #promo_code_war{color:var(--im-danger)!important;}
+
+/* ===== الأزرار العامة ===== */
+.imenu-rd .btn-primary{
+  background:var(--im-primary)!important;border-color:var(--im-primary)!important;
+  border-radius:var(--im-cta-r)!important;font-weight:800;
+}
+.imenu-rd .btn-outline-primary{
+  border-radius:var(--im-cta-r)!important;
+}
+
+/* ===== الموافقة على الشروط — مربع اختيار أصلي بجانب النص ===== */
+.imenu-rd .custom-checkbox:has(#privacypolicy){padding:0!important;}
+.imenu-rd #privacypolicy{
+  position:static!important;opacity:1!important;z-index:5;pointer-events:auto;
+  width:19px;height:19px;margin:0 0 0 8px;vertical-align:-4px;
+  accent-color:var(--im-primary);flex-shrink:0;
+}
+.imenu-rd #privacypolicy ~ .custom-control-label{
+  display:inline!important;width:auto;
+  background:transparent!important;border:none!important;min-height:auto!important;
+  padding:0!important;margin:0;font-size:13px;color:var(--im-muted);font-weight:600;line-height:1.6;
+}
+.imenu-rd #privacypolicy ~ .custom-control-label::before,
+.imenu-rd #privacypolicy ~ .custom-control-label::after{display:none!important;}
+.imenu-rd #privacypolicy ~ .custom-control-label a{color:var(--im-primary);font-weight:700;text-decoration:underline;}
+
+/* ============================================================================
+   شريط التأكيد الثابت أسفل الشاشة
+   يلتف زر الدفع (.paymentbutton) تلقائيًا — مع بطاقة السعر العائمة.
+   ============================================================================ */
+.imenu-rd .paymentbutton{
+  position:fixed!important;bottom:0;left:0;right:0;z-index:1030;
+  margin:0!important;width:100%!important;border-radius:0!important;
+  height:62px;font-size:17px;font-weight:800;
+  background:var(--im-primary)!important;border:none!important;color:#fff!important;
+  box-shadow:0 -8px 24px rgba(0,0,0,.08);
+}
+.imenu-rd .paymentbutton:disabled{background:var(--im-line)!important;color:#9aa6b5!important;}
+
+/* ===== لمسات نهائية ===== */
+.imenu-rd .alert{border-radius:var(--im-r-in);font-weight:700;}
+.imenu-rd br{line-height:0.6;}
+
+/* ===== جوال ===== */
+@media (max-width:767px){
+  .imenu-rd .container{padding-left:12px;padding-right:12px;}
+}

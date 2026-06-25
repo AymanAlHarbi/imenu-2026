@@ -1,0 +1,16 @@
+{
+    "alias": "glow",
+    "name": "Glow theme",
+    "version":"1.4",
+    "description": "",
+    "isTemplateModule":true,
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Glow\\Providers\\Main"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

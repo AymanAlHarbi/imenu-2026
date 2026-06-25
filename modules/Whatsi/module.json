@@ -1,0 +1,48 @@
+{
+    "alias": "whatsi",
+    "version":"1.3",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Whatsi\\Providers\\Main",
+        "Modules\\Whatsi\\Providers\\Event"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": [],
+    "vendor_fields":[
+    ],
+    "global_fields":[
+        {
+            "separator":"WhatsApp Notifications",
+            "title": "WhatsBox Project URL",
+            "key": "whats_box_url",
+            "ftype": "input",
+            "value":"https://what.si"
+        },
+        {
+            
+            "title": "WhatsBox Project name",
+            "key": "whats_box_name",
+            "ftype": "input",
+            "value":"What.si"
+        },
+        {
+            
+            "title": "Example data",
+            "key": "whats_box_info",
+            "ftype": "input",
+            "value":"https://gist.github.com/dimovdaniel/e0d2b1c146216491200bdba519dbb69f.js"
+        }
+    ],
+    "ownermenus":[
+        {
+            "name":"WhatsApp Notifications",
+            "route":"whatsi.campaings",
+            "icon":"ni ni-notification-70  text-green"
+        }
+    ]
+    
+}
