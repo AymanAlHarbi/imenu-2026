@@ -57,6 +57,15 @@ Route::post('/search/location', [FrontEndController::class, 'getCurrentLocation'
 
 Auth::routes();
 
+Route::prefix('client')->name('client.phone.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'show'])->name('show');
+    Route::post('/check', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'check'])->name('check');
+    Route::post('/register', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'register'])->name('register');
+    Route::post('/send-code', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'sendCode'])->name('send-code');
+    Route::post('/verify', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'verify'])->name('verify');
+});
+
+
 Route::get('/selectpay/{order}', [PaymentController::class, 'selectPaymentGateway'])->name('selectpay');
 Route::get('/selectedpaymentt/{order}/{payment}', [PaymentController::class, 'selectedPaymentGateway'])->name('selectedpaymentt');
 

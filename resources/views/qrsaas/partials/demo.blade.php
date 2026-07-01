@@ -1,20 +1,31 @@
- <!-- DEMO -->
- <section id="demo" class="section section-lg pb-5 bg-soft">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center mb-5">
-            <i class="fas fa-edit mr-2 text-primary ckedit_btn" type="button" style="display: none"></i><h2 class="mb-4 ckedit" key="demo_title" id="demo_title">{{ __('qrlanding.demo_title') }}</h2>
-            <i class="fas fa-edit mr-2 text-primary ckedit_btn" type="button" style="display: none"></i><p class="lead mb-5 ckedit" key="demo_subtitle" id="demo_subtitle">{{ __('qrlanding.demo_subtitle') . " " }}<span class="font-weight-bolder">{{ __('qrlanding.qr_code') }}</span> {{ __('qrlanding.below') }}!</p>
-                <a href="#" class="icon icon-lg text-gray mr-3">
-                    <img style="width:300px" src="{{ asset('impactfront') }}/img/qrdemo.jpg" />
-
-                </a>
-
-            </div>
-            <div class="col-12 text-center">
-                <!-- Button Modal -->
-                <a href="{{ route('newrestaurant.register') }}" class="btn btn-secondary animate-up-2"><span class="mr-2"><i class="fas fa-hand-pointer"></i></span>{{ __('qrlanding.demo_button') }}</a>
-            </div>
+<section id="demo">
+  <div class="wrap">
+    <div class="demo-card reveal">
+      <div class="demo-left">
+        <h2>جرّب قائمة إلكترونية حيّة الآن</h2>
+        <p>لا حاجة للتسجيل. شاهد بنفسك كيف يرى عملاؤك قائمتك على هواتفهم.</p>
+        <ul class="demo-steps">
+          <li><span class="c">١</span> افتح كاميرا هاتفك</li>
+          <li><span class="c">٢</span> وجّهها نحو رمز QR المجاور</li>
+          <li><span class="c">٣</span> تصفّح القائمة التجريبية فوراً</li>
+        </ul>
+        <a class="btn btn-primary btn-lg" href="{{ route('newrestaurant.register') }}">افتح القائمة التجريبية</a>
+      </div>
+      <div class="demo-right">
+        <div class="qr-frame">
+          {{-- استبدل الصورة برمز QR الحقيقي لقائمتك التجريبية، أو احذف <img> لإظهار الرمز الزخرفي --}}
+          @if(file_exists(public_path('impactfront/img/qrdemo.jpg')))
+            <img src="{{ asset('impactfront') }}/img/qrdemo.jpg" alt="رمز QR لقائمة تجريبية">
+          @else
+            <div class="qr-big" role="img" aria-label="رمز QR لقائمة تجريبية"></div>
+          @endif
+          <p>قائمة تجريبية فورية</p>
+          <span class="scan">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#155083" stroke-width="2"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/></svg>
+            امسح للبدء
+          </span>
         </div>
+      </div>
     </div>
+  </div>
 </section>

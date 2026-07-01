@@ -1,0 +1,72 @@
+{
+    "alias": "loyaltypoints",
+    "version": "1.0",
+    "description": "Loyalty points program - earn points per riyal spent, redeem points for discount coupons.",
+    "keywords": ["loyalty", "points", "rewards"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\LoyaltyPoints\\Providers\\Main"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": [],
+    "vendor_fields": [
+        {
+            "separator": "Loyalty Points",
+            "title": "Enable loyalty points program",
+            "key": "loyalty_enable",
+            "ftype": "bool",
+            "value": false
+        },
+        {
+            "title": "Points earned per 1 riyal paid",
+            "key": "loyalty_points_per_riyal",
+            "ftype": "input",
+            "type": "number",
+            "value": "1"
+        },
+        {
+            "title": "Points required for 1 riyal discount (redeem ratio)",
+            "key": "loyalty_redeem_points_per_riyal",
+            "ftype": "input",
+            "type": "number",
+            "value": "10"
+        },
+        {
+            "title": "Welcome points for new members",
+            "key": "loyalty_welcome_points",
+            "ftype": "input",
+            "type": "number",
+            "value": "50"
+        },
+        {
+            "title": "Minimum points required before a client can redeem",
+            "key": "loyalty_min_redeem_points",
+            "ftype": "input",
+            "type": "number",
+            "value": "10"
+        }
+    ],
+    "ownermenus": [
+        {
+            "name": "Loyalty Points",
+            "route": "loyaltypoints.report",
+            "icon": "ni ni-favourite-28 text-yellow"
+        }
+    ],
+    "staffmenus": [
+        {
+            "name": "Loyalty Points",
+            "route": "loyaltypoints.report",
+            "icon": "ni ni-favourite-28 text-yellow"
+        }
+    ],
+    "clientmenus": [
+        {
+            "name": "Loyalty Points",
+            "route": "loyaltypoints.mine",
+            "icon": "ni ni-favourite-28 text-yellow"
+        }
+    ]
+}

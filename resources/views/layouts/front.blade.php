@@ -82,7 +82,7 @@ Coded by www.creative-tim.com
 
 </head>
 
-<body class="">
+<body class="{{ $class ?? '' }}">
     @include('googletagmanager::body')
     @auth()
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

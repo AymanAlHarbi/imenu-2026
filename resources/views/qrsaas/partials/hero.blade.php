@@ -1,33 +1,58 @@
-<section class="section-header pb-7 pb-lg-11 bg-soft">
-    <div class="container">
-        <div class="row justify-content-between align-items-center">
-            <div class="col-12 col-md-6 order-2 order-lg-1">
-            <img src="{{ asset('impactfront') }}/img/flayer.png" alt="">
-            </div>
-            <div class="col-12 col-md-5 order-1 order-lg-2">
-            <i class="fas fa-edit mr-2 text-primary ckedit_btn" type="button" style="display: none"></i> <h1 class="display-2 mb-3 ckedit" key="contactles_menu" id="contactles_menu">{{__('qrlanding.contactles_menu')}}</h1>
-            <i class="fas fa-edit mr-2 text-primary ckedit_btn" type="button" style="display: none"></i> <p class="lead ckedit" key="hero_title" id="hero_title">{{ __('qrlanding.hero_title')}}</p>
-            <i class="fas fa-edit mr-2 text-primary ckedit_btn" type="button" style="display: none"></i> <p class="lead ckedit" key="hero_subtitle" id="hero_subtitle"><strong> {{ __('qrlanding.hero_subtitle') }}</strong></p>
-                  <div class="mt-4">
-                    @if (session('status'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('status') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
-                    @guest()
-                        <form action="{{ route('newrestaurant.register') }}" class="d-flex flex-column mb-5 mb-lg-0">
-                            <input class="form-control" type="text" name="name" placeholder="{{ __('qrlanding.hero_input_name')}}" required>
-                            <input class="form-control my-3" type="email" name="email" placeholder="{{ __('qrlanding.hero_input_email')}}" required>
-                            <input class="form-control my-1" type="text" name="phone" placeholder="{{ __('qrlanding.hero_input_phone')}}" required>
-                            <button class="btn btn-primary my-3" type="submit">{{ __('qrlanding.join_now')}}</button>
-                        </form>
-                    @endguest
-                  </div>
-              </div>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="dot"></span> المنصة الأشمل لقوائم QR الرقمية</span>
+      <h1>حوّل قائمة مطعمك إلى <span class="hl">قائمة إلكترونية ذكية</span></h1>
+      <p class="lead">أنشئ قائمة رقمية لمطعمك أو مقهاك، صمّم رمز QR احترافياً، واستقبل الطلبات والمدفوعات مباشرة من هاتف عميلك.</p>
+      <p class="punch">هاتف عميلك هو قائمتك الآن.</p>
+
+      @if (session('status'))
+        <div class="alert">{{ session('status') }}</div>
+      @endif
+
+      @guest
+        <form class="hero-form" action="{{ route('newrestaurant.register') }}">
+          <input type="text"  name="name"  placeholder="اسمك" required>
+          <input type="email" name="email" placeholder="بريدك الإلكتروني" required>
+          <input type="text"  name="phone" placeholder="رقم جوالك" required>
+          <button class="btn btn-primary btn-lg" type="submit">أنشئ قائمتك الآن</button>
+        </form>
+      @else
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="/home">لوحة التحكم</a>
+          <a class="btn btn-ghost btn-lg" href="#demo">شاهد نموذجاً حياً</a>
         </div>
+      @endguest
+
+      <div class="micro">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C82C4" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+        ابدأ مجاناً — بدون بطاقة ائتمانية، وبدون التزام.
+      </div>
     </div>
-    <div class="pattern bottom"></div>
+
+    <div class="hero-visual">
+      <div class="blob"></div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ps-head">
+            <div class="logo">م</div>
+            <b>مطعم الذواقة</b>
+            <span>القائمة الرقمية</span>
+          </div>
+          <div class="ps-tabs">
+            <i class="on">المشاوي</i><i>المقبّلات</i><i>المشروبات</i><i>الحلى</i>
+          </div>
+          <div class="ps-item"><div class="ps-thumb"></div><div class="ps-meta"><b>مشاوي مشكّلة</b><span>لحم • دجاج • كباب</span></div><div class="ps-price">٦٥ ﷼</div></div>
+          <div class="ps-item"><div class="ps-thumb b"></div><div class="ps-meta"><b>سلطة فتوش</b><span>طازجة يومياً</span></div><div class="ps-price">١٨ ﷼</div></div>
+          <div class="ps-item"><div class="ps-thumb c"></div><div class="ps-meta"><b>عصير برتقال</b><span>طبيعي ١٠٠٪</span></div><div class="ps-price">١٢ ﷼</div></div>
+          <div class="ps-item"><div class="ps-thumb"></div><div class="ps-meta"><b>كنافة بالقشطة</b><span>تُقدّم ساخنة</span></div><div class="ps-price">٢٢ ﷼</div></div>
+        </div>
+      </div>
+      <div class="qr-tag">
+        <div class="qr"></div>
+        <div><small>امسح للوصول</small><b>قائمة فورية</b></div>
+      </div>
+      <div class="order-tag"><span class="ping"></span> طلب جديد وصل!</div>
+    </div>
+  </div>
 </section>

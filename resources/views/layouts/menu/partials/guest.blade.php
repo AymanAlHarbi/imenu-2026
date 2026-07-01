@@ -1,10 +1,10 @@
-<a href="/login?showCreate=true"  class="btn btn-neutral btn-icon web-menu">
+<a href="{{ route('client.phone.show') }}"  class="btn btn-neutral btn-icon web-menu">
     <span class="btn-inner--icon">
       <i class="fa fa-user mr-2"></i>
     </span>
     <span class="nav-link-inner--text">{{ __('Login') }}</span>
 </a>
-<a href="/login?showCreate=true"  class="nav-link nav-link-icon mobile-menu">
+<a href="{{ route('client.phone.show') }}"  class="nav-link nav-link-icon mobile-menu">
     <span class="btn-inner--icon">
       <i class="fa fa-user mr-2"></i>
     </span>

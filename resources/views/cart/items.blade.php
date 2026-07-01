@@ -1,7 +1,13 @@
 <div class="card card-profile shadow mt--300">
     <div class="px-4">
-      <div class="mt-5">
-        <h3>{{ __('Items') }}<span class="font-weight-light"></span></h3>
+      <div class="mt-5 ck-items-head">
+        <h3 class="mb-0">{{ __('Items') }}<span class="font-weight-light"></span></h3>
+        @isset($restorant)
+        <a href="{{ $restorant->getLinkAttribute() }}" class="ck-back-link">
+            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            {{ __('Back to menu') }}
+        </a>
+        @endisset
       </div>
         <!-- List of items -->
         <div  id="cartList" class="border-top">

@@ -102,17 +102,18 @@ a{text-decoration:none;}
 
 /* ---- Product modal (Flowbite outer kept) ---- */
 .em-modal{position:relative;width:100%;max-width:430px;margin:0 auto;background:var(--em-surface);border-radius:22px;overflow:hidden;max-height:88vh;overflow-y:auto;}
-.em-modal-img{height:200px;background:var(--em-tint) center/cover no-repeat;}
+.em-modal-img{height:400px;background:var(--em-tint) center/cover no-repeat;}
 .em-modal-body{padding:18px;}
 .em-modal-title{font-size:21px;font-weight:700;color:var(--em-ink);margin:0;}
 .em-modal-price{font-size:18px;font-weight:700;color:var(--em-primary);margin:6px 0 0;}
 .em-modal-desc{font-size:14px;color:var(--em-muted);margin:10px 0 0;line-height:1.6;}
 .em-modal-body label.lbl{display:block;font-size:13px;font-weight:700;color:var(--em-ink);margin:16px 0 6px;}
 .em-qtyrow{display:flex;align-items:center;gap:12px;margin-top:14px;}
-.em-qtyrow input{width:80px;height:42px;border:1px solid var(--em-line);border-radius:12px;text-align:center;font-size:15px;font-weight:700;color:var(--em-ink);}
+.em-qtyrow input{width:90px;height:42px;border:1px solid var(--em-line);border-radius:12px;text-align:center;font-size:15px;font-weight:700;color:var(--em-ink);}
 .em-addbtn{width:100%;background:var(--em-primary);color:#fff;border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:700;margin-top:16px;cursor:pointer;}
 .em-addbtn:hover{background:var(--em-primary-d);}
 .em-closed{display:block;margin-top:12px;font-size:13px;color:var(--em-accent);font-weight:600;}
+
 
 /* ---- Social links bar ---- */
 .em-social{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:16px;background:#fff;border-bottom:1px solid var(--em-line);}

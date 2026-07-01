@@ -1,0 +1,15 @@
+{
+    "name": "custom/loyaltypoints",
+    "description": "Loyalty points program - earn points per riyal spent, redeem points for discount coupons.",
+    "authors": [
+        {
+            "name": "Custom",
+            "email": "info@example.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\LoyaltyPoints\\": ""
+        }
+    }
+}

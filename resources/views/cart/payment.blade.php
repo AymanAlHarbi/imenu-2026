@@ -100,15 +100,14 @@
         <!-- END Payment -->
 
         <div class="text-center">
-            <div class="custom-control custom-checkbox mb-3">
-                <input class="custom-control-input" id="privacypolicy" type="checkbox">
-                <!--<label class="custom-control-label" for="privacypolicy">{{ __('I agree to the Terms and Conditions and Privacy Policy') }}</label>-->
-                <label class="custom-control-label" for="privacypolicy">
-                    &nbsp;&nbsp;{{__('I agree to the')}}
-                    <a href="{{config('settings.link_to_ts')}}" target="_blank" style="text-decoration: underline;">{{__('Terms of Service')}}</a> {{__('and')}}
-                    <a href="{{config('settings.link_to_pr')}}" target="_blank" style="text-decoration: underline;">{{__('Privacy Policy')}}</a>.
-                </label>
-            </div>
+            {{-- خانة مخفية ومؤشَّرة تُبقي زر الإرسال مفعّلاً؛ الموافقة تتم ضمنياً بالضغط على «تقديم الطلب» --}}
+            <input class="custom-control-input" id="privacypolicy" type="checkbox" checked hidden>
+            <p class="ck-terms-note">
+                {{ __('By placing your order, you agree to the') }}
+                <a href="{{config('settings.link_to_ts')}}" target="_blank">{{__('Terms of Service')}}</a>
+                {{ __('and') }}
+                <a href="{{config('settings.link_to_pr')}}" target="_blank">{{__('Privacy Policy')}}</a>.
+            </p>
         </div><br />
 
         <!-- Payment Actions -->

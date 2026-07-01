@@ -1,55 +1,63 @@
 /* =========================================================================
-   iMenu — تحسين صفحة الطلب (checkout-enhance.css)
-   طبقة تجميل فوق الماركب الحالي — لا تغيّر أي حقل أو ID أو منطق.
-   كل القواعد محصورة تحت .imenu-checkout-enhanced حتى لا تؤثر على بقية الصفحات.
+   iMenu — تحسين صفحة السلة / الدفع  (checkout-enhance.css)
+   ملف واحد قائم بذاته. طبقة تجميل فوق الماركب الحالي — لا يغيّر أي ID أو منطق.
+   كل القواعد محصورة تحت .imenu-checkout-enhanced فلا تؤثر على بقية الصفحات.
 
-   طريقة التفعيل:
-   1) ضع هذا الملف في:  public/custom/css/checkout-enhance.css
-   2) في resources/views/cart.blade.php غيّر أول سطر:
-         @extends('layouts.front', ['class' => ''])
-      إلى:
+   التفعيل:
+   1) ضع هذا الملف في:  public/custom/css/checkout-enhance.css  (استبدل القديم)
+   2) تأكّد أن أول سطر في resources/views/cart.blade.php:
          @extends('layouts.front', ['class' => 'imenu-checkout-enhanced'])
-      (هذا الكلاس يوضع على body عبر القالب، فيُفعّل التنسيق لهذه الصفحة فقط)
-   3) أضف الرابط — في أعلى @section('content') داخل cart.blade.php:
+   3) ويوجد الرابط داخل @section('content'):
          <link rel="stylesheet" href="{{ asset('custom/css/checkout-enhance.css') }}">
-   4) نفّذ:  php artisan view:clear
+   4) نفّذ:  php artisan view:clear   ثم افتح بوضع خفي / Hard Refresh
    ========================================================================= */
 
-/* ===== اللون الوحيد الذي تتحكم به ===== */
 .imenu-checkout-enhanced{
-  --brand:#2563eb;     /* ⬅️ ضع لون علامتك الحالي هنا */
-  --brand-soft:color-mix(in srgb, var(--brand) 8%, #fff);
-  --brand-line:color-mix(in srgb, var(--brand) 35%, #fff);
-  --ck-line:#e6e8ee;
-  --ck-line-strong:#d3d7e0;
-  --ck-muted:#6b7280;
-  --ck-danger:#dc2626;
+  --brand:#FA8128;            /* برتقالي Extra Shrimp */
+  --brand-d:#E06A12;          /* درجة أغمق للضغط/التحويم */
+  --brand-soft:#FFF4EB;       /* خلفية فاتحة للبطاقة المختارة */
+  --brand-line:#F0D9C4;       /* حد فاتح بلون العلامة */
+  --ck-line:#EAEDEF;
+  --ck-line-strong:#D3D7DA;
+  --ck-ink:#1f2430;
+  --ck-muted:#6E7B7C;
+  --ck-danger:#C0392B;
 }
 
-/* ===== البطاقات: حواف أنعم، حدود رفيعة، بدون ظل ثقيل ===== */
+/* ===== البطاقات ===== */
 .imenu-checkout-enhanced .card.card-profile{
   border:1px solid var(--ck-line) !important;
-  border-radius:14px !important;
+  border-radius:16px !important;
   box-shadow:0 1px 2px rgba(16,24,40,.04) !important;
 }
 .imenu-checkout-enhanced .card.card-profile .px-4{ padding:1.1rem 1.25rem !important; }
 .imenu-checkout-enhanced .card.card-profile .mt-5{ margin-top:.25rem !important; }
-.imenu-checkout-enhanced .card.card-profile h3{
-  font-size:16px; font-weight:600; margin-bottom:.25rem; color:#1f2430;
+.imenu-checkout-enhanced h3{
+  font-size:16px !important; font-weight:700 !important; color:var(--ck-ink) !important; margin-bottom:.25rem !important;
 }
 .imenu-checkout-enhanced .border-top{ border-top-color:var(--ck-line) !important; }
 
-/* ===== بطاقة العناصر ===== */
-.imenu-checkout-enhanced #cartList .items{ padding:10px 0; }
+/* ===== قائمة الأصناف ===== */
+.imenu-checkout-enhanced #cartList .items{ padding:12px 0; }
 .imenu-checkout-enhanced #cartList .items + .items{ border-top:1px solid var(--ck-line); }
-.imenu-checkout-enhanced .product-item_title{ font-weight:600; font-size:15px; margin:0 0 2px; }
-.imenu-checkout-enhanced .product-item_quantity{ color:var(--ck-muted); font-size:13px; margin-bottom:8px; }
-.imenu-checkout-enhanced .productImage{
-  border-radius:10px; object-fit:cover; width:64px !important; height:64px !important;
-}
-.imenu-checkout-enhanced .square-box figure{ margin:0; }
+.imenu-checkout-enhanced .product-item_title{ font-weight:700; font-size:15px; margin:0 0 2px; color:var(--ck-ink); }
+.imenu-checkout-enhanced .product-item_quantity{ color:var(--brand); font-size:13px; margin-bottom:8px; }
 
-/* أزرار الكمية والحذف: دائرية ومرتّبة */
+/* >>> إصلاح المربّع الأزرق/الرمادي خلف صور الأصناف <<< */
+.imenu-checkout-enhanced .info-block .square-box,
+.imenu-checkout-enhanced .info-block.block-info .square-box{
+  width:64px !important; height:64px !important; min-height:0 !important;
+  background:transparent !important; border-radius:12px !important;
+  margin:0 0 0 12px !important; overflow:hidden; text-align:initial !important;
+}
+.imenu-checkout-enhanced .square-box figure{ margin:0 !important; padding:0 !important; background:transparent !important; }
+.imenu-checkout-enhanced .productImage{
+  width:64px !important; height:64px !important; border-radius:12px; object-fit:cover; display:block;
+}
+/* يزيل الشريط الجانبي الملوّن على حافة الصف */
+.imenu-checkout-enhanced .info-block{ border-right:none !important; margin-bottom:0 !important; }
+
+/* أزرار الكمية والحذف: دائرية مرتّبة */
 .imenu-checkout-enhanced .btn-cart-radius{
   width:38px; height:38px; border-radius:50% !important;
   display:inline-flex; align-items:center; justify-content:center;
@@ -57,50 +65,70 @@
   background:#fff !important; margin:0 3px; padding:0 !important;
 }
 .imenu-checkout-enhanced .btn-cart-radius:hover{ background:var(--brand-soft) !important; }
-/* زر + باللون الممتلئ */
 .imenu-checkout-enhanced .btn-cart-radius:has(.fa-plus){
   background:var(--brand) !important; border-color:var(--brand) !important; color:#fff !important;
 }
-/* زر الحذف بالأحمر لتمييزه */
-.imenu-checkout-enhanced .btn-cart-radius:has(.fa-trash){ border-color:#f0caca !important; }
+.imenu-checkout-enhanced .btn-cart-radius:has(.fa-trash){ border-color:#EAD2CC !important; }
 .imenu-checkout-enhanced .btn-cart-radius .fa-trash{ color:var(--ck-danger) !important; }
 
-/* ===== خيارات نوع الطلب (تناول/استلام/توصيل) كبطاقات واضحة ===== */
+/* ===== خيارات نوع الطلب كبطاقات ===== */
 .imenu-checkout-enhanced .custom-control.custom-radio{
-  border:1px solid var(--ck-line); border-radius:10px;
+  position:relative;
+  border:1px solid var(--ck-line); border-radius:12px;
   padding:12px 14px; margin-bottom:8px; transition:border-color .12s, background .12s;
 }
 .imenu-checkout-enhanced .custom-control.custom-radio:hover{ border-color:var(--ck-line-strong); }
 .imenu-checkout-enhanced .custom-control.custom-radio:has(input:checked){
-  border-color:var(--brand); background:var(--brand-soft);
+  border-color:var(--brand) !important; background:var(--brand-soft) !important;
 }
+/* لون نص الخيار: محايد افتراضاً، وبلون العلامة عند الاختيار */
+.imenu-checkout-enhanced .custom-control-label{ color:var(--ck-ink) !important; font-weight:600; }
 .imenu-checkout-enhanced .custom-radio:has(input:checked) .custom-control-label{
-  color:var(--brand); font-weight:600;
+  color:var(--brand-d) !important; font-weight:700;
+}
+.imenu-checkout-enhanced .custom-control-input:checked ~ .custom-control-label::before{
+  background-color:var(--brand) !important; border-color:var(--brand) !important;
 }
 
-/* ===== حقل الجوال ===== */
+/* أيقونة الخيار (مطعم / استلام / توصيل) على الطرف */
+.imenu-checkout-enhanced .ck-opt-icon{
+  position:absolute; left:16px; top:50%; transform:translateY(-50%);
+  font-size:19px; color:var(--ck-muted); transition:color .12s;
+}
+.imenu-checkout-enhanced .custom-radio:has(input:checked) .ck-opt-icon{ color:var(--brand) !important; }
+
+/* ===== حقل الجوال وبقية الحقول ===== */
 .imenu-checkout-enhanced #localorder_phone input.form-control,
 .imenu-checkout-enhanced .form-control{
   border-radius:10px; border:1px solid var(--ck-line-strong);
-  min-height:46px; font-size:14px;
+  min-height:46px; font-size:14px; color:var(--ck-ink);
 }
 .imenu-checkout-enhanced .form-control:focus{
   border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft);
 }
+/* عنوان «الهاتف» الباهت → واضح */
+.imenu-checkout-enhanced label,
+.imenu-checkout-enhanced .form-control-label,
+.imenu-checkout-enhanced h6{ color:var(--ck-ink) !important; opacity:1 !important; }
 
 /* ===== ملخّص السعر ===== */
 .imenu-checkout-enhanced #totalPrices .card-stats{
   border:1px solid var(--ck-line) !important; border-radius:12px !important; box-shadow:none !important;
 }
-.imenu-checkout-enhanced #totalPrices .ammount{ font-weight:600; }
+.imenu-checkout-enhanced #totalPrices .ammount{ font-weight:700; color:var(--ck-ink); }
 
-/* ===== زر «تقديم الطلب»: واضح، عريض، بلون العلامة، وثابت أسفل الجوال ===== */
-.imenu-checkout-enhanced .paymentbutton{
-  width:100%; background:var(--brand) !important; border:none !important; color:#fff !important;
-  height:50px; border-radius:12px !important; font-size:16px; font-weight:600;
+/* ===== زر «تقديم الطلب»: واضح، عريض، بلون العلامة ===== */
+.imenu-checkout-enhanced .paymentbutton,
+.imenu-checkout-enhanced #totalSubmitCOD .btn,
+.imenu-checkout-enhanced #totalSubmitStripe .btn{
+  width:100%; background:var(--brand) !important; background-image:none !important;
+  border:none !important; color:#fff !important; opacity:1 !important;
+  height:50px; border-radius:14px !important; font-size:16px; font-weight:700;
   margin-top:.5rem !important; box-shadow:none !important; transition:filter .12s, transform .08s;
 }
-.imenu-checkout-enhanced .paymentbutton:hover{ filter:brightness(.95); color:#fff !important; }
+.imenu-checkout-enhanced .paymentbutton:hover,
+.imenu-checkout-enhanced #totalSubmitCOD .btn:hover,
+.imenu-checkout-enhanced #totalSubmitStripe .btn:hover{ filter:brightness(.95); color:#fff !important; }
 .imenu-checkout-enhanced .paymentbutton:active{ transform:scale(.99); }
 
 /* تثبيت زر التأكيد أسفل الشاشة على الجوال */
@@ -111,10 +139,31 @@
     background:#fff; padding:12px 14px;
     padding-bottom:max(12px, env(safe-area-inset-bottom));
     border-top:1px solid var(--ck-line);
-    margin:0 -1.25rem -1rem;   /* يمتد بعرض البطاقة */
+    margin:0 -1.25rem -1rem;
   }
   .imenu-checkout-enhanced .paymentbutton{ margin-top:0 !important; }
 }
 
-/* تباعد عام أنعم بين البطاقات */
+/* تباعد عام أنعم */
 .imenu-checkout-enhanced .section.bg-secondary{ padding-top:1rem; }
+
+/* ===== رابط العودة للمنيو ===== */
+.imenu-checkout-enhanced .ck-items-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.imenu-checkout-enhanced .ck-back-link{
+  display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  font-size:13.5px; font-weight:700; color:var(--brand) !important; text-decoration:none;
+  background:var(--brand-soft); border:1px solid var(--brand-line);
+  padding:7px 12px; border-radius:999px; transition:background .12s;
+}
+.imenu-checkout-enhanced .ck-back-link:hover{ background:#fff; }
+.imenu-checkout-enhanced .ck-back-link .fa{ font-size:13px; }
+
+/* ===== ملاحظة الموافقة على الشروط ===== */
+.imenu-checkout-enhanced .ck-terms-note{
+  font-size:12.5px; color:var(--ck-muted); line-height:1.7; margin:0 auto; max-width:340px;
+}
+.imenu-checkout-enhanced .ck-terms-note a{
+  color:var(--brand) !important; font-weight:700; text-decoration:underline;
+}
