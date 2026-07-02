@@ -51,25 +51,42 @@
 // set the modal menu element
 const $targetEl = document.getElementById('productModal');
 
+        
+        // نقل النافذة خارج أي عنصر فيه transform حتى يغطي التعتيم الشاشة كاملة
+document.body.appendChild($targetEl);
+
+        
         // options with default values
-        const options = {
-            //placement: 'bottom-right',
-            backdrop: 'dynamic',
-            backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
+  const options = {
+            backdrop: 'static',
+            backdropClasses: 'hidden',
             closable: true,
-            onHide: () => {
-                console.log('modal is hidden');
-            },
-            onShow: () => {
-                console.log('modal is shown');
-            },
-            onToggle: () => {
-                console.log('modal has been toggled');
-            }
+            onHide: () => { document.body.style.overflow = ''; },
+            onShow: () => { document.body.style.overflow = 'hidden'; }
         };
 
 
+
         const productModal = new Modal($targetEl, options);
+        
+                // الإغلاق بالنقر خارج البطاقة
+        $targetEl.addEventListener('click', function (e) {
+            if (e.target === $targetEl) { productModal.hide(); }
+        });
+
+        // جسر: cartFunctions.js يغلق النافذة بأمر Bootstrap — نحوّله إلى Flowbite
+        // (بدون تعديل الملف المشترك حتى لا تتأثر القوالب الأخرى)
+        (function () {
+            var orig = $.fn.modal;
+            $.fn.modal = function (action) {
+                if (this.is('#productModal')) {
+                    if (action === 'hide') { productModal.hide(); }
+                    return this;
+                }
+                return orig ? orig.apply(this, arguments) : this;
+            };
+        })();
+
 
         function setCurrentItemInEmber(id){
 

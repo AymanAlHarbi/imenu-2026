@@ -4,7 +4,10 @@
   المتغيّرات المستخدمة (يمرّرها OrderController@success): $order, $showWhatsApp
   لتلوين الهوية: --brand يأخذ لون المطعم تلقائياً من theme_color إن وُجد.
 --}}
-@extends('layouts.front', ['title' => __('Order')])
+
+@extends('layouts.front', ['title' => __('Order'), 'class' => 'imenu-clean-page'])
+
+
 @section('content')
 @php
   $currency = config('settings.cashier_currency');

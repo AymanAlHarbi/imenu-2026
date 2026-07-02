@@ -6,7 +6,8 @@
   المتغيّرات (يمرّرها OrderController@guestOrders): $orders, $statuses, $backUrl, $showWhatsApp
   أحدث طلب يُفتح تلقائياً؛ البقية مطويّة (نقر العنوان يفتح/يغلق).
 --}}
-@extends('layouts.front', ['title' => __('Orders')])
+@extends('layouts.front', ['title' => __('Orders'), 'class' => 'imenu-clean-page'])
+
 @section('content')
 @php
   $currency = config('settings.cashier_currency');
@@ -18,7 +19,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
   <div style="width:100%; max-width:480px; background:#F7F6F4; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 60px rgba(20,20,18,.08);">
 
-    <header style="position:sticky; top:0; z-index:20; background:rgba(247,246,244,.92); backdrop-filter:blur(12px); border-bottom:1px solid #E9E7E2; padding:11px 16px; display:flex; align-items:center; gap:11px;">
+
+
+        <header style="position:sticky; top:0; z-index:20; background:rgba(247,246,244,.92); backdrop-filter:blur(12px); border-bottom:1px solid #E9E7E2; padding:11px 16px; display:flex; align-items:center; gap:11px;">
       <a href="{{ $backUrl }}" aria-label="{{ __('Go Back') }}" style="width:40px;height:40px;flex:none;background:#fff;border:1px solid #E9E7E2;border-radius:12px;display:grid;place-items:center;color:#1B1B1A;text-decoration:none;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
       </a>
@@ -26,10 +29,25 @@
         <span style="font-weight:700;font-size:1.15rem;">{{ __('My Orders') }}</span>
         <span style="font-size:.8rem;color:#8A8983;">{{ $orders->count() }} {{ __('Orders') }}</span>
       </div>
-      @if($firstResto)
-      <div style="width:40px;height:40px;flex:none;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:1.15rem;">{{ mb_substr($firstResto->name,0,1) }}</div>
-      @endif
+      @auth
+      <button type="button" onclick="var m=document.getElementById('acctMenu'); m.style.display = m.style.display==='block' ? 'none' : 'block';" aria-label="{{ __('My profile') }}" style="width:40px;height:40px;flex:none;border:none;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:1.05rem;cursor:pointer;">
+        {{ mb_substr(auth()->user()->name,0,1) }}
+      </button>
+      @endauth
     </header>
+
+    @auth
+    <div id="acctMenu" style="display:none; margin:10px 16px 0; background:#fff; border:1px solid #E9E7E2; border-radius:14px; box-shadow:0 8px 30px rgba(20,20,18,.10); overflow:hidden;">
+      <div style="padding:13px 16px; border-bottom:1px solid #E9E7E2;">
+        <div style="font-weight:700;">{{ auth()->user()->name }}</div>
+        <div style="font-size:.82rem; color:#8A8983;" dir="ltr">{{ auth()->user()->phone }}</div>
+      </div>
+      <a href="{{ $backUrl }}" style="display:block; padding:12px 16px; color:#1B1B1A; text-decoration:none; border-bottom:1px solid #E9E7E2; font-weight:600;">{{ __('Go back to restaurant') }}</a>
+      <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="display:block; padding:12px 16px; color:#C0392B; text-decoration:none; font-weight:600;">{{ __('Logout') }}</a>
+    </div>
+    @endauth
+
+
 
     <main style="flex:1; padding:16px; display:flex; flex-direction:column; gap:13px;">
 

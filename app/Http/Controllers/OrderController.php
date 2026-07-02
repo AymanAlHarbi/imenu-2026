@@ -50,6 +50,13 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+    
+            // العملاء لهم صفحة الطلبات الموحدة — وليس لوحة التحكم
+        if (auth()->user()->hasRole('client')) {
+            return redirect()->route('guest.orders');
+        }
+
+    
         $this->migrateStatuses();
 
         $restorants = Restorant::where(['active' => 1])->get();
@@ -967,41 +974,55 @@ class OrderController extends Controller
         );
     }
 
-    public function guestOrders(): View
+        public function guestOrders(): View
     {
+        // 1) طلبات الكوكيز (طلبات سابقة كضيف قبل تفعيل إلزام التسجيل)
         $previousOrders = Cookie::get('orders') ? Cookie::get('orders') : '';
         $previousOrderArray = array_filter(explode(',', $previousOrders));
 
-        //Find the orders
-        $orders = Order::whereIn('id', $previousOrderArray)->orderBy('id', 'desc')->get();
-        $backUrl = url()->previous();
-        $lastOrder = null;
-        foreach ($orders as $key => $order) {
-            //Change currency
-            $lastOrder = $order;
-            $backUrl = route('vendor', $order->restorant->subdomain);
+        // 2) طلبات العميل المسجّل + طلبات الكوكيز معاً
+        $ordersQuery = Order::query();
+        if (auth()->check()) {
+            $ordersQuery->where('client_id', auth()->user()->id);
+            if (count($previousOrderArray)) {
+                $ordersQuery->orWhereIn('id', $previousOrderArray);
+            }
+        } else {
+            $ordersQuery->whereIn('id', $previousOrderArray);
         }
+
+        $orders = $ordersQuery->orderBy('id', 'desc')->limit(20)->get();
+
+        // زر الرجوع: منيو آخر مطعم
+        $backUrl = url()->previous();
+        if (session('last_visited_restaurant_alias')) {
+            $backUrl = route('vendor', session('last_visited_restaurant_alias'));
+        }
+
+        $lastOrder = $orders->first();
 
         $showWhatsApp = config('settings.whatsapp_ordering_enabled');
         if ($lastOrder) {
+            $backUrl = route('vendor', $lastOrder->restorant->subdomain);
             ConfChanger::switchCurrency($lastOrder->restorant);
-            //Should we show whatsapp send order
             if ($showWhatsApp) {
-                //Disable when WhatsApp Mode
                 if (config('settings.is_whatsapp_ordering_mode')) {
                     $showWhatsApp = false;
                 }
-
-                //In QR, if owner phone is not set, hide the button
-                //In FT, we use owner phone to have the number
-                if (strlen($order->restorant->whatsapp_phone) < 3) {
+                if (strlen($lastOrder->restorant->whatsapp_phone) < 3) {
                     $showWhatsApp = false;
                 }
             }
         }
 
-        return view('orders.guestorders', ['showWhatsApp' => $showWhatsApp, 'backUrl' => $backUrl, 'orders' => $orders, 'statuses' => Status::pluck('name', 'id')]);
+        return view('orders.guestorders', [
+            'showWhatsApp' => $showWhatsApp,
+            'backUrl'      => $backUrl,
+            'orders'       => $orders,
+            'statuses'     => Status::pluck('name', 'id'),
+        ]);
     }
+
 
     public function generateOrderMsg($address, $comment, $price)
     {

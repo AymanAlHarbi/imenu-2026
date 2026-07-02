@@ -249,6 +249,23 @@ body.mobile-menu-opened{overflow:hidden;}
 @media(max-width:380px){
   .em-grid{grid-template-columns:1fr;}
 }
+
+
+/* ==== إصلاح نافذة المنتج ==== */
+#productModal{position:fixed;inset:0;z-index:1050;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,20,18,.55);overflow-y:auto;}
+#productModal.hidden{display:none;}
+#productModal .em-modal{position:relative;width:100%;max-width:420px;margin:auto;background:#fff;border-radius:20px;overflow:hidden;max-height:calc(100dvh - 32px);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+#productModal .em-modal-body{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#productModal .em-close{position:absolute;top:12px;inset-inline-end:12px;width:36px;height:36px;border:none;border-radius:50%;background:rgba(255,255,255,.92);color:#1B1B1A;font-size:22px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);z-index:2;}
+
+/* عدّاد الكمية − / + */
+.em-qtyrow{display:flex;align-items:center;gap:10px;}
+.em-qtyrow button{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--em-line,#E9E7E2);background:#fff;font-size:22px;font-weight:700;cursor:pointer;color:var(--em-ink,#1B1B1A);}
+.em-qtyrow button:active{background:var(--em-tint,#FFF4EB);}
+.em-qtyrow input{flex:1;min-width:0;text-align:center;border:1px solid var(--em-line,#E9E7E2);border-radius:12px;height:44px;font-size:17px;font-weight:700;}
+
+
+
     </style>
 
 </head>

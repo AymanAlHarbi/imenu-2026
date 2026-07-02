@@ -167,3 +167,29 @@
 .imenu-checkout-enhanced .ck-terms-note a{
   color:var(--brand) !important; font-weight:700; text-decoration:underline;
 }
+
+
+
+/* ===== إصلاح أعلى الصفحة: إخفاء الشريط وإلغاء الهامش السالب ===== */
+body.imenu-checkout-enhanced nav.navbar{ display:none !important; }
+body.imenu-checkout-enhanced .mt--300{ margin-top:0 !important; }
+body.imenu-checkout-enhanced{ padding-top:12px !important; }
+
+/* ===== ألوان الهوية (ضمان توفر المتغيرات — يصلح أزرار + الزرقاء) ===== */
+body.imenu-checkout-enhanced{
+  --brand:#FA8128; --brand-d:#E0701E;
+  --brand-soft:#FFF4EB; --brand-line:#F6D9C2; --ck-danger:#C0392B;
+}
+
+/* ===== زر تقديم الطلب: شريط ثابت أسفل الشاشة دائماً ===== */
+body.imenu-checkout-enhanced #totalSubmitCOD,
+body.imenu-checkout-enhanced #totalSubmitStripe{
+  position:fixed; bottom:0; left:0; right:0; z-index:1040;
+  margin:0 !important;
+  padding:10px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top, #ECEAE6 75%, rgba(236,234,230,0));
+}
+body.imenu-checkout-enhanced .paymentbutton{ margin-top:0 !important; }
+body.imenu-checkout-enhanced .paymentbutton:disabled{ opacity:.5; }
+/* مساحة أسفل المحتوى حتى لا يغطيه الشريط الثابت */
+body.imenu-checkout-enhanced{ padding-bottom:120px !important; }

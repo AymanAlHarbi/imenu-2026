@@ -23,9 +23,11 @@
         @endif
 
         @if ($canDoOrdering&&$restorant->getConfig('clients_enable','false')!='false')
-            <a href="{{ route('login') }}?showCreate=true" class="em-tab"><i class="las la-receipt"></i>{{ __('My Orders') }}</a>
+<a href="{{ auth()->check() ? route('orders.index') : route('client.phone.show') }}" class="em-tab"><i class="las la-receipt"></i>{{ __('My Orders') }}</a>
+
         @elseif(isset($hasGuestOrders)&&$hasGuestOrders&&$canDoOrdering)
-            <a href="{{ route('guest.orders') }}" class="em-tab"><i class="las la-receipt"></i>{{ __('My Orders') }}</a>
+          <a href="{{ auth()->check() ? route('guest.orders') : route('client.phone.show') }}" class="em-tab"><i class="las la-receipt"></i>{{ __('My Orders') }}</a>
+
         @endif
     </div>
 </div>

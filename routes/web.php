@@ -57,6 +57,10 @@ Route::post('/search/location', [FrontEndController::class, 'getCurrentLocation'
 
 Auth::routes();
 
+
+
+
+
 Route::prefix('client')->name('client.phone.')->group(function () {
     Route::get('/login', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'show'])->name('show');
     Route::post('/check', [\App\Http\Controllers\Auth\ClientPhoneAuthController::class, 'check'])->name('check');
@@ -289,10 +293,18 @@ Route::middleware('auth', 'impersonate')->group(function () {
 });
 
 if (config('app.isqrsaas')) {
-    Route::get('/cart-checkout', [CartController::class, 'cart'])->name('cart.checkout');
+    // إلزام الدخول قبل صفحة إتمام الطلب
+    Route::get('/cart-checkout', [CartController::class, 'cart'])
+        ->middleware('auth')->name('cart.checkout');
+
+    // تبقى لعرض طلبات الضيوف القديمة فقط
     Route::get('/guest-orders', [OrderController::class, 'guestOrders'])->name('guest.orders');
-    Route::post('/whatsapp/store', [OrderController::class, 'storeWhatsappOrder'])->name('whatsapp.store');
+
+    // إلزام الدخول لطلبات واتساب أيضاً
+    Route::post('/whatsapp/store', [OrderController::class, 'storeWhatsappOrder'])
+        ->middleware('auth')->name('whatsapp.store');
 }
+
 
 Route::get('/handleOrderPaymentStripe/{order}', [PaymentController::class, 'handleOrderPaymentStripe'])->name('handle.order.payment.stripe');
 
@@ -306,7 +318,9 @@ Route::get('/cart-update', [CartController::class, 'update'])->name('cart.update
 Route::get('/cartinc/{item}', [CartController::class, 'increase'])->name('cart.increase');
 Route::get('/cartdec/{item}', [CartController::class, 'decrease'])->name('cart.decrease');
 
-Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+Route::post('/order', [OrderController::class, 'store'])
+    ->middleware('auth')->name('order.store');
+
 
 Route::resource('pages', PagesController::class);
 Route::get('/blog/{slug}', [PagesController::class, 'blog'])->name('blog');
@@ -381,4 +395,6 @@ Route::post('/fb-order', [OrderController::class, 'fbOrderMsg'])->name('fb.order
 Route::get('onboarding', [FrontEndController::class, 'onboarding'])->name('sd.onboarding');
 
 Route::get('/{alias}', [FrontEndController::class, 'restorant'])->where('alias', '.*')->name('vendrobyalias');
+
+
 

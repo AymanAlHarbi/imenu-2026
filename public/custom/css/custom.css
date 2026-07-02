@@ -2707,4 +2707,20 @@ lottie-player {
     left: auto !important;
   }
   
+  /* ===== صفحات العميل النظيفة (طلباتي / نجاح الطلب) =====
+   تخفي شريط iMenu العلوي والفوتر العام لأن لهذه الصفحات هيدرها الخاص */
+body.imenu-clean-page nav.navbar,
+body.imenu-clean-page footer,
+body.imenu-clean-page .footer,
+body.imenu-clean-page #mySidenav,
+body.imenu-clean-page .sidenav {
+  display: none !important;
+}
+body.imenu-clean-page,
+body.imenu-clean-page .wrapper {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+  
   
