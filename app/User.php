@@ -243,14 +243,11 @@ class User extends Authenticatable
         ])->save();
     }
 
-    public function callToVerify()
-    {
-        $code = random_int(100000, 999999);
-        $this->forceFill(['verification_code' => $code])->save();
-        $client = new Client(config('settings.twilio_sid'), config('settings.twilio_auth_token'));
-        $body = __('Hi').' '.$this->name.".\n\n".__('Your verification code is').': '.$code;
-        $client->messages->create($this->phone, ['from' => config('settings.twilio_from'), 'body' => $body]);
-    }
+public function callToVerify()
+{
+    // Authentica تولّد الرمز وترسله عبر SMS — لا تخزين محلي للرمز
+    app(\App\Services\Authentica::class)->sendOtp($this->phone);
+}
 
     public function setExpoToken($token)
     {

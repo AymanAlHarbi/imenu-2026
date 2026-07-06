@@ -141,6 +141,16 @@ Route::prefix('v2/client')->group(function () {
         Route::post('register', [API\Client\AuthController::class, 'register'])->name('register');
         Route::post('loginfb', [API\Client\AuthController::class, 'loginFacebook']);
         Route::post('logingoogle', [API\Client\AuthController::class, 'loginGoogle']);
+
+        // دخول العميل برقم الجوال + OTP (خاص بتطبيق الجوال)
+        // مسارات عامة: العميل لا يملك توكن قبل تسجيل الدخول
+        Route::prefix('phone')->name('phone.')->group(function () {
+            Route::post('check', [API\Client\PhoneAuthController::class, 'check'])->name('check');
+            Route::post('register', [API\Client\PhoneAuthController::class, 'register'])->name('register');
+            Route::post('sendcode', [API\Client\PhoneAuthController::class, 'sendCode'])->name('sendcode');
+            Route::post('verify', [API\Client\PhoneAuthController::class, 'verify'])->name('verify');
+        });
+
         Route::middleware('auth:api')->group(function () {
             Route::get('data', [API\Client\AuthController::class, 'getUseData'])->name('getUseData');
             Route::get('deactivate', [API\Client\AuthController::class, 'deactivate'])->name('deactivate');

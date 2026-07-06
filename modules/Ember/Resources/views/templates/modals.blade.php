@@ -1,5 +1,5 @@
 <!-- Product modal (Flowbite outer kept; Ember styled inner) -->
-<div id="productModal" tabindex="-1" role="dialog" class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full items-center justify-center">
+<div id="productModal" tabindex="-1" role="dialog" class="hidden">
         <div class="em-modal">
         <button type="button" class="em-close" aria-label="{{ __('Close') }}" onclick="productModal.hide()">×</button>
 

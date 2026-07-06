@@ -11,8 +11,8 @@
 
 .imenu-rd{
   /* ===== رموز الهوية (الاتجاه A) ===== */
-  --im-primary:#2f6fed;
-  --im-primary-soft:#e7f0ff;
+  --im-primary:#FA8128;
+  --im-primary-soft:#FFF4EB;
   --im-on-primary:#ffffff;
   --im-page:#eef1f6;
   --im-card:#ffffff;
@@ -234,3 +234,10 @@
 @media (max-width:767px){
   .imenu-rd .container{padding-left:12px;padding-right:12px;}
 }
+/* رقم الهاتف: اتجاه لاتيني حتى تظهر + في مكانها الصحيح */
+.imenu-rd #phone{ direction:ltr; text-align:right; }
+
+/* إخفاء فواصل الأسطر الحشوية داخل البطاقات */
+.imenu-rd .card .px-4 > br,
+.imenu-rd .card .card-content > br,
+.imenu-rd #cartList > br{ display:none; }

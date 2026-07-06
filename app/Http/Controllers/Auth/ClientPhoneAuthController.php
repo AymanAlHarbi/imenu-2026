@@ -191,10 +191,9 @@ class ClientPhoneAuthController extends Controller
             '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
         ]);
 
-        $valid = $user
-            && ! $expired
-            && $user->verification_code !== null
-            && hash_equals((string) $user->verification_code, (string) $code);
+$valid = $user
+    && ! $expired
+    && app(\App\Services\Authentica::class)->verifyOtp((string) $user->phone, (string) $code);
 
         if (! $valid) {
             RateLimiter::hit($key, 300);

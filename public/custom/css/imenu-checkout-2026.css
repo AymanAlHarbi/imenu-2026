@@ -154,3 +154,27 @@ body.imenu-checkout-enhanced .bg-primary{ background:var(--brand) !important; bo
 body.imenu-checkout-enhanced .text-primary,
 body.imenu-checkout-enhanced a{ color:var(--brand); }
 body.imenu-checkout-enhanced a:hover{ color:var(--brand-d); }
+
+
+
+
+
+
+
+
+/* ===== طبقة تحكيم: إلغاء تعارض الطبقات القديمة ===== */
+/* صف الصنف: تخطيط flex فقط — إلغاء التموضع المطلق والحشوات القديمة */
+body.imenu-checkout-enhanced #cartList .info-block{
+  padding:12px 0 !important;
+}
+body.imenu-checkout-enhanced #cartList .square-box{
+  position:static !important; transform:none !important; margin:0 !important;
+}
+body.imenu-checkout-enhanced #cartList .info-block .row{
+  position:static !important; transform:none !important;
+  background:transparent !important; padding:0 !important;
+}
+/* زر تقديم الطلب: يثبت الشريطُ الحاوي فقط، لا الزر نفسه */
+body.imenu-checkout-enhanced .paymentbutton{
+  position:static !important;
+}

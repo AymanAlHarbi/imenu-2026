@@ -6,9 +6,7 @@
     <h1 class="em-rest-name notranslate">{{ $restorant->name }}</h1>
     <p class="em-rest-desc">{{ $restorant->description }}</p>
 
-    @if (strlen($restorant->address)>2)
-        <a class="em-dir" target="_blank" href="https://maps.google.com/maps?q={{ $restorant->address }}">{{ __('Get Directions') }}</a>
-    @endif
+
 
     <div class="em-tabs">
         <a href="#place-menu" class="em-tab menu-tab is-active"><i class="las la-utensils"></i>{{ __('Menu') }}</a>
@@ -28,6 +26,13 @@
         @elseif(isset($hasGuestOrders)&&$hasGuestOrders&&$canDoOrdering)
           <a href="{{ auth()->check() ? route('guest.orders') : route('client.phone.show') }}" class="em-tab"><i class="las la-receipt"></i>{{ __('My Orders') }}</a>
 
+        @endif
+                @if (strlen($restorant->phone ?? '')>2)
+            <a href="tel:{{ $restorant->phone }}" class="em-tab"><i class="las la-phone"></i>{{ __('Call') }}</a>
+        @endif
+
+        @if (strlen($restorant->address)>2)
+            <a href="https://maps.google.com/maps?q={{ $restorant->address }}" target="_blank" class="em-tab"><i class="las la-map-marker"></i>{{ __('Directions') }}</a>
         @endif
     </div>
 </div>

@@ -113,7 +113,7 @@ a{text-decoration:none;}
 .em-cover{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:260px;padding:34px 16px 26px;background-size:cover;background-position:center;color:#fff;}
 .em-cover::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(42,30,22,.30),rgba(178,50,24,.74));}
 .em-cover>*{position:relative;z-index:1;}
-.em-logo{width:74px;height:74px;border-radius:50%;border:3px solid #fff;background:#C23A22 center/cover no-repeat;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.em-logo{width:74px;height:74px;border-radius:18px;border:3px solid #fff;background:#C23A22 center/cover no-repeat;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
 .em-logo i{font-size:34px;color:#fff;}
 .em-rest-name{font-size:30px;font-weight:700;line-height:1.2;margin:0;}
 .em-rest-desc{font-size:14px;opacity:.92;margin:4px 0 0;}
@@ -196,7 +196,7 @@ a{text-decoration:none;}
 
 /* ---- Product modal (Flowbite outer kept) ---- */
 .em-modal{position:relative;width:100%;max-width:430px;margin:0 auto;background:var(--em-surface);border-radius:22px;overflow:hidden;max-height:88vh;overflow-y:auto;}
-.em-modal-img{height:200px;background:var(--em-tint) center/cover no-repeat;}
+.em-modal-img{width:100%;aspect-ratio:1/1;max-height:48dvh;background:#fff center/contain no-repeat;}
 .em-modal-body{padding:18px;}
 .em-modal-title{font-size:21px;font-weight:700;color:var(--em-ink);margin:0;}
 .em-modal-price{font-size:18px;font-weight:700;color:var(--em-primary);margin:6px 0 0;}
@@ -257,6 +257,7 @@ body.mobile-menu-opened{overflow:hidden;}
 #productModal .em-modal{position:relative;width:100%;max-width:420px;margin:auto;background:#fff;border-radius:20px;overflow:hidden;max-height:calc(100dvh - 32px);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);}
 #productModal .em-modal-body{overflow-y:auto;-webkit-overflow-scrolling:touch;}
 #productModal .em-close{position:absolute;top:12px;inset-inline-end:12px;width:36px;height:36px;border:none;border-radius:50%;background:rgba(255,255,255,.92);color:#1B1B1A;font-size:22px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);z-index:2;}
+#productModal{ left:0 !important; right:0 !important; }
 
 /* عدّاد الكمية − / + */
 .em-qtyrow{display:flex;align-items:center;gap:10px;}
@@ -264,7 +265,25 @@ body.mobile-menu-opened{overflow:hidden;}
 .em-qtyrow button:active{background:var(--em-tint,#FFF4EB);}
 .em-qtyrow input{flex:1;min-width:0;text-align:center;border:1px solid var(--em-line,#E9E7E2);border-radius:12px;height:44px;font-size:17px;font-weight:700;}
 
-
+/* ===== الجوال: أزرار الترويسة صف واحد قابل للسحب ===== */
+@media (max-width:568px){
+      .em-cover{min-height:200px;padding:22px 12px 18px;}
+  .em-logo{width:64px;height:64px;border-radius:16px;margin-bottom:8px;}
+  .em-rest-name{font-size:24px;}
+  .em-rest-desc{font-size:13px;}
+  .em-tabs{
+    flex-wrap:nowrap;justify-content:flex-start;
+    width:100%;max-width:100%;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:2px 4px;margin-top:14px;
+  }
+  .em-tabs::-webkit-scrollbar{display:none;}
+  .em-tab{flex:0 0 auto;white-space:nowrap;padding:8px 14px;font-size:12.5px;}
+  /* تتوسّط الأزرار إن اتسعت للشاشة، وتنسحب بشكل طبيعي إن زادت */
+  .em-tab:first-child{margin-inline-start:auto;}
+  .em-tab:last-child{margin-inline-end:auto;}
+}
 
     </style>
 

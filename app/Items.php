@@ -74,6 +74,10 @@ class Items extends TranslateAwareModel
     {
         return $this->getImge($this->image, config('global.restorant_details_image'), '_thumbnail.jpg');
     }
+    public function getMediummAttribute()
+    {
+        return $this->getImge($this->image, config('global.restorant_details_image'), '_medium.jpg');
+    }
 
     public function getItempriceAttribute()
     {

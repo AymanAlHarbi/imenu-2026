@@ -21,8 +21,10 @@ class PhoneVerificationController extends Controller
 
     public function verify(Request $request): RedirectResponse
     {
-        if ($request->user()->verification_code !== $request->code) {
-            throw ValidationException::withMessages([
+$verified = app(\App\Services\Authentica::class)
+    ->verifyOtp((string) $request->user()->phone, (string) $request->code);
+
+if (! $verified) {            throw ValidationException::withMessages([
                 'code' => ['The code your provided is wrong. Please try again or request another call.'],
             ]);
         }

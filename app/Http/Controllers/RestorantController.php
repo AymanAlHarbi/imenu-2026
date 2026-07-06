@@ -756,21 +756,11 @@ class RestorantController extends Controller
         //Fire event
         NewVendor::dispatch($owner, $restaurant);
 
-        if (config('app.isqrsaas') || config('settings.directly_approve_resstaurant')) {
-            //QR SaaS - or directly approve
-            $this->makeRestaurantActive($restaurant);
-
-            //We can have a usecase when lading id disabled
-            if (config('settings.disable_landing')) {
-                return redirect('/login')->withStatus(__('notifications_thanks_andcheckemail'));
-            } else {
-                //Normal, go to landing
-                return redirect()->route('front')->withStatus(__('notifications_thanks_andcheckemail'));
-            }
-
+        // التفعيل يتم يدويًا من لوحة الإدارة فقط - الإيميل يُرسل عند التفعيل
+        if (config('settings.disable_landing')) {
+            return redirect('/login')->withStatus(__('notifications_thanks_andcheckemail'));
         } else {
-            //Foodtiger
-            return redirect()->route('newrestaurant.register')->withStatus(__('notifications_thanks_and_review'));
+            return redirect()->route('front')->withStatus(__('notifications_thanks_andcheckemail'));
         }
     }
 

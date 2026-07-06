@@ -50,11 +50,11 @@ class Controller extends BaseController
 
                 if (isset($version['w']) && isset($version['h'])) {
                     $img = Image::make($laravel_image_resource->getRealPath())->fit($version['w'], $version['h']);
-                    $img->save($saveLocation, 100, $ext);
+                    $img->save($saveLocation, 75, $ext);
                 } else {
                     //Original image
                     $img = Image::make($laravel_image_resource->getRealPath());
-                    $img->save($saveLocation, 100, $ext);
+                    $img->save($saveLocation, 75, $ext);
                 }
             }
 

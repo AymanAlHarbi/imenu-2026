@@ -215,9 +215,11 @@
     "Or add new": "أو أضف جديداً",
     "Add new": "إضافة جديد",
     "Phone": "الهاتف",
+    "Call": "اتصال",
+    "Directions": "الاتجاهات",
     "Your phone here": "أدخل رقم هاتفك",
-    "Comment": "تعليق",
-    "Your comment here": "أدخل تعليقك هنا",
+    "Comment": "ملاحظاتك",
+    "Your comment here": "أكتب ملاحظاتك هنا",
     "Demo Stripe Credentials": "بيانات Stripe التجريبية",
     "Payment method": "طريقة الدفع",
     "Cash on delivery": "الدفع عند الاستلام",
@@ -388,8 +390,7 @@
     "View it": "عرض المنيو",
     "Go back": "العودة",
     "Order again": "اطلب مرة أخرى",
-    
-        "Enter your phone number": "أدخل رقم جوالك",
+    "Enter your phone number": "أدخل رقم جوالك",
     "We use your number to sign you in — no password needed": "ندخلك برقم جوالك مباشرة — بدون كلمة مرور",
     "Continue": "متابعة",
     "Welcome, first time here": "أهلاً بك! أول مرة هنا",
@@ -410,8 +411,6 @@
     "Phone number not registered.": "رقم الجوال غير مسجّل.",
     "Please enter your phone number first.": "يرجى إدخال رقم جوالك أولاً.",
     "Could not send verification code. Please try again later.": "تعذر إرسال رمز التحقق. حاول لاحقاً.",
-
-
     "Share Menu": "مشاركة القائمة",
     "Share your menu with your audience": "شارك قائمتك مع جمهورك",
     "Download QR Code": "تنزيل رمز QR",

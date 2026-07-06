@@ -33,8 +33,8 @@
                             <div class="em-grid">
                                 @foreach ($category->aitems as $item)
                                     <div class="em-card" onClick="setCurrentItemInEmber({{ $item->id }})" style="cursor:pointer;">
-                                        <div class="em-thumb" style="@if(strlen($item->logom)>5)background-image:url('{{ $item->logom }}');@endif">
-                                            @if(!(strlen($item->logom)>5))<i class="las la-utensils"></i>@endif
+                                        <div class="em-thumb" style="@if(strlen($item->mediumm)>5)background-image:url('{{ $item->mediumm }}');@endif">
+                                            @if(!(strlen($item->mediumm)>5))<i class="las la-utensils"></i>@endif
                                         </div>
                                         <div class="em-cardbody">
                                             <h3 class="em-name">{{ $item->name }}</h3>
