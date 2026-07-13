@@ -101,6 +101,9 @@
         <div id="step-otp" class="pl-step">
           <h2 class="pl-title">{{ __('Verify your phone') }}</h2>
           <p class="pl-sub">{{ __('We sent a code to') }} <span id="otpPhoneLabel" dir="ltr" style="font-weight:700;color:#1B1B1A;"></span></p>
+                    <p id="otpChannelNote" style="display:none;margin:0 0 12px;padding:10px 14px;border-radius:10px;background:#e7f8ef;color:#128C4B;font-size:14px;font-weight:600;">
+            {{ __('The code was sent via WhatsApp this time.') }}
+          </p>
           <input type="text" id="codeInput" class="pl-input pl-otp" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
                  placeholder="——————" required
                  onkeydown="if(event.key==='Enter'){AppAuth.submitCode();}">
@@ -184,8 +187,12 @@ const AppAuth = {
         this.handleFailure(data); return;
       }
       if(data.skip_otp && data.redirect){ window.location.href = data.redirect; return; }
-      if(data.status){ this.showStep('step-otp'); } else { this.handleFailure(data); }
-    } catch(e){ this.showError('خطأ في الاتصال بالسيرفر: ' + e.message); }
+      if(data.status){
+        this.showStep('step-otp');
+        const note = document.getElementById('otpChannelNote');
+        note.style.display = (data.channel === 'whatsapp') ? 'block' : 'none';
+      } else { this.handleFailure(data); }
+      } catch(e){ this.showError('خطأ في الاتصال بالسيرفر: ' + e.message); }
   },
 
   async resendCode(){

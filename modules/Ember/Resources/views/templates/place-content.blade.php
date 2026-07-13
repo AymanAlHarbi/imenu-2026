@@ -79,14 +79,22 @@
 
                 <h3 style="margin-top:18px;"><i class="las la-clock"></i>{{ __('Working Hours') }}</h3>
                 <ol class="em-hours">
-                    @foreach ($wh as $day=>$hours)
+                    @php
+                        $fmtTime = function($t){ return \Carbon\Carbon::createFromFormat('H:i', (string)$t)->locale(config('app.locale'))->translatedFormat('g:i a'); };
+                    @endphp
+                    @foreach (['sunday','monday','tuesday','wednesday','thursday','friday','saturday'] as $day)
+                        @php $hours = $wh[$day] ?? []; @endphp
                         <li>
                             <span class="day {{ $day==$currentDay?'today':'' }}">
                                 {{ __(ucfirst($day)) }}
                                 @if ($day==$currentDay)<span class="tag">{{ __('Today') }}</span>@endif
                             </span>
                             <span>
-                                @foreach ($hours as $timeRange){{ $timeRange->start() }} - {{ $timeRange->end() }} @endforeach
+                                @forelse ($hours as $timeRange)
+                                    {{ $fmtTime($timeRange->start()) }} - {{ $fmtTime($timeRange->end()) }}@if(!$loop->last) <span style="opacity:.6;">و</span> @endif
+                                @empty
+                                    <span style="color:#e24b4a; font-weight:bold;">{{ __('Closed') }}</span>
+                                @endforelse
                             </span>
                         </li>
                     @endforeach

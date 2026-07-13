@@ -146,6 +146,7 @@
             var USER_ID = '{{  auth()->user()&&auth()->user()?auth()->user()->id:"" }}';
             var PUSHER_APP_KEY = "{{ config('broadcasting.connections.pusher.key') }}";
             var PUSHER_APP_CLUSTER = "{{ config('broadcasting.connections.pusher.options.cluster') }}";
+            var USER_IS_CLIENT = @json(auth()->check() && auth()->user()->hasRole('client'));
         </script>
         @if (auth()->user()!=null&&auth()->user()->hasRole('staff'))
             <script>
@@ -169,7 +170,7 @@
          <!-- Pusher -->
          @if(strlen( config('broadcasting.connections.pusher.app_id'))>2)
             <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-            <script src="{{ asset('custom') }}/js/pusher.js"></script>
+            <script src="{{ asset('custom') }}/js/pusher.js?v=3"></script>
         @endif
 
         <!-- Custom JS defined by admin -->

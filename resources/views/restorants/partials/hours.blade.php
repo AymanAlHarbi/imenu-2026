@@ -34,7 +34,14 @@
                     <input type="hidden" id="rid" name="rid" value="{{ $restorant->id }}"/>
                     <input type="hidden" id="shift_id" name="shift_id" value="{{ $shiftId }}"/>
                     <div class="form-group">
-                        @foreach($days as $key => $value)
+                    <div class="row" style="margin-top: 10px; font-size: 13px; color: #8898aa; font-weight: 600;">
+                        <div class="col-4">{{ __('Day') }}</div>
+                        <div class="col-3">{{ __('Opening time') }}</div>
+                        <div class="col-2"></div>
+                        <div class="col-3">{{ __('Closing time') }}</div>
+                    </div>
+                    @foreach([6, 0, 1, 2, 3, 4, 5] as $key)
+                        @php $value = $days[$key]; @endphp
                         <br/>
                         <div class="row">
                             <div class="col-4">
@@ -66,6 +73,7 @@
                         @endforeach
                     </div>
                     <div class="text-center">
+                        <button type="button" onclick="copyDayHours({{ $shiftId }})" class="btn btn-outline-primary mt-4">{{ __('Copy Sunday hours to all days') }}</button>
                         @if(count($shifts)>1)
                             <a class="btn btn-danger mt-4" href="{{ route('restaurant.workinghoursremove',$shiftId) }}" style="color: #fff">{{ __('Delete') }}</a>
                         @endif

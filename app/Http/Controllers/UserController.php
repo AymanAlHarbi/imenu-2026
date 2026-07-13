@@ -127,11 +127,11 @@ class UserController extends Controller
 
     public function stripeReAuth(Request $request)
     {
-        dd($request->all());
+        return redirect()->route('home');
     }
 
     public function stripeOnNoardResponse(Request $request)
     {
-        dd($request->all());
+        return redirect()->route('home');
     }
 }

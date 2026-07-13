@@ -214,9 +214,11 @@ Route::middleware('auth', 'impersonate')->group(function () {
     Route::get('/updatestatus/{alias}/{order}', [OrderController::class, 'updateStatus'])->name('update.status');
 
     Route::resource('settings', SettingsController::class);
-    Route::get('apps', [AppsController::class, 'index'])->name('apps.index');
-    Route::get('appremove/{alias}', [AppsController::class, 'remove'])->name('apps.remove');
-    Route::post('apps', [AppsController::class, 'store'])->name('apps.store');
+    Route::middleware('role:admin')->group(function () {
+        Route::get('apps', [AppsController::class, 'index'])->name('apps.index');
+        Route::get('appremove/{alias}', [AppsController::class, 'remove'])->name('apps.remove');
+        Route::post('apps', [AppsController::class, 'store'])->name('apps.store');
+    });
     Route::get('cloudupdate', [SettingsController::class, 'cloudupdate'])->name('settings.cloudupdate');
     Route::get('systemstatus', [SettingsController::class, 'systemstatus'])->name('systemstatus');
     Route::get('translatemenu', [SettingsController::class, 'translateMenu'])->name('translatemenu');

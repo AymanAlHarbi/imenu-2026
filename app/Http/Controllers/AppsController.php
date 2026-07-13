@@ -238,36 +238,69 @@ class AppsController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // 1) الأدمن فقط — لا أحد غيره يرفع كوداً برمجياً
+        $this->adminOnly();
 
-        $path = $request->appupload->storeAs('appupload', $request->appupload->getClientOriginalName());
+        // 2) امنع الرفع في وضع التجربة
+        if (config('settings.is_demo')) {
+            abort(403);
+        }
 
+        // 3) تحقق أنه ملف zip فعلاً وبحجم معقول
+        $request->validate([
+            'appupload' => ['required', 'file', 'mimes:zip', 'max:51200'], // 50MB
+        ]);
+
+        // 4) اسم ملف آمن — لا نثق باسم المستخدم (basename فقط)
+        $safeName = Str::random(20).'_'.basename($request->appupload->getClientOriginalName());
+        $path = $request->appupload->storeAs('appupload', $safeName);
         $fullPath = storage_path('app/'.$path);
+
         $zip = new ZipArchive;
-
-        if ($zip->open($fullPath)) {
-
-            //Modules folder - for plugins
-            $destination = public_path('../modules');
-            $message = __('App is installed');
-
-            //If it is language pack
-            if (strpos($fullPath, '_lang') !== false) {
-                $destination = public_path('../lang');
-                $message = __('Language pack is installed');
-            }else if(strpos($fullPath, '_update') !== false){
-                $destination = public_path('../');
-                $message = __('Update is installed. Please go to settings.');
-            }
-
-            // Extract file
-            $zip->extractTo($destination);
-
-            // Close ZipArchive
-            $zip->close();
-
-            return redirect()->route('apps.index')->withStatus($message);
-        } else {
+        if ($zip->open($fullPath) !== true) {
             return redirect(route('apps.index'))->withError(__('There was an error on app install. Please try manual install'));
         }
+
+        // 5) حدّد الوجهة من اسم الملف الأصلي كما قبل
+        $original = $request->appupload->getClientOriginalName();
+        $destination = public_path('../modules');
+        $message = __('App is installed');
+        if (strpos($original, '_lang') !== false) {
+            $destination = public_path('../lang');
+            $message = __('Language pack is installed');
+        } elseif (strpos($original, '_update') !== false) {
+            $destination = public_path('../');
+            $message = __('Update is installed. Please go to settings.');
+        }
+
+        // 6) حماية Zip Slip: ارفض أي مدخل فيه مسار خارج الوجهة
+        $destReal = realpath($destination);
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry = $zip->getNameIndex($i);
+
+            // منع المسارات المطلقة و ../
+            if (str_starts_with($entry, '/') || str_contains($entry, '..')) {
+                $zip->close();
+                @unlink($fullPath);
+                abort(422, 'Malicious archive entry detected: '.$entry);
+            }
+
+            // تأكد أن المسار النهائي يبقى داخل الوجهة
+            $target = $destReal.DIRECTORY_SEPARATOR.$entry;
+            $targetDir = dirname($target);
+            // نتحقق من البادئة بعد تطبيع الفواصل
+            if (strpos(str_replace('\\', '/', $targetDir), str_replace('\\', '/', $destReal)) !== 0) {
+                $zip->close();
+                @unlink($fullPath);
+                abort(422, 'Path traversal detected in archive.');
+            }
+        }
+
+        // 7) الفك بعد التحقق
+        $zip->extractTo($destination);
+        $zip->close();
+        @unlink($fullPath); // احذف الأرشيف بعد التثبيت
+
+        return redirect()->route('apps.index')->withStatus($message);
     }
 }

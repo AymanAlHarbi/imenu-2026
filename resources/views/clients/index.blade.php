@@ -28,7 +28,10 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th scope="col">{{ __('Name') }}</th>
-                                    <th scope="col">{{ __('Email') }}</th>
+                                    <th scope="col">{{ __('Phone') }}</th>
+                                    <th scope="col">{{ __('Orders') }}</th>
+                                    <th scope="col">{{ __('Total spent') }}</th>
+                                    <th scope="col">{{ __('Last order') }}</th>
                                     <th scope="col">{{ __('Creation Date') }}</th>
                                     @if(config('settings.enable_birth_date_on_register'))
                                         <th scope="col">{{ __('Birth Date') }}</th>
@@ -38,18 +41,69 @@
                             </thead>
                             <tbody>
                                 @foreach ($clients as $client)
+                                    @php
+                                        $ordersCount = $client->orders()->count();
+                                        $totalSpent = $ordersCount ? $client->orders()->sum('order_price') - $client->orders()->sum('discount') : 0;
+                                        $lastOrderDate = $ordersCount ? \Carbon\Carbon::parse($client->orders()->max('created_at')) : null;
+
+                                        $waPhone = null;
+                                        if ($client->phone) {
+                                            $waPhone = preg_replace('/[^0-9]/', '', $client->phone);
+                                            if (substr($waPhone, 0, 2) == '00') {
+                                                $waPhone = substr($waPhone, 2);
+                                            } elseif (substr($waPhone, 0, 1) == '0') {
+                                                $waPhone = '966'.substr($waPhone, 1);
+                                            }
+                                        }
+
+                                        $avatarColors = [['#EEEDFE','#3C3489'],['#E1F5EE','#085041'],['#FAECE7','#712B13'],['#FBEAF0','#72243E'],['#E6F1FB','#0C447C']];
+                                        $avColor = $avatarColors[$client->id % 5];
+                                        $avLetter = mb_substr(trim($client->name), 0, 1);
+                                    @endphp
                                     <tr>
                                         <td>
-                                            <img class="avatar avatar-md rounded-circle mr-3" src="https://www.gravatar.com/avatar/{{ md5($client->email) }}?d=mp" />
-                                            <a href="{{ route('clients.edit', $client) }}"> {{ $client->name }}</a></td>
-                                        <td>
-                                            <a href="mailto:{{ $client->email }}">{{ $client->email }}</a>
+                                            <div class="media align-items-center">
+                                                <span class="avatar rounded-circle" style="background-color: {{ $avColor[0] }}; color: {{ $avColor[1] }}; font-weight: 700; font-size: 17px; width: 42px; height: 42px; min-width: 42px; margin: 0 12px;">{{ $avLetter }}</span>
+                                                <div class="media-body">
+                                                    <a href="{{ route('clients.edit', $client) }}" style="font-size: 15px; font-weight: 700; color: #32325d; display: block; line-height: 1.5;">{{ $client->name }}</a>
+                                                    <a href="mailto:{{ $client->email }}" style="font-size: 12px; color: #8898aa; display: block; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" dir="ltr">{{ $client->email }}</a>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td>{{ $client->created_at->format(config('settings.datetime_display_format')) }}</td>
+                                        <td>
+                                            @if ($client->phone)
+                                                <a class="text-sm text-success" href="https://wa.me/{{ $waPhone }}" target="_blank" dir="ltr">
+                                                    <i class="fab fa-whatsapp"></i> {{ $client->phone }}
+                                                </a>
+                                            @else
+                                                <span class="text-sm text-muted">{{ __('Not registered') }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('clients.edit', $client) }}" class="badge badge-pill badge-{{ $ordersCount ? 'primary' : 'secondary' }}">{{ $ordersCount }}</a>
+                                        </td>
+                                        <td>
+                                            <span class="font-weight-bold">@money($totalSpent, config('settings.cashier_currency'), config('settings.do_convertion'))</span>
+                                        </td>
+                                        <td>
+                                            @if ($lastOrderDate)
+                                                <span class="text-sm">{{ $lastOrderDate->locale(Config::get('app.locale'))->calendar() }}</span>
+                                                <br/>
+                                                <small class="text-muted">{{ $lastOrderDate->locale(Config::get('app.locale'))->diffForHumans() }}</small>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="text-sm">{{ $client->created_at->locale(Config::get('app.locale'))->isoFormat('D MMM YYYY') }}</span>
+                                            <br/>
+                                            <small class="text-muted">{{ $client->created_at->locale(Config::get('app.locale'))->diffForHumans() }}</small>
+                                        </td>
+                                        @if(config('settings.enable_birth_date_on_register'))
+                                            <td>{{ $client->birth_date }}</td>
+                                        @endif
                                         <td class="text-right">
-                                            
                                             <div class="dropdown">
-                                               
                                                 <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </a>
@@ -67,10 +121,7 @@
                                                         </form>
                                                     @endhasrole
                                                 </div>
-                                                
-                                            </div> 
-                                            
-                                            
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

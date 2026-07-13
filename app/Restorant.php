@@ -264,7 +264,8 @@ class Restorant extends MyModel
         $tz = $this->getConfig('time_zone', config('app.timezone'));
 
         $mergedRanges = OpeningHours::mergeOverlappingRanges($creationArray);
-
+        $mergedRanges['overflow'] = true;
+        
         //Get all working hours
         return OpeningHours::create($mergedRanges, $tz);
     }

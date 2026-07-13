@@ -4,7 +4,9 @@
 @endsection
 
 @section('content')
-    @if(!auth()->user()->hasRole('driver'))
+    @if(auth()->user()->hasRole('owner'))
+        @include('layouts.headers.cards.owner')
+    @elseif(!auth()->user()->hasRole('driver'))
         @include('layouts.headers.cards.general')
     @else
         @include('layouts.headers.cards.driver')
@@ -28,75 +30,102 @@
     @if(!auth()->user()->hasRole('driver'))
     <div class="container-fluid mt--7">
         <div class="row">
-            <div class="col-xl-8 mb-5 mb-xl-0">
-                <div class="card bg-gradient-default shadow">
-                    <div class="card-header bg-transparent">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h6 class="text-uppercase text-light ls-1 mb-1">{{ __('Overview') }}</h6>
-                                <h2 class="text-white mb-0">{{ __('Sales value') }}</h2>
-                            </div>
-
-                        </div>
-                    </div>
-                    <script>
-                        var salesValue= @json($salesValue);
-                        var monthLabels = @json($monthLabels);
-                        
-                        totalOrders=[];
-                        salesValues=[];
-                        costValues=[];
-                        for (const key in salesValue) {
-
-                            totalOrders.push(salesValue[key].totalPerMonth);
-                            salesValues.push(salesValue[key].sumValue);
-                            if(salesValue[key].costValue){
-                                costValues.push(salesValue[key].costValue);
-                            }else{
-                                costValues.push(0);
-                            }
-                            }
-                        
-                        
-                        
-                    </script>
-
-                    <div class="card-body">
-                        <!-- Chart -->
-                        @if(count($salesValue)>0)
-                            <div class="chart">
-                                <!-- Chart wrapper -->
-                                <canvas id="chart-sales" class="chart-canvas"></canvas>
-                            </div>
-                        @else
-                            <p class="text-white">{{ __('No sales right now!') }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4">
+            <div class="col-xl-12">
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h6 class="text-uppercase text-muted ls-1 mb-1">{{ __('Performance') }}</h6>
-                                <h2 class="mb-0">{{ __('Total orders') }}</h2>
-                            </div>
-                        </div>
+                        <h6 class="text-uppercase text-muted ls-1 mb-1">{{ __('Overview') }}</h6>
+                        <h2 class="mb-0">{{ __('Daily sales') }} — {{ __('Last 14 days') }}</h2>
                     </div>
                     <div class="card-body">
-                        <!-- Chart -->
-                        @if(count($salesValue)>0)
-                            <div class="chart">
-                                <canvas id="chart-orders" class="chart-canvas"></canvas>
-                            </div>
-                        @else
-                            <p>{{ __('No orders right now!') }}</p>
-                        @endif
+                        <div class="chart"><canvas id="chart-daily" class="chart-canvas"></canvas></div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col-xl-7 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">{{ __('Latest orders') }}</h3>
+                        <a href="{{ route('orders.index') }}" class="btn btn-sm btn-outline-primary">{{ __('View all') }}</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <tbody>
+                            @foreach ($latestOrders as $order)
+                                @php
+                                    $dashCustomer = $order->client ? $order->client->name : null;
+                                    if (!$dashCustomer) {
+                                        foreach ($order->getAllConfigs() as $cKey => $cValue) {
+                                            if ($cValue && (str_contains(mb_strtolower($cKey), 'name') || str_contains($cKey, 'اسم'))) { $dashCustomer = $cValue; break; }
+                                        }
+                                    }
+                                @endphp
+                                <tr>
+                                    <td><a class="btn badge badge-success badge-pill" href="{{ route('orders.show', $order->id) }}">#{{ $order->id_formated }}</a></td>
+                                    <td><span class="font-weight-bold">{{ $dashCustomer ?: __('Guest') }}</span></td>
+                                    <td>@money($order->order_price_with_discount, config('settings.cashier_currency'), config('settings.do_convertion'))</td>
+                                    <td>@include('orders.partials.laststatus')</td>
+                                    <td class="text-muted"><small>{{ $order->created_at->locale(Config::get('app.locale'))->diffForHumans() }}</small></td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header bg-transparent"><h3 class="mb-0">{{ __('Top selling items') }} ( 30 {{ __('days') }} )</h3></div>
+                    <div class="card-body">
+                        @php $maxQty = count($topItems) ? max($topItems->pluck('qty')->toArray()) : 1; @endphp
+                        @forelse ($topItems as $item)
+                            <div class="d-flex justify-content-between"><span>{{ $item->name }}</span><span class="text-muted">{{ $item->qty }} {{ __('times') }}</span></div>
+                            <div class="progress" style="height: 6px; margin: 4px 0 12px;">
+                                <div class="progress-bar bg-success" style="width: {{ round($item->qty / max($maxQty, 1) * 100) }}%"></div>
+                            </div>
+                        @empty
+                            <p class="text-muted">{{ __('No orders right now!') }}</p>
+                        @endforelse
+                        <hr class="my-3"/>
+                        @php $typeNames = [1 => __('Delivery'), 2 => __('Pickup'), 3 => __('Dine in')]; @endphp
+                        @foreach ($orderTypes as $type => $cnt)
+                            <span class="badge badge-pill badge-primary">{{ $typeNames[$type] ?? $type }}: {{ $cnt }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var ctx = document.getElementById('chart-daily');
+                if (ctx && window.Chart) {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: @json($dailyLabels),
+                            datasets: [{ label: '{{ __('Daily sales') }}', data: @json($dailyValues), backgroundColor: '#7F77DD' }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            maintainAspectRatio: false,
+                            tooltips: {
+                                callbacks: {
+                                    afterLabel: function (item, data) {
+                                        var counts = @json($dailyCounts);
+                                        return '{{ __('Orders') }}: ' + counts[item.index];
+                                    }
+                                }
+                            },
+                            scales: {
+                                yAxes: [{ ticks: { beginAtZero: true } }],
+                                xAxes: [{ barPercentage: 0.7, categoryPercentage: 0.8, maxBarThickness: 40 }]
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
         @if ($doWeHaveExpensesApp)
         <script>
            
@@ -157,8 +186,13 @@
         @endif
 
         @if(auth()->user()->hasRole('owner')&&config('settings.enable_pricing'))
-            <br /><br />
-            @include("plans.info",['planAttribute'=> auth()->user()->restorant->getPlanAttribute(),'showLinkToPlans'=>true])
+            @php $dashPlan = auth()->user()->restorant->getPlanAttribute(); @endphp
+            <div class="card shadow mt-4">
+                <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                    <span>{{ __('Current Plan') }}: <strong>{{ isset($dashPlan['plan']['name']) ? $dashPlan['plan']['name'] : '' }}</strong></span>
+                    <a href="{{ route('plans.current') }}" class="btn btn-sm btn-outline-primary">{{ __('Go to plans') }}</a>
+                </div>
+            </div>
         @endif
         
         @include('layouts.footers.auth')

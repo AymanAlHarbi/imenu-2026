@@ -391,9 +391,11 @@ class RestorantController extends Controller
         }
 
         //Update subdomain only if rest is not older than 1 day
+        /*
         if (Carbon::parse($restaurant->created_at)->diffInDays(Carbon::now()) < 2) {
             $restaurant->subdomain = $this->makeAlias(strip_tags($request->name));
         }
+        */
 
         if (auth()->user()->hasRole('admin')) {
             $restaurant->is_featured = $request->is_featured != null ? 1 : 0;
@@ -682,19 +684,29 @@ class RestorantController extends Controller
 
     public function storeRegisterRestaurant(Request $request): RedirectResponse
     {
+        //توحيد رابط المنيو الذي كتبه العميل قبل التحقق (حروف صغيرة + شرطات فقط)
+        $request->merge([
+            'subdomain' => \Illuminate\Support\Str::slug(strip_tags($request->subdomain.'')),
+        ]);
+        
         //Validate first
         $theRules = [
             'name' => ['required', 'string', 'unique:companies,name', 'max:255'],
+            'subdomain' => ['required', 'string', 'max:60', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'unique:companies,subdomain'],
             'name_owner' => ['required', 'string', 'max:255'],
             'email_owner' => ['required', 'string', 'email', 'unique:users,email,NULL,id,deleted_at,NULL', 'max:255'],
             'phone_owner' => ['required', 'string', 'regex:/^([0-9\s\-\+\(\)]*)$/'],
         ];
-
+        
         if (strlen(config('settings.recaptcha_site_key')) > 2) {
             $theRules['g-recaptcha-response'] = 'recaptcha';
         }
-
-        $request->validate($theRules);
+        
+        $request->validate($theRules, [
+            'subdomain.required' => 'الرجاء إدخال رابط المنيو.',
+            'subdomain.unique'   => 'هذا الرابط مستخدم من مطعم آخر، اختر رابطًا مختلفًا.',
+            'subdomain.regex'    => 'الرابط يجب أن يحتوي أحرفًا إنجليزية صغيرة وأرقامًا وشرطات فقط.',
+        ]);
 
         //Create the user
         $owner = new User;
@@ -724,7 +736,7 @@ class RestorantController extends Controller
         $restaurant->address = '';
         $restaurant->phone = $owner->phone;
         $restaurant->active = 0;
-        $restaurant->subdomain = null;
+        $restaurant->subdomain = $request->subdomain;
         $restaurant->save();
 
         //default hours
@@ -768,8 +780,10 @@ class RestorantController extends Controller
     {
         //Activate the restaurant
         $restaurant->active = 1;
-        $restaurant->subdomain = $this->makeAlias($restaurant->name);
-        $restaurant->update();
+        //إبقِ الرابط الذي اختاره العميل؛ ولّده من الاسم فقط إن كان فارغًا (توافقًا مع السجلات القديمة)
+        if (empty($restaurant->subdomain)) {
+            $restaurant->subdomain = $this->makeAlias($restaurant->name);
+        }        $restaurant->update();
 
         $owner = $restaurant->user;
 

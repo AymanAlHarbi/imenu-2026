@@ -243,10 +243,10 @@ class User extends Authenticatable
         ])->save();
     }
 
-public function callToVerify()
+public function callToVerify(string $method = 'sms')
 {
-    // Authentica تولّد الرمز وترسله عبر SMS — لا تخزين محلي للرمز
-    app(\App\Services\Authentica::class)->sendOtp($this->phone);
+    // Authentica تولّد الرمز وترسله — لا تخزين محلي للرمز
+    app(\App\Services\Authentica::class)->sendOtp($this->phone, $method);
 }
 
     public function setExpoToken($token)

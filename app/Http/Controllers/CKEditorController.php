@@ -78,30 +78,25 @@ class CKEditorController extends Controller
 
     public function upload(Request $request)
     {
-        if ($request->hasFile('upload')) {
-            //get filename with extension
-            $filenamewithextension = $request->file('upload')->getClientOriginalName();
+        // 1) تحقق صارم: صورة فقط، وامتداد من قائمة بيضاء، وحد أقصى للحجم
+        $request->validate([
+            'upload' => ['required', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:4096'],
+        ]);
 
-            //get filename without extension
-            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+        // 2) اسم عشوائي بالكامل — لا نثق باسم الملف الأصلي إطلاقاً
+        $extension = strtolower($request->file('upload')->getClientOriginalExtension());
+        $filenametostore = \Illuminate\Support\Str::random(40).'_'.time().'.'.$extension;
 
-            //get file extension
-            $extension = $request->file('upload')->getClientOriginalExtension();
+        // 3) خزّن الملف
+        $request->file('upload')->storeAs('public/uploads', $filenametostore);
 
-            //filename to store
-            $filenametostore = $filename.'_'.time().'.'.$extension;
+        // 4) رقم الدالة رقمي فقط (منع حقن JS)
+        $CKEditorFuncNum = (int) $request->input('CKEditorFuncNum');
+        $url = asset('storage/uploads/'.$filenametostore);
+        $msg = 'Image successfully uploaded';
+        $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '".e($url)."', '".e($msg)."')</script>";
 
-            //Upload File
-            $request->file('upload')->storeAs('public/uploads', $filenametostore);
-
-            $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('storage/uploads/'.$filenametostore);
-            $msg = 'Image successfully uploaded';
-            $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
-
-            // Render HTML output
-            @header('Content-type: text/html; charset=utf-8');
-            echo $re;
-        }
+        @header('Content-type: text/html; charset=utf-8');
+        echo $re;
     }
 }

@@ -19,6 +19,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        'adminer', 'paddle', 'webhooks/mollie', 'razorpaysubscribe/webhook','paddlebilling','webhook/subscription/*'
+        'paddle', 'webhooks/mollie', 'razorpaysubscribe/webhook', 'paddlebilling', 'webhook/subscription/*',
     ];
 }

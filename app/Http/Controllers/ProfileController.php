@@ -33,8 +33,8 @@ class ProfileController extends Controller
      */
     public function update(ProfileRequest $request): RedirectResponse
     {
-        auth()->user()->update($request->all());
-
+        auth()->user()->update($request->only(['name', 'email']));
+        
         //Update custom fields
         $rawFields = $this->vendorFields(auth()->user()->getAllConfigs(), auth()->user()->roles->toArray()[0]['name'].'_fields');
         //dd($request->all());

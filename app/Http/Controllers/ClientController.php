@@ -20,7 +20,7 @@ class ClientController extends Controller
     {
         if (auth()->user()->hasRole('admin')) {
             return view('clients.index', [
-                'clients' => User::role('client')->where(['active' => 1])->paginate(15),
+                'clients' => User::role('client')->where(['active' => 1])->orderBy('created_at', 'desc')->paginate(15),
             ]
             );
         } elseif (auth()->user()->hasRole('owner')) {
@@ -33,7 +33,7 @@ class ClientController extends Controller
                 ->get()->pluck('client_id')->unique()->toArray();
 
             return view('clients.index', [
-                'clients' => User::role('client')->where(['active' => 1])->whereIn('id', $client_ids)->paginate(15),
+                'clients' => User::role('client')->where(['active' => 1])->whereIn('id', $client_ids)->orderBy('created_at', 'desc')->paginate(15),
             ]);
         } else {
             return redirect()->route('orders.index')->withStatus(__('No Access'));

@@ -436,6 +436,18 @@ class OrderController extends Controller
 
     public function orderLocationAPI(Order $order): JsonResponse
     {
+        // تأكد أن الطلب يخص المستخدم الحالي فقط
+        $user = auth()->user();
+        $allowed = $user && (
+            $user->hasRole('admin')
+            || ($user->hasRole('client') && $user->id == $order->client_id)
+            || ($user->hasRole('driver') && $user->id == $order->driver_id)
+            || ($user->hasRole('owner')  && optional($order->restorant)->user_id == $user->id)
+        );
+        if (! $allowed) {
+            abort(403);
+        }
+
         if ($order->status->pluck('alias')->last() == 'picked_up') {
             return response()->json(
                 [
@@ -787,20 +799,7 @@ class OrderController extends Controller
 
     public function updateStatus($alias, Order $order): RedirectResponse
     {
-        if (isset($_GET['driver'])) {
-            $order->driver_id = $_GET['driver'];
-            $order->update();
-
-            //Now increment the driver orders
-            $theDriver = User::findOrFail($order->driver_id);
-            $theDriver->numorders = $theDriver->numorders + 1;
-            $theDriver->update();
-        }
-
-        if (isset($_GET['time_to_prepare'])) {
-            $order->time_to_prepare = $_GET['time_to_prepare'];
-            $order->update();
-        }
+       
 
         $status_id_to_attach = Status::where('alias', $alias)->value('id');
 
@@ -838,7 +837,7 @@ class OrderController extends Controller
             'rejected_by_driver' => ['driver'],
         ];
 
-        if (! auth()->user()->hasRole($rolesNeeded[$alias])) {
+        if (! isset($rolesNeeded[$alias]) || ! auth()->user()->hasRole($rolesNeeded[$alias])) {
             abort(403, 'Unauthorized action. You do not have the appropriate role');
         }
 
@@ -863,6 +862,20 @@ class OrderController extends Controller
             if (auth()->user()->id != $order->driver->id) {
                 abort(403, 'Unauthorized action. You are not driver of this order');
             }
+        }
+                // بعد التأكد من الصلاحية والملكية — الآن يُسمح بتعديل السائق/الوقت
+        if (isset($_GET['driver'])) {
+            $order->driver_id = (int) $_GET['driver'];
+            $order->update();
+
+            $theDriver = User::findOrFail($order->driver_id);
+            $theDriver->numorders = $theDriver->numorders + 1;
+            $theDriver->update();
+        }
+
+        if (isset($_GET['time_to_prepare'])) {
+            $order->time_to_prepare = $_GET['time_to_prepare'];
+            $order->update();
         }
 
         /**

@@ -141,6 +141,7 @@ Coded by www.creative-tim.com
         var USER_ID = '{{  auth()->user()&&auth()->user()?auth()->user()->id:"" }}';
         var PUSHER_APP_KEY = "{{ config('broadcasting.connections.pusher.key') }}";
         var PUSHER_APP_CLUSTER = "{{ config('broadcasting.connections.pusher.options.cluster') }}";
+        var USER_IS_CLIENT = @json(auth()->check() && auth()->user()->hasRole('client'));
     </script>
     <script src="{{ asset('custom') }}/js/cartFunctions.js"></script>
 
@@ -167,7 +168,7 @@ Coded by www.creative-tim.com
     @if(strlen( config('broadcasting.connections.pusher.app_id'))>2)
         <!-- Pusher -->
         <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-        <script src="{{ asset('custom') }}/js/pusher.js"></script>
+        <script src="{{ asset('custom') }}/js/pusher.js?v=3"></script>
     @endif
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

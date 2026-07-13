@@ -73,9 +73,10 @@ class ClientPhoneAuthController extends Controller
             ], 403);
         }
 
-        session([
+         session([
             'pending_phone'   => $phone,
             'pending_user_id' => $user?->id,
+            'otp_send_count'  => 0,
         ]);
 
         return response()->json(['exists' => (bool) $user, 'phone' => $phone]);
@@ -229,14 +230,28 @@ $valid = $user
     private function sendOtpOrSkip(User $user): JsonResponse
     {
         if (config('settings.enable_sms_verification')) {
+            // أول إرسال عبر SMS، وإعادة الإرسال تتحول تلقائياً إلى واتساب
+            $count  = (int) session('otp_send_count', 0);
+            $method = $count === 0 ? 'sms' : 'whatsapp';
+
             try {
-                $user->callToVerify();
-                session(['otp_sent_at' => now()]);
+                $user->callToVerify($method);
             } catch (\Throwable $e) {
-                return response()->json(['status' => false, 'errMsg' => __('Could not send verification code. Please try again later.')], 500);
+                // لو فشلت القناة الأولى نجرب الثانية فوراً في نفس الطلب
+                $method = $method === 'sms' ? 'whatsapp' : 'sms';
+                try {
+                    $user->callToVerify($method);
+                } catch (\Throwable $e2) {
+                    return response()->json(['status' => false, 'errMsg' => __('Could not send verification code. Please try again later.')], 500);
+                }
             }
 
-            return response()->json(['status' => true]);
+            session([
+                'otp_sent_at'    => now(),
+                'otp_send_count' => $count + 1,
+            ]);
+
+            return response()->json(['status' => true, 'channel' => $method]);
         }
 
         // وضع التجربة: لا يوجد مزود SMS مفعّل بعد
@@ -257,8 +272,7 @@ $valid = $user
 
         $user->markPhoneAsVerified();
         Auth::login($user, true);
-        session()->forget(['pending_phone', 'pending_user_id', 'otp_sent_at']);
-
+        session()->forget(['pending_phone', 'pending_user_id', 'otp_sent_at', 'otp_send_count']);
         $lastVendor = session('last_visited_restaurant_alias');
         if ($lastVendor) {
             NewClient::dispatch($user, Restorant::where('subdomain', $lastVendor)->first());

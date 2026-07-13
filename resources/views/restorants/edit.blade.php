@@ -186,6 +186,23 @@
                 hourTo.clear();
             }
         });
+        function copyDayHours(shiftId){
+            var srcFrom = document.getElementById('6_from_shift'+shiftId);
+            var srcTo = document.getElementById('6_to_shift'+shiftId);
+            if (!srcFrom || !srcFrom._flatpickr || srcFrom._flatpickr.selectedDates.length == 0 ||
+                !srcTo || !srcTo._flatpickr || srcTo._flatpickr.selectedDates.length == 0){
+                alert("{{ __('Set Sunday hours first') }}");
+                return;
+            }
+            [0, 1, 2, 3, 4, 5].forEach(function(d){
+                var cb = document.getElementById('day'+d+'_shift'+shiftId);
+                if (cb && !cb.checked){ cb.checked = true; }
+                var f = flatpickr($('#'+d+'_from_shift'+shiftId), config);
+                var t = flatpickr($('#'+d+'_to_shift'+shiftId), config);
+                f.setDate(srcFrom._flatpickr.selectedDates[0], false);
+                t.setDate(srcTo._flatpickr.selectedDates[0], false);
+            });
+        }
 
         $('input:radio[name="primer"]').change(function(){
             if($(this).val() == 'map') {

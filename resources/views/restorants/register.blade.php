@@ -110,6 +110,13 @@
     }
     @media(max-width:520px){ .formside{padding:22px 20px} }
     :focus-visible{outline:3px solid var(--saffron-deep);outline-offset:2px;border-radius:6px}
+    .url-control{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;transition:border-color .15s, box-shadow .15s}
+    .url-control:focus-within{border-color:var(--green-500);box-shadow:0 0 0 4px rgba(44,130,196,.12)}
+    .url-control .url-prefix{display:flex;align-items:center;padding:0 14px;background:var(--cream-deep);color:var(--ink-soft);font-size:.9rem;white-space:nowrap;border-inline-end:1.5px solid var(--line)}
+    .url-control input{border:none !important;box-shadow:none !important;border-radius:0;padding:14px !important;text-align:left}
+    .field.has-danger .url-control{border-color:var(--coral)}
+    .url-hint{display:block;color:var(--ink-soft);font-size:.85rem;margin-top:7px}
+    .url-hint b{color:var(--green-900);font-weight:600}
   </style>
 </head>
 
@@ -179,7 +186,23 @@
             <span class="err">{{ $errors->first('name') }}</span>
           @endif
         </div>
-
+        <div class="field {{ $errors->has('subdomain') ? 'has-danger' : '' }}">
+          <label for="subdomain">رابط المنيو الإلكتروني</label>
+          <div class="control url-control" dir="ltr">
+            <span class="url-prefix">i-menu.me/m/</span>
+            <input type="text" id="subdomain" name="subdomain" dir="ltr"
+                   placeholder="albik"
+                   value="{{ old('subdomain') }}"
+                   required
+                   oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]+/g,'-'); document.getElementById('slugEcho').textContent=this.value||'extra';">
+          </div>
+          <span class="url-hint">رابط منيو مطعمك سيكون:
+            <b dir="ltr">https://i-menu.me/m/<span id="slugEcho">{{ old('subdomain', 'albik') }}</span></b>
+          </span>
+          @if ($errors->has('subdomain'))
+            <span class="err">{{ $errors->first('subdomain') }}</span>
+          @endif
+        </div>
         <div class="group-label">{{ __('Owner information') }}</div>
         <div class="field {{ $errors->has('name_owner') ? 'has-danger' : '' }}">
           <label for="name_owner">{{ __('Owner Name') }}</label>

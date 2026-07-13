@@ -192,9 +192,12 @@ class HomeController extends Controller
             12 => __('Dec'),
         ];
 
-        $last30daysOrders = Order::where('created_at', '>', $last30days)->count();
+        $notRejected = function ($q) {
+            $q->whereIn('status.id', [8, 9]);
+        };
+        $last30daysOrders = Order::where('created_at', '>', $last30days)->whereDoesntHave('status', $notRejected)->count();
         $last30daysOrdersValue = Order::where('created_at', '>', $last30days)
-            ->where('payment_status', 'paid')
+            ->whereDoesntHave('status', $notRejected)
             ->select(DB::raw('ROUND(SUM(order_price+delivery_price),2) as order_price'), DB::raw('SUM(delivery_price + static_fee + fee_value) AS total_fee'), DB::raw('SUM(delivery_price) AS total_delivery'), DB::raw('SUM(static_fee) AS total_static_fee'), DB::raw('SUM(fee_value) AS total_fee_value'))
             ->first()->toArray();
 
@@ -288,6 +291,55 @@ class HomeController extends Controller
                 $countItems = Items::whereIn('category_id', auth()->user()->restorant->categories->pluck('id')->toArray())->whereNull('deleted_at')->count();
             }
         }
+                //== Dashboard extras ==
+        $todayStart = Carbon::today();
+        $todayOrdersCount = Order::where('created_at', '>=', $todayStart)->whereDoesntHave('status', $notRejected)->count();
+        $todaySalesValue = Order::where('created_at', '>=', $todayStart)->whereDoesntHave('status', $notRejected)->sum(DB::raw('order_price + delivery_price'));
+        $yesterdayOrdersCount = Order::whereBetween('created_at', [Carbon::yesterday(), $todayStart])->whereDoesntHave('status', $notRejected)->count();
+        $yesterdaySalesValue = Order::whereBetween('created_at', [Carbon::yesterday(), $todayStart])->whereDoesntHave('status', $notRejected)->sum(DB::raw('order_price + delivery_price'));
+
+        $sales30 = is_numeric($last30daysOrdersValue['order_price']) ? $last30daysOrdersValue['order_price'] : 0;
+        $avgOrderValue = $last30daysOrders > 0 ? round($sales30 / $last30daysOrders, 2) : 0;
+
+        $totalOrdersAllTime = Order::count();
+        $allViewsCount = auth()->user()->hasRole('owner') ? auth()->user()->restorant->views : Restorant::sum('views');
+        $conversionRate = $allViewsCount > 0 ? round($totalOrdersAllTime / $allViewsCount * 100, 1) : 0;
+
+        $dailyRaw = Order::where('created_at', '>=', Carbon::today()->subDays(13))
+            ->whereDoesntHave('status', $notRejected)
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->select(DB::raw('DATE(created_at) as day'), DB::raw('ROUND(SUM(order_price + delivery_price),2) as total'), DB::raw('COUNT(id) as cnt'))
+            ->get()->keyBy('day');
+        $dailyLabels = [];
+        $dailyValues = [];
+        $dailyCounts = [];
+        for ($i = 13; $i >= 0; $i--) {
+            $d = Carbon::today()->subDays($i);
+            $k = $d->format('Y-m-d');
+            $dailyLabels[] = $d->locale(config('app.locale'))->isoFormat('D MMM');
+            $dailyValues[] = isset($dailyRaw[$k]) ? (float) $dailyRaw[$k]->total : 0;
+            $dailyCounts[] = isset($dailyRaw[$k]) ? (int) $dailyRaw[$k]->cnt : 0;
+        }
+
+        $latestOrders = Order::orderBy('id', 'desc')->limit(5)->get();
+
+        $topItemsQuery = DB::table('order_has_items')
+            ->join('orders', 'orders.id', '=', 'order_has_items.order_id')
+            ->join('items', 'items.id', '=', 'order_has_items.item_id')
+            ->where('orders.created_at', '>', $last30days)
+            ->whereNull('orders.deleted_at');
+        if (session('restaurant_id')) {
+            $topItemsQuery->where('orders.restorant_id', session('restaurant_id'));
+        }
+        $topItems = $topItemsQuery->groupBy('order_has_items.item_id', 'items.name')
+            ->orderByDesc(DB::raw('SUM(order_has_items.qty)'))
+            ->select('items.name', DB::raw('SUM(order_has_items.qty) as qty'))
+            ->limit(5)->get();
+
+        $orderTypes = Order::where('created_at', '>', $last30days)
+            ->groupBy('delivery_method')
+            ->select('delivery_method', DB::raw('count(id) as cnt'))
+            ->pluck('cnt', 'delivery_method');
 
         $dataToDisplay = [
             'availableLanguages' => $availableLanguages,
@@ -300,6 +352,18 @@ class HomeController extends Controller
             'salesValue' => $salesValue,
             'monthLabels' => $monthList,
             'countItems' => $countItems,
+            'todayOrdersCount' => $todayOrdersCount,
+            'todaySalesValue' => $todaySalesValue,
+            'yesterdayOrdersCount' => $yesterdayOrdersCount,
+            'yesterdaySalesValue' => $yesterdaySalesValue,
+            'avgOrderValue' => $avgOrderValue,
+            'conversionRate' => $conversionRate,
+            'dailyLabels' => $dailyLabels,
+            'dailyValues' => $dailyValues,
+            'dailyCounts' => $dailyCounts,
+            'latestOrders' => $latestOrders,
+            'topItems' => $topItems,
+            'orderTypes' => $orderTypes,
             'last30daysDeliveryFee' => $last30daysDeliveryFee,
             'last30daysStaticFee' => $last30daysStaticFee,
             'last30daysDynamicFee' => $last30daysDynamicFee,

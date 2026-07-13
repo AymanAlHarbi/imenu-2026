@@ -23,6 +23,12 @@
         <!-- Icons -->
         <link href="{{ asset('argon') }}/vendor/nucleo/css/nucleo.css" rel="stylesheet">
         <link href="{{ asset('argon') }}/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+            <style>
+                body, .table, .btn, .form-control, .dropdown-menu, .badge, h1, h2, h3, h4, h5, h6, .nav-link {
+                    font-family: 'Tajawal', 'Open Sans', sans-serif !important;
+                }
+            </style>
         <!-- Argon CSS -->
         <link type="text/css" href="{{ asset('argon') }}/css/argon.css?v=1.0.0" rel="stylesheet">
         <!-- Argon CSS -->
@@ -138,6 +144,7 @@
 
 
         <script>
+              var USER_IS_CLIENT = @json(auth()->check() && auth()->user()->hasRole('client'));
             var ONESIGNAL_APP_ID = "{{ config('settings.onesignal_app_id') }}";
             var USER_ID = '{{  auth()->user()&&auth()->user()?auth()->user()->id:"" }}';
             var PUSHER_APP_KEY = "{{ config('broadcasting.connections.pusher.key') }}";
@@ -165,7 +172,7 @@
          <!-- Pusher -->
          @if(strlen( config('broadcasting.connections.pusher.app_id'))>2)
             <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-            <script src="{{ asset('custom') }}/js/pusher.js"></script>
+            <script src="{{ asset('custom') }}/js/pusher.js?v=3"></script>
         @endif
 
         <!-- Custom JS defined by admin -->
