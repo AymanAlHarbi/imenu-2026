@@ -155,11 +155,22 @@ class AppsController extends Controller
 
         //Code
         $appsLink .= '&code='.config('settings.extended_license_download_code');
-        $response = (new \GuzzleHttp\Client())->get($appsLink);
 
+        // متجر التطبيقات خادم خارجي — أي فشل في الاتصال يجب ألا يُسقط الصفحة بخطأ 500
         $rawApps = [];
-        if ($response->getStatusCode() == 200) {
-            $rawApps = json_decode($response->getBody());
+        try {
+            $response = (new \GuzzleHttp\Client([
+                'timeout' => 15,
+                'connect_timeout' => 5,
+            ]))->get($appsLink);
+
+            if ($response->getStatusCode() == 200) {
+                $decoded = json_decode($response->getBody());
+                $rawApps = is_array($decoded) ? $decoded : [];
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Apps store unreachable: '.$e->getMessage());
+            session()->flash('error', __('Could not load the apps list. Please try again later.'));
         }
 
         //2. Merge info

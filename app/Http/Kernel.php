@@ -68,5 +68,8 @@ class Kernel extends HttpKernel
         'verifiedSetup' => \App\Http\Middleware\EnsureSetupIsDone::class,
         'impersonate' => \App\Http\Middleware\Impersonate::class,
         'XssSanitizer' => \App\Http\Middleware\XssSanitization::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 }

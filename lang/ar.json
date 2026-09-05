@@ -1966,5 +1966,9 @@
     "Copy Sunday hours to all days": "نسخ أوقات الأحد لكل الأيام",
     "Set Sunday hours first": "حدد أوقات يوم الأحد أولاً",
     "Order minimum is :amount. Please add few more items in cart": "الحد الأدنى للطلب هو :amount. الرجاء إضافة المزيد من المنتجات إلى السلة.",
-    "Order minimum is :min. Please add few more items in cart": "الحد الأدنى للطلب هو :min. يرجى إضافة المزيد من المنتجات إلى سلة التسوق."
+    "Order minimum is :min. Please add few more items in cart": "الحد الأدنى للطلب هو :min. يرجى إضافة المزيد من المنتجات إلى سلة التسوق.",
+    "Total restaurants": "إجمالي المطاعم",
+    "New this month": "انضم هذا الشهر",
+    "No orders yet": "لا طلبات بعد",
+    "Copy": "نسخ"
 }

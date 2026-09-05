@@ -77,25 +77,55 @@ class RestorantController extends Controller
             return Excel::download(new VendorsExport($items), 'vendors_'.time().'.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
-        if (auth()->user()->hasRole('admin')) {
-            $allRes = $restaurants->orderBy('id', 'desc')->pluck('name', 'id');
-
-            return view('restorants.index', [
-                'parameters' => count($_GET) != 0,
-                'hasCloner' => Module::has('cloner'),
-                'allRes' => $allRes,
-                'restorants' => $restaurants->orderBy('id', 'desc')->paginate(10)]);
-        } if (auth()->user()->hasRole('manager')) {
-            $allRes = $restaurants->whereIn('id', auth()->user()->getManagerVendors())->orderBy('id', 'desc')->pluck('name', 'id');
-
-            return view('restorants.index', [
-                'parameters' => count($_GET) != 0,
-                'hasCloner' => Module::has('cloner'),
-                'allRes' => $allRes,
-                'restorants' => $restaurants->whereIn('id', auth()->user()->getManagerVendors())->orderBy('id', 'desc')->paginate(10)]);
-        } else {
+        if (! auth()->user()->hasRole(['admin', 'manager'])) {
             return redirect()->route('orders.index')->withStatus(__('No Access'));
         }
+
+        $query = $restaurants->newQuery();
+        if (! auth()->user()->hasRole('admin')) {
+            $query->whereIn('id', auth()->user()->getManagerVendors());
+        }
+
+        // إحصائيات أعلى الصفحة — قبل تطبيق البحث والفلاتر
+        $stats = [
+            'total' => (clone $query)->count(),
+            'active' => (clone $query)->where('active', 1)->count(),
+            'inactive' => (clone $query)->where('active', 0)->count(),
+            'newThisMonth' => (clone $query)->where('created_at', '>=', now()->startOfMonth())->count(),
+        ];
+
+        // بحث بالاسم أو رابط المنيو أو اسم/بريد المالك
+        if (request()->filled('search')) {
+            $s = request('search');
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', '%'.$s.'%')
+                    ->orWhere('subdomain', 'like', '%'.$s.'%')
+                    ->orWhereHas('user', function ($uq) use ($s) {
+                        $uq->where('name', 'like', '%'.$s.'%')
+                            ->orWhere('email', 'like', '%'.$s.'%');
+                    });
+            });
+        }
+
+        // فلتر الحالة
+        if (request('status') === 'active') {
+            $query->where('active', 1);
+        } elseif (request('status') === 'inactive') {
+            $query->where('active', 0);
+        }
+
+        return view('restorants.index', [
+            'parameters' => count($_GET) != 0,
+            'hasCloner' => Module::has('cloner'),
+            'stats' => $stats,
+            'planNames' => Plans::withTrashed()->pluck('name', 'id'),
+            'restorants' => $query->with('user')
+                ->withCount('orders')
+                ->withMax('orders as last_order_at', 'created_at')
+                ->orderBy('id', 'desc')
+                ->paginate(10)
+                ->appends(request()->query()),
+        ]);
     }
 
     public function stopImpersonate(): RedirectResponse
