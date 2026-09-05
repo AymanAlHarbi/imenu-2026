@@ -57,6 +57,8 @@ Coded by www.creative-tim.com
             gtag('config', '<?php echo config('settings.google_analytics'); ?>');
         </script>
     @endif
+    @include('layouts.snap-pixel')
+
 
   @include('googletagmanager::head')
   @yield('head')

@@ -311,7 +311,7 @@ class ItemsController extends Controller
 
         $item->update();
 
-        return redirect()->route('items.edit', $item)->withStatus(__('Item successfully updated.'));
+        return redirect()->route('items.index')->withStatus(__('Item successfully updated.'));
     }
 
     /**

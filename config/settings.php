@@ -162,5 +162,6 @@ return [
     'show_clear_link' => env('SHOW_CLEAR_LINK', false),
     'human_captcha_secret' => env('HUMAN_CAPTCHA_SECRET', ""),
     'human_captcha_sitekey' => env('HUMAN_CAPTCHA_SITEKEY', ""),
+    'snapchat_pixel' => env('SNAPCHAT_PIXEL_ID', null),
 
 ];

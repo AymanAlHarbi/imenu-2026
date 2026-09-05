@@ -310,7 +310,7 @@ class BaseOrderRepository extends Controller
             //Dispatch Approved by admin event
             OrderAcceptedByAdmin::dispatch($this->order);
         } catch (\Throwable $th) {
-            \Log::error("notifyOwner failed: ".$th->getMessage());
+            //throw $th;
         }
 
     }

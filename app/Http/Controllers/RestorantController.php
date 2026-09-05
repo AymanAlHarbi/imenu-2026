@@ -405,6 +405,7 @@ class RestorantController extends Controller
      */
     public function update(Request $request, $restaurantid): RedirectResponse
     {
+        
         $restaurant = Restorant::findOrFail($restaurantid);
         $restaurant->name = strip_tags($request->name);
         $thereIsRestaurantAddressChange = $restaurant->address.'' != $request->address.'';
@@ -446,9 +447,13 @@ class RestorantController extends Controller
         if ($request->has('disable_ordering')) {
             $restaurant->setConfig('disable_ordering', $request->disable_ordering == 'true' ? 1 : 0);
         }
-
         if ($request->has('disable_continues_ordering')) {
             $restaurant->setConfig('disable_continues_ordering', $request->disable_continues_ordering == 'true' ? 1 : 0);
+        }
+
+        // Snap Pixel الخاص بالمطعم
+        if ($request->has('snap_pixel_id')) {
+            $restaurant->setConfig('snap_pixel_id', trim(strip_tags($request->snap_pixel_id)));
         }
 
         if ($request->has('payment_info')) {

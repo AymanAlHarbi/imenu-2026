@@ -114,6 +114,9 @@
                 @endif
             @endif
 
+            <!-- SNAP PIXEL -->
+            @include('restorants.partials.snap_pixel')
+
         </div>
 
         </div>

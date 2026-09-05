@@ -1,3 +1,16 @@
+@section('head')
+<script>
+  window.snaptr && snaptr('track', 'PURCHASE', {
+    'price': {{ $order->delivery_price + $order->order_price_with_discount }},
+    'currency': '{{ config('settings.cashier_currency') }}',
+    'transaction_id': '{{ $order->id }}'
+  });
+</script>
+@endsection
+
+
+
+
 {{--
   صفحة نجاح الطلب — جاهزة للتركيب
   المسار: resources/views/orders/success.blade.php  (route: order.success)
