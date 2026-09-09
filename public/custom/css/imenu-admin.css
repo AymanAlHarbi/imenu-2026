@@ -99,6 +99,9 @@ a:hover{ color:var(--im-navy-800); }
   border-radius:var(--im-radius-card) var(--im-radius-card) 0 0 !important;
 }
 .card.bg-secondary{ background:var(--im-surface) !important; }
+/* Argon --secondary: #f7fafc — رمادي مزرق كان يظهر كشريط أسفل البطاقات */
+.bg-secondary{ background-color:var(--im-cream) !important; }
+.section-primary{ background-color:var(--im-cream) !important; }
 
 /* ── ٦) الشريط الجانبي ───────────────────────────────────── */
 .navbar-vertical.navbar-light{ background:var(--im-surface) !important; border-inline-end:1px solid var(--im-line); }
@@ -113,13 +116,14 @@ a:hover{ color:var(--im-navy-800); }
 .navbar-vertical .navbar-nav .nav-link i{ color:var(--im-navy-700); }
 .navbar-heading{ color:var(--im-ink-faint) !important; }
 
-/* ── ٧) الشريط العلوي الملوّن — كان يهدر ١٨٠ بكسل ────────── */
-.header.bg-gradient-primary{ padding-bottom:2.5rem !important; padding-top:1.75rem !important; }
-.mt--7{ margin-top:-3rem !important; }
-.mt--6{ margin-top:-2.5rem !important; }
+/* ── ٧) الشريط العلوي الملوّن ──────────────────────────────
+   Argon: pb-8 = 8rem · pt-md-8 = 8rem · mt--7 = -6rem · mt--6 = -4.5rem
+   القاعدة: |mt| يجب أن يبقى أصغر من padding-bottom، وإلا خرجت
+   البطاقات فوق الشريط وتراكب العنوان مع الشريط الأعلى.
+   لذلك يُقلَّص الحشو الأعلى (٨ ← ٢٫٧٥) ويُترك الأسفل ٧ ولا تُلمس الهوامش. */
+.header.bg-gradient-primary{ padding-top:2.75rem !important; padding-bottom:7rem !important; }
 @media (max-width:767.98px){
-  .header.bg-gradient-primary{ padding-bottom:2rem !important; padding-top:1.25rem !important; }
-  .mt--7,.mt--6{ margin-top:-2rem !important; }
+  .header.bg-gradient-primary{ padding-top:1.5rem !important; padding-bottom:6.75rem !important; }
 }
 
 /* ── ٨) الجداول — أرقام متراصفة رأسيًا ───────────────────── */
@@ -153,7 +157,10 @@ a:hover{ color:var(--im-navy-800); }
 /* ── ١٠) الشارات والتنبيهات ─────────────────────────────── */
 .badge{ border-radius:var(--im-radius-btn); font-weight:600; }
 .badge-success{ background:#2E5C43; color:#fff; }
-.badge-warning{ background:var(--im-orange); color:#fff; }
+/* حالة لا فعل: رملي بنص برتقالي غامق — البرتقالي الممتلئ للأزرار وحدها */
+.badge-warning{ background:#FCEEDA !important; color:var(--im-orange-deep) !important; }
+.badge-danger{ background:#FBE9E7 !important; color:#B03A2E !important; }
+.badge-info{ background:#E8F0F7 !important; color:var(--im-blue) !important; }
 .badge-secondary{ background:var(--im-cream-2); color:var(--im-ink); }
 .alert-warning{ background:#FCEEDA !important; border-color:#F4DCBB !important; color:var(--im-orange-deep) !important; }
 .alert-success{ background:#E8F3EC !important; border-color:#C6E2D1 !important; color:#2E5C43 !important; }
@@ -163,6 +170,10 @@ a:hover{ color:var(--im-navy-800); }
 .modal-content{ border-radius:var(--im-radius-card); border:1px solid var(--im-line); }
 .nav-pills .nav-link.active{ background:var(--im-navy-800) !important; }
 .page-item.active .page-link{ background:var(--im-navy-800); border-color:var(--im-navy-800); }
+.avatar{ background-color:var(--im-navy-800) !important; color:#fff; }
+.icon-shape.bg-gradient-primary,.icon.bg-gradient-primary{
+  background:linear-gradient(180deg,var(--im-navy-700) 0%,var(--im-navy-900) 100%) !important;
+}
 hr{ border-top-color:var(--im-line); }
 
 /* ── ١٢) قلب أدوات الاتجاه لـRTL ─────────────────────────

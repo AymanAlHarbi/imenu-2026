@@ -91,6 +91,8 @@
                 <ul class="nav nav-sm flex-column">
     
                     @foreach (auth()->user()->getExtraMenus() as $menu)
+                            {{-- iMenu 2026 — لا يُرسم بند مجموعة بلا مسار، ولا بند مساره غير مسجّل --}}
+                            @continue(!isset($menu['route']) || !Route::has($menu['route']))
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route($menu['route'],isset($menu['params'])?$menu['params']:[]) }}">
                                         <i class="{{ $menu['icon'] }}"></i> {{ __($menu['name']) }}
