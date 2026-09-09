@@ -1,0 +1,341 @@
+/* =============================================================
+   iMenu 2026 — هوية لوحة الإدارة
+   المرجع: imenu-brand-identity.md (المعتمدة سبتمبر ٢٠٢٦)
+
+   يُحمَّل آخر ملف في الترويسة، بعد argon.css و custom.css و back.css.
+   لا يُعدَّل أي ملف من القالب — والتراجع حذف سطر الاستدعاء.
+   ============================================================= */
+
+:root{
+  /* الأسطح */
+  --im-cream:#FAF6EF; --im-cream-2:#F3ECE0; --im-surface:#FFFFFF; --im-line:#E6DCCC;
+  /* الكحلي */
+  --im-navy-900:#16304C; --im-navy-800:#1D3E5E; --im-navy-700:#26537C; --im-blue:#2E6FA3;
+  /* البرتقالي — للفعل فقط */
+  --im-orange:#E8952F; --im-orange-lt:#F2A94A; --im-orange-deep:#B96F14;
+  /* النص */
+  --im-ink:#17324E; --im-ink-soft:#5A7590; --im-ink-faint:#8FA3B8;
+  /* الشكل */
+  --im-radius-card:20px; --im-radius-field:12px; --im-radius-btn:999px;
+  --im-shadow-card:0 1px 2px rgba(22,48,76,.06);
+  --im-shadow-raise:0 4px 14px rgba(22,48,76,.08);
+  --im-shadow-orange:0 6px 18px rgba(232,149,47,.30);
+  /* الخطوط */
+  --im-display:"El Messiri","Segoe UI",serif;
+  --im-body:"IBM Plex Sans Arabic","Segoe UI",system-ui,sans-serif;
+}
+
+/* ── ١) الخط ───────────────────────────────────────────────── */
+body, .table, .btn, .form-control, .custom-select, .dropdown-menu, .badge,
+.nav-link, .card, .alert, label, input, select, textarea, button,
+.tooltip, .popover, .modal, .breadcrumb, .pagination{
+  font-family:var(--im-body) !important;
+}
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,
+.display-1,.display-2,.display-3,.display-4,.navbar-brand{
+  font-family:var(--im-display) !important; font-weight:700;
+}
+.heading-small{ font-family:var(--im-body) !important; letter-spacing:0; }
+
+/* ── ٢) الأرضية والنص ─────────────────────────────────────── */
+body{ background:var(--im-cream) !important; color:var(--im-ink); }
+.main-content{ background:var(--im-cream); }
+.text-muted{ color:var(--im-ink-soft) !important; }
+a{ color:var(--im-blue); }
+a:hover{ color:var(--im-navy-800); }
+
+/* ── ٣) إعادة تلوين Argon: الأساسي كحلي ──────────────────── */
+.bg-gradient-primary{
+  background:linear-gradient(180deg,var(--im-navy-800) 0%,var(--im-navy-900) 100%) !important;
+}
+.bg-primary{ background-color:var(--im-navy-900) !important; }
+.text-primary{ color:var(--im-navy-800) !important; }
+.badge-primary{ background-color:var(--im-navy-800); color:#fff; }
+.bg-gradient-default,.bg-default{ background:var(--im-navy-900) !important; }
+
+/* الأيقونات الملوّنة في القائمة — تُهدّأ إلى نظام الهوية */
+.text-info{ color:var(--im-blue) !important; }
+.text-orange,.text-warning{ color:var(--im-orange) !important; }
+.text-green,.text-success{ color:#2E5C43 !important; }
+.text-pink,.text-red{ color:var(--im-orange-deep) !important; }
+.text-blue{ color:var(--im-blue) !important; }
+.text-black{ color:var(--im-ink) !important; }
+
+/* ── ٤) الأزرار — البرتقالي للفعل فقط ────────────────────── */
+.btn{ border-radius:var(--im-radius-btn) !important; font-weight:600; }
+.btn-primary,.btn-success{
+  background:linear-gradient(180deg,var(--im-orange-lt) 0%,var(--im-orange) 100%) !important;
+  border-color:var(--im-orange) !important; color:#fff !important;
+  box-shadow:var(--im-shadow-orange) !important;
+}
+.btn-primary:hover,.btn-success:hover,
+.btn-primary:focus,.btn-success:focus,
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-success:not(:disabled):not(.disabled):active{
+  background:var(--im-orange-deep) !important; border-color:var(--im-orange-deep) !important;
+  box-shadow:none !important; color:#fff !important;
+}
+.btn-outline-primary{
+  color:var(--im-navy-800) !important; border-color:var(--im-navy-800) !important; background:transparent !important;
+}
+.btn-outline-primary:hover{ background:var(--im-navy-800) !important; color:#fff !important; }
+.btn-secondary{
+  background:var(--im-cream-2) !important; border-color:var(--im-line) !important; color:var(--im-ink) !important;
+  box-shadow:none !important;
+}
+.btn-info{ background:var(--im-blue) !important; border-color:var(--im-blue) !important; }
+
+/* ── ٥) البطاقات ─────────────────────────────────────────── */
+.card{
+  border-radius:var(--im-radius-card) !important;
+  border:1px solid var(--im-line) !important;
+  box-shadow:var(--im-shadow-card) !important;
+  background:var(--im-surface);
+}
+.card.shadow,.shadow{ box-shadow:var(--im-shadow-raise) !important; }
+.card-header{
+  background:var(--im-surface) !important;
+  border-bottom:1px solid var(--im-line) !important;
+  border-radius:var(--im-radius-card) var(--im-radius-card) 0 0 !important;
+}
+.card.bg-secondary{ background:var(--im-surface) !important; }
+
+/* ── ٦) الشريط الجانبي ───────────────────────────────────── */
+.navbar-vertical.navbar-light{ background:var(--im-surface) !important; border-inline-end:1px solid var(--im-line); }
+.navbar-vertical .navbar-nav .nav-link{
+  color:var(--im-ink) !important; border-radius:var(--im-radius-field);
+  margin-inline:.4rem; padding-block:.6rem;
+}
+.navbar-vertical .navbar-nav .nav-link:hover{ background:var(--im-cream-2) !important; }
+.navbar-vertical .navbar-nav .nav-link.active{
+  background:var(--im-cream-2) !important; color:var(--im-navy-900) !important; font-weight:700;
+}
+.navbar-vertical .navbar-nav .nav-link i{ color:var(--im-navy-700); }
+.navbar-heading{ color:var(--im-ink-faint) !important; }
+
+/* ── ٧) الشريط العلوي الملوّن — كان يهدر ١٨٠ بكسل ────────── */
+.header.bg-gradient-primary{ padding-bottom:2.5rem !important; padding-top:1.75rem !important; }
+.mt--7{ margin-top:-3rem !important; }
+.mt--6{ margin-top:-2.5rem !important; }
+@media (max-width:767.98px){
+  .header.bg-gradient-primary{ padding-bottom:2rem !important; padding-top:1.25rem !important; }
+  .mt--7,.mt--6{ margin-top:-2rem !important; }
+}
+
+/* ── ٨) الجداول — أرقام متراصفة رأسيًا ───────────────────── */
+.table{ color:var(--im-ink); }
+.table thead th{
+  background:var(--im-cream-2) !important; color:var(--im-navy-900) !important;
+  border-bottom:1px solid var(--im-line) !important; font-weight:700;
+  letter-spacing:0; font-size:.78rem;
+}
+.table td,.table th{ border-top-color:var(--im-line) !important; vertical-align:middle; }
+.table tbody tr:hover{ background:var(--im-cream) !important; }
+/* الأرقام في كل الجداول والشارات والإحصاءات */
+.table, .badge, .h1, .h2, .h3, .display-1, .display-2, .display-3, .display-4{
+  font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1;
+}
+
+/* ── ٩) الحقول ───────────────────────────────────────────── */
+.form-control,.custom-select{
+  border-radius:var(--im-radius-field) !important;
+  border:1px solid var(--im-line) !important; color:var(--im-ink);
+}
+.form-control:focus,.custom-select:focus{
+  border-color:var(--im-orange) !important;
+  box-shadow:0 0 0 3px rgba(232,149,47,.18) !important;
+}
+.form-control-label,label{ color:var(--im-ink) !important; font-weight:600; }
+.custom-control-input:checked~.custom-control-label::before{
+  background:var(--im-orange) !important; border-color:var(--im-orange) !important;
+}
+
+/* ── ١٠) الشارات والتنبيهات ─────────────────────────────── */
+.badge{ border-radius:var(--im-radius-btn); font-weight:600; }
+.badge-success{ background:#2E5C43; color:#fff; }
+.badge-warning{ background:var(--im-orange); color:#fff; }
+.badge-secondary{ background:var(--im-cream-2); color:var(--im-ink); }
+.alert-warning{ background:#FCEEDA !important; border-color:#F4DCBB !important; color:var(--im-orange-deep) !important; }
+.alert-success{ background:#E8F3EC !important; border-color:#C6E2D1 !important; color:#2E5C43 !important; }
+
+/* ── ١١) تفاصيل ─────────────────────────────────────────── */
+.dropdown-menu{ border-radius:var(--im-radius-field); border:1px solid var(--im-line); box-shadow:var(--im-shadow-raise); }
+.modal-content{ border-radius:var(--im-radius-card); border:1px solid var(--im-line); }
+.nav-pills .nav-link.active{ background:var(--im-navy-800) !important; }
+.page-item.active .page-link{ background:var(--im-navy-800); border-color:var(--im-navy-800); }
+hr{ border-top-color:var(--im-line); }
+
+/* ── ١٢) قلب أدوات الاتجاه لـRTL ─────────────────────────
+   Bootstrap 4 أدواته اتجاهية (ml/mr/pl/pr/text-left…) ولا تنقلب
+   تلقائيًا. هذا ما فعلته Bootstrap 5 بتسمية ms/me — نحاكيه هنا.
+   يعمل فقط عند dir="rtl" على <html>. ─────────────────── */
+[dir="rtl"] .ml-0{margin-left:0 !important;margin-right:0 !important}
+[dir="rtl"] .mr-0{margin-right:0 !important;margin-left:0 !important}
+[dir="rtl"] .ml-1{margin-left:0 !important;margin-right:.25rem !important}
+[dir="rtl"] .mr-1{margin-right:0 !important;margin-left:.25rem !important}
+[dir="rtl"] .ml-2{margin-left:0 !important;margin-right:.5rem !important}
+[dir="rtl"] .mr-2{margin-right:0 !important;margin-left:.5rem !important}
+[dir="rtl"] .ml-3{margin-left:0 !important;margin-right:1rem !important}
+[dir="rtl"] .mr-3{margin-right:0 !important;margin-left:1rem !important}
+[dir="rtl"] .ml-4{margin-left:0 !important;margin-right:1.5rem !important}
+[dir="rtl"] .mr-4{margin-right:0 !important;margin-left:1.5rem !important}
+[dir="rtl"] .ml-5{margin-left:0 !important;margin-right:3rem !important}
+[dir="rtl"] .mr-5{margin-right:0 !important;margin-left:3rem !important}
+[dir="rtl"] .ml-auto{margin-left:0 !important;margin-right:auto !important}
+[dir="rtl"] .mr-auto{margin-right:0 !important;margin-left:auto !important}
+[dir="rtl"] .pl-0{padding-left:0 !important;padding-right:0 !important}
+[dir="rtl"] .pr-0{padding-right:0 !important;padding-left:0 !important}
+[dir="rtl"] .pl-1{padding-left:0 !important;padding-right:.25rem !important}
+[dir="rtl"] .pr-1{padding-right:0 !important;padding-left:.25rem !important}
+[dir="rtl"] .pl-2{padding-left:0 !important;padding-right:.5rem !important}
+[dir="rtl"] .pr-2{padding-right:0 !important;padding-left:.5rem !important}
+[dir="rtl"] .pl-3{padding-left:0 !important;padding-right:1rem !important}
+[dir="rtl"] .pr-3{padding-right:0 !important;padding-left:1rem !important}
+[dir="rtl"] .pl-4{padding-left:0 !important;padding-right:1.5rem !important}
+[dir="rtl"] .pr-4{padding-right:0 !important;padding-left:1.5rem !important}
+[dir="rtl"] .pl-5{padding-left:0 !important;padding-right:3rem !important}
+[dir="rtl"] .pr-5{padding-right:0 !important;padding-left:3rem !important}
+[dir="rtl"] .text-left{text-align:right !important}
+[dir="rtl"] .text-right{text-align:left !important}
+[dir="rtl"] .float-left{float:right !important}
+[dir="rtl"] .float-right{float:left !important}
+@media (min-width:576px){
+  [dir="rtl"] .ml-sm-0{margin-left:0 !important;margin-right:0 !important}
+  [dir="rtl"] .mr-sm-0{margin-right:0 !important;margin-left:0 !important}
+  [dir="rtl"] .ml-sm-1{margin-left:0 !important;margin-right:.25rem !important}
+  [dir="rtl"] .mr-sm-1{margin-right:0 !important;margin-left:.25rem !important}
+  [dir="rtl"] .ml-sm-2{margin-left:0 !important;margin-right:.5rem !important}
+  [dir="rtl"] .mr-sm-2{margin-right:0 !important;margin-left:.5rem !important}
+  [dir="rtl"] .ml-sm-3{margin-left:0 !important;margin-right:1rem !important}
+  [dir="rtl"] .mr-sm-3{margin-right:0 !important;margin-left:1rem !important}
+  [dir="rtl"] .ml-sm-4{margin-left:0 !important;margin-right:1.5rem !important}
+  [dir="rtl"] .mr-sm-4{margin-right:0 !important;margin-left:1.5rem !important}
+  [dir="rtl"] .ml-sm-5{margin-left:0 !important;margin-right:3rem !important}
+  [dir="rtl"] .mr-sm-5{margin-right:0 !important;margin-left:3rem !important}
+  [dir="rtl"] .ml-sm-auto{margin-left:0 !important;margin-right:auto !important}
+  [dir="rtl"] .mr-sm-auto{margin-right:0 !important;margin-left:auto !important}
+  [dir="rtl"] .pl-sm-0{padding-left:0 !important;padding-right:0 !important}
+  [dir="rtl"] .pr-sm-0{padding-right:0 !important;padding-left:0 !important}
+  [dir="rtl"] .pl-sm-1{padding-left:0 !important;padding-right:.25rem !important}
+  [dir="rtl"] .pr-sm-1{padding-right:0 !important;padding-left:.25rem !important}
+  [dir="rtl"] .pl-sm-2{padding-left:0 !important;padding-right:.5rem !important}
+  [dir="rtl"] .pr-sm-2{padding-right:0 !important;padding-left:.5rem !important}
+  [dir="rtl"] .pl-sm-3{padding-left:0 !important;padding-right:1rem !important}
+  [dir="rtl"] .pr-sm-3{padding-right:0 !important;padding-left:1rem !important}
+  [dir="rtl"] .pl-sm-4{padding-left:0 !important;padding-right:1.5rem !important}
+  [dir="rtl"] .pr-sm-4{padding-right:0 !important;padding-left:1.5rem !important}
+  [dir="rtl"] .pl-sm-5{padding-left:0 !important;padding-right:3rem !important}
+  [dir="rtl"] .pr-sm-5{padding-right:0 !important;padding-left:3rem !important}
+  [dir="rtl"] .text-sm-left{text-align:right !important}
+  [dir="rtl"] .text-sm-right{text-align:left !important}
+  [dir="rtl"] .float-sm-left{float:right !important}
+  [dir="rtl"] .float-sm-right{float:left !important}
+}
+@media (min-width:768px){
+  [dir="rtl"] .ml-md-0{margin-left:0 !important;margin-right:0 !important}
+  [dir="rtl"] .mr-md-0{margin-right:0 !important;margin-left:0 !important}
+  [dir="rtl"] .ml-md-1{margin-left:0 !important;margin-right:.25rem !important}
+  [dir="rtl"] .mr-md-1{margin-right:0 !important;margin-left:.25rem !important}
+  [dir="rtl"] .ml-md-2{margin-left:0 !important;margin-right:.5rem !important}
+  [dir="rtl"] .mr-md-2{margin-right:0 !important;margin-left:.5rem !important}
+  [dir="rtl"] .ml-md-3{margin-left:0 !important;margin-right:1rem !important}
+  [dir="rtl"] .mr-md-3{margin-right:0 !important;margin-left:1rem !important}
+  [dir="rtl"] .ml-md-4{margin-left:0 !important;margin-right:1.5rem !important}
+  [dir="rtl"] .mr-md-4{margin-right:0 !important;margin-left:1.5rem !important}
+  [dir="rtl"] .ml-md-5{margin-left:0 !important;margin-right:3rem !important}
+  [dir="rtl"] .mr-md-5{margin-right:0 !important;margin-left:3rem !important}
+  [dir="rtl"] .ml-md-auto{margin-left:0 !important;margin-right:auto !important}
+  [dir="rtl"] .mr-md-auto{margin-right:0 !important;margin-left:auto !important}
+  [dir="rtl"] .pl-md-0{padding-left:0 !important;padding-right:0 !important}
+  [dir="rtl"] .pr-md-0{padding-right:0 !important;padding-left:0 !important}
+  [dir="rtl"] .pl-md-1{padding-left:0 !important;padding-right:.25rem !important}
+  [dir="rtl"] .pr-md-1{padding-right:0 !important;padding-left:.25rem !important}
+  [dir="rtl"] .pl-md-2{padding-left:0 !important;padding-right:.5rem !important}
+  [dir="rtl"] .pr-md-2{padding-right:0 !important;padding-left:.5rem !important}
+  [dir="rtl"] .pl-md-3{padding-left:0 !important;padding-right:1rem !important}
+  [dir="rtl"] .pr-md-3{padding-right:0 !important;padding-left:1rem !important}
+  [dir="rtl"] .pl-md-4{padding-left:0 !important;padding-right:1.5rem !important}
+  [dir="rtl"] .pr-md-4{padding-right:0 !important;padding-left:1.5rem !important}
+  [dir="rtl"] .pl-md-5{padding-left:0 !important;padding-right:3rem !important}
+  [dir="rtl"] .pr-md-5{padding-right:0 !important;padding-left:3rem !important}
+  [dir="rtl"] .text-md-left{text-align:right !important}
+  [dir="rtl"] .text-md-right{text-align:left !important}
+  [dir="rtl"] .float-md-left{float:right !important}
+  [dir="rtl"] .float-md-right{float:left !important}
+}
+@media (min-width:992px){
+  [dir="rtl"] .ml-lg-0{margin-left:0 !important;margin-right:0 !important}
+  [dir="rtl"] .mr-lg-0{margin-right:0 !important;margin-left:0 !important}
+  [dir="rtl"] .ml-lg-1{margin-left:0 !important;margin-right:.25rem !important}
+  [dir="rtl"] .mr-lg-1{margin-right:0 !important;margin-left:.25rem !important}
+  [dir="rtl"] .ml-lg-2{margin-left:0 !important;margin-right:.5rem !important}
+  [dir="rtl"] .mr-lg-2{margin-right:0 !important;margin-left:.5rem !important}
+  [dir="rtl"] .ml-lg-3{margin-left:0 !important;margin-right:1rem !important}
+  [dir="rtl"] .mr-lg-3{margin-right:0 !important;margin-left:1rem !important}
+  [dir="rtl"] .ml-lg-4{margin-left:0 !important;margin-right:1.5rem !important}
+  [dir="rtl"] .mr-lg-4{margin-right:0 !important;margin-left:1.5rem !important}
+  [dir="rtl"] .ml-lg-5{margin-left:0 !important;margin-right:3rem !important}
+  [dir="rtl"] .mr-lg-5{margin-right:0 !important;margin-left:3rem !important}
+  [dir="rtl"] .ml-lg-auto{margin-left:0 !important;margin-right:auto !important}
+  [dir="rtl"] .mr-lg-auto{margin-right:0 !important;margin-left:auto !important}
+  [dir="rtl"] .pl-lg-0{padding-left:0 !important;padding-right:0 !important}
+  [dir="rtl"] .pr-lg-0{padding-right:0 !important;padding-left:0 !important}
+  [dir="rtl"] .pl-lg-1{padding-left:0 !important;padding-right:.25rem !important}
+  [dir="rtl"] .pr-lg-1{padding-right:0 !important;padding-left:.25rem !important}
+  [dir="rtl"] .pl-lg-2{padding-left:0 !important;padding-right:.5rem !important}
+  [dir="rtl"] .pr-lg-2{padding-right:0 !important;padding-left:.5rem !important}
+  [dir="rtl"] .pl-lg-3{padding-left:0 !important;padding-right:1rem !important}
+  [dir="rtl"] .pr-lg-3{padding-right:0 !important;padding-left:1rem !important}
+  [dir="rtl"] .pl-lg-4{padding-left:0 !important;padding-right:1.5rem !important}
+  [dir="rtl"] .pr-lg-4{padding-right:0 !important;padding-left:1.5rem !important}
+  [dir="rtl"] .pl-lg-5{padding-left:0 !important;padding-right:3rem !important}
+  [dir="rtl"] .pr-lg-5{padding-right:0 !important;padding-left:3rem !important}
+  [dir="rtl"] .text-lg-left{text-align:right !important}
+  [dir="rtl"] .text-lg-right{text-align:left !important}
+  [dir="rtl"] .float-lg-left{float:right !important}
+  [dir="rtl"] .float-lg-right{float:left !important}
+}
+@media (min-width:1200px){
+  [dir="rtl"] .ml-xl-0{margin-left:0 !important;margin-right:0 !important}
+  [dir="rtl"] .mr-xl-0{margin-right:0 !important;margin-left:0 !important}
+  [dir="rtl"] .ml-xl-1{margin-left:0 !important;margin-right:.25rem !important}
+  [dir="rtl"] .mr-xl-1{margin-right:0 !important;margin-left:.25rem !important}
+  [dir="rtl"] .ml-xl-2{margin-left:0 !important;margin-right:.5rem !important}
+  [dir="rtl"] .mr-xl-2{margin-right:0 !important;margin-left:.5rem !important}
+  [dir="rtl"] .ml-xl-3{margin-left:0 !important;margin-right:1rem !important}
+  [dir="rtl"] .mr-xl-3{margin-right:0 !important;margin-left:1rem !important}
+  [dir="rtl"] .ml-xl-4{margin-left:0 !important;margin-right:1.5rem !important}
+  [dir="rtl"] .mr-xl-4{margin-right:0 !important;margin-left:1.5rem !important}
+  [dir="rtl"] .ml-xl-5{margin-left:0 !important;margin-right:3rem !important}
+  [dir="rtl"] .mr-xl-5{margin-right:0 !important;margin-left:3rem !important}
+  [dir="rtl"] .ml-xl-auto{margin-left:0 !important;margin-right:auto !important}
+  [dir="rtl"] .mr-xl-auto{margin-right:0 !important;margin-left:auto !important}
+  [dir="rtl"] .pl-xl-0{padding-left:0 !important;padding-right:0 !important}
+  [dir="rtl"] .pr-xl-0{padding-right:0 !important;padding-left:0 !important}
+  [dir="rtl"] .pl-xl-1{padding-left:0 !important;padding-right:.25rem !important}
+  [dir="rtl"] .pr-xl-1{padding-right:0 !important;padding-left:.25rem !important}
+  [dir="rtl"] .pl-xl-2{padding-left:0 !important;padding-right:.5rem !important}
+  [dir="rtl"] .pr-xl-2{padding-right:0 !important;padding-left:.5rem !important}
+  [dir="rtl"] .pl-xl-3{padding-left:0 !important;padding-right:1rem !important}
+  [dir="rtl"] .pr-xl-3{padding-right:0 !important;padding-left:1rem !important}
+  [dir="rtl"] .pl-xl-4{padding-left:0 !important;padding-right:1.5rem !important}
+  [dir="rtl"] .pr-xl-4{padding-right:0 !important;padding-left:1.5rem !important}
+  [dir="rtl"] .pl-xl-5{padding-left:0 !important;padding-right:3rem !important}
+  [dir="rtl"] .pr-xl-5{padding-right:0 !important;padding-left:3rem !important}
+  [dir="rtl"] .text-xl-left{text-align:right !important}
+  [dir="rtl"] .text-xl-right{text-align:left !important}
+  [dir="rtl"] .float-xl-left{float:right !important}
+  [dir="rtl"] .float-xl-right{float:left !important}
+}
+
+/* حدود وزوايا */
+[dir="rtl"] .border-left{border-left:0 !important;border-right:1px solid var(--im-line) !important}
+[dir="rtl"] .border-right{border-right:0 !important;border-left:1px solid var(--im-line) !important}
+[dir="rtl"] .rounded-left{border-radius:0 var(--im-radius-field) var(--im-radius-field) 0 !important}
+[dir="rtl"] .rounded-right{border-radius:var(--im-radius-field) 0 0 var(--im-radius-field) !important}
+[dir="rtl"] .dropdown-menu-right{right:auto !important;left:0 !important}
+[dir="rtl"] .custom-control{padding-left:0;padding-right:1.5rem}
+[dir="rtl"] .custom-control-label::before,[dir="rtl"] .custom-control-label::after{left:auto;right:-1.5rem}
+[dir="rtl"] .navbar-vertical .navbar-nav .nav-link[data-toggle="collapse"]::after{margin-left:0;margin-right:auto}
+[dir="rtl"] .close{float:left}
+

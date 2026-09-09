@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ in_array(app()->getLocale(), ['ar','he','fa','ur']) ? 'rtl' : 'ltr' }}">
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -17,18 +17,16 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-        <!-- Fonts -->
-        <link href="{{ asset('css') }}/gfonts.css" rel="stylesheet">
+        {{-- gfonts.css (Open Sans) مُستبعد: مجموعاته latin/greek/cyrillic بلا عربية،
+             و٢٠ ملفًا بحجم ١٫٢م لا يُستخدم منها حرف في لوحة عربية. --}}
         
         <!-- Icons -->
         <link href="{{ asset('argon') }}/vendor/nucleo/css/nucleo.css" rel="stylesheet">
         <link href="{{ asset('argon') }}/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-            <style>
-                body, .table, .btn, .form-control, .dropdown-menu, .badge, h1, h2, h3, h4, h5, h6, .nav-link {
-                    font-family: 'Tajawal', 'Open Sans', sans-serif !important;
-                }
-            </style>
+        {{-- iMenu 2026 — خطوط الهوية المعتمدة: El Messiri للعناوين · IBM Plex Sans Arabic للنصوص --}}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
         <!-- Argon CSS -->
         <link type="text/css" href="{{ asset('argon') }}/css/argon.css?v=1.0.0" rel="stylesheet">
         <!-- Argon CSS -->
@@ -57,6 +55,9 @@
 
         <!-- Custom CSS defined by admin -->
         <link type="text/css" href="{{ asset('byadmin') }}/back.css" rel="stylesheet">
+
+        {{-- iMenu 2026 — هوية اللوحة. آخر ملف عمدًا ليتجاوز Argon. التراجع: حذف هذا السطر. --}}
+        <link type="text/css" href="{{ asset('custom') }}/css/imenu-admin.css?v=1" rel="stylesheet">
 
 
 

@@ -14,6 +14,20 @@
         @endif
     @endif
 
+    {{-- iMenu 2026 — الترتيب يتبع الاستخدام: المطاعم ثم الخطط أولًا --}}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('admin.restaurants.index') }}">
+            <i class="ni ni-shop text-info"></i> {{ __('Restaurants') }}
+        </a>
+    </li>
+    @if(config('settings.enable_pricing'))
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('plans.index') }}">
+                <i class="ni ni-credit-card text-orange"></i> {{ __('Pricing plans') }}
+            </a>
+        </li>
+    @endif
+
     @if (config('app.isft'))
         <li class="nav-item">
             <a class="nav-link" href="/live">
@@ -36,11 +50,6 @@
             </a>
         </li>
     @endif
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.restaurants.index') }}">
-            <i class="ni ni-shop text-info"></i> {{ __('Restaurants') }}
-        </a>
-    </li>
     @if(config('settings.multi_city'))
         <li class="nav-item">
             <a class="nav-link" href="{{ route('cities.index') }}">
@@ -113,13 +122,6 @@
                             </li>
                         @endif
                     @endif
-                    @if(config('settings.enable_pricing'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('plans.index') }}">
-                                <i class="ni ni-credit-card text-orange"></i> {{ __('Pricing plans') }}
-                            </a>
-                        </li>
-                    @endif
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('pages.index') }}">
                             <i class="ni ni-ungroup text-info"></i> {{ __('Pages') }}
@@ -147,11 +149,9 @@
 
                     @if(!config('settings.hideUpdate'))
                         <li class="nav-item">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('settings.cloudupdate') }}">
-                                    <i class="ni ni-cloud-download-95 text-blue"></i> {{ __('Updates') }}
-                                </a>
-                            </li>
+                            <a class="nav-link" href="{{ route('settings.cloudupdate') }}">
+                                <i class="ni ni-cloud-download-95 text-blue"></i> {{ __('Updates') }}
+                            </a>
                         </li>
                     @endif
                 </ul>
