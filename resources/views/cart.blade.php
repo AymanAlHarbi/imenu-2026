@@ -110,22 +110,8 @@ a{ color:var(--es-tang); } a:hover{ color:var(--es-tang-d); }
                       <!-- DINE IN OR TAKEAWAY -->
                       @if (config('settings.enable_pickup'))
                       
-                          @if (in_array("poscloud", config('global.modules',[])) || in_array("deliveryqr", config('global.modules',[])) )
-                            <!-- We have POS in QR -->
-                            @include('cart.localorder.dineiintakeawaydeliver')
-
-                            <!-- Delivery adress -->
-                            <div class="qraddressBox" style="display: none">
-                              @include('cart.newaddress')
-                              <br />
-                            </div>
-                            
-                            
-                           
-                          @else
-                             <!-- Simple QR -->
-                            @include('cart.localorder.dineiintakeaway')
-                          @endif
+                          <!-- iMenu 2026 — استلام من الشباك أو من السيارة فقط -->
+                          @include('cart.localorder.pickupmethod')
                           
                           <!-- Takeaway time slot -->
                    <!-- Takeaway time slot 

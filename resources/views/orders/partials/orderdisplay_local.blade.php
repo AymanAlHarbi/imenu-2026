@@ -80,6 +80,21 @@
         <span class="badge badge-pill badge-{{ $methodColors[$order->delivery_method] ?? 'secondary' }}">
             {{ $order->table ? $order->table->getFullNameAttribute()." / " : '' }}{{ $order->getExpeditionType() }}
         </span>
+        @if ($order->getConfig('pickup_method','') == 'car')
+            <br/>
+            <span class="text-sm font-weight-bold"><i class="fa fa-car"></i>
+                {{ trim($order->getConfig('vehicle_brand','').' '.$order->getConfig('vehicle_model','')) }}
+                @if ($order->getConfig('vehicle_color',''))
+                    · {{ $order->getConfig('vehicle_color') }}
+                @endif
+            </span>
+            @if ($order->getConfig('vehicle_plate',''))
+                <br/><small class="text-muted" dir="ltr">{{ $order->getConfig('vehicle_plate') }}</small>
+            @endif
+            @if ($order->getConfig('arrived_at',''))
+                <br/><span class="badge badge-pill badge-success">{{ __('Customer has arrived') }}</span>
+            @endif
+        @endif
     </td>
     <td class="table-web">
         <span class="font-weight-bold">@money( $order->order_price_with_discount, config('settings.cashier_currency'),config('settings.do_convertion'))</span>

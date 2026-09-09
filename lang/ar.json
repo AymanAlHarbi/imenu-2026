@@ -1973,5 +1973,22 @@
     "Copy Sunday hours to all days": "نسخ أوقات الأحد لكل الأيام",
     "Set Sunday hours first": "حدد أوقات يوم الأحد أولاً",
     "Order minimum is :amount. Please add few more items in cart": "الحد الأدنى للطلب هو :amount. الرجاء إضافة المزيد من المنتجات إلى السلة.",
-    "Order minimum is :min. Please add few more items in cart": "الحد الأدنى للطلب هو :min. يرجى إضافة المزيد من المنتجات إلى سلة التسوق."
+    "Order minimum is :min. Please add few more items in cart": "الحد الأدنى للطلب هو :min. يرجى إضافة المزيد من المنتجات إلى سلة التسوق.",
+    "How would you like to receive your order?": "كيف تستلم طلبك؟",
+    "Order ahead and pay at the coffee shop when you pick up": "جهّز طلبك قبل وصولك، وادفع عند الاستلام",
+    "From the window": "من الشباك",
+    "From my car": "من السيارة",
+    "Your vehicle details — we save them for your next orders": "بيانات مركبتك — نحفظها لطلباتك القادمة",
+    "Brand": "العلامة",
+    "Model": "الموديل",
+    "Color": "اللون",
+    "Plate": "اللوحة",
+    "Other": "أخرى",
+    "Please select your vehicle color": "اختر لون المركبة",
+    "After confirming, an \"I have arrived\" button appears — tap it when you get there": "بعد تأكيد الطلب يظهر زر «وصلت» — اضغطه عند وصولك",
+    "I have arrived": "وصلت",
+    "Customer has arrived": "وصل العميل",
+    "The coffee shop knows you have arrived": "الكوفي يعرف أنك وصلت",
+    "Your order will be brought out shortly": "جهّزوا طلبك وسيصلك خلال لحظات",
+    "The coffee shop has been notified": "تم إبلاغ الكوفي"
 }

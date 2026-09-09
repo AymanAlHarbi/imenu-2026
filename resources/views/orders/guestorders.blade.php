@@ -114,6 +114,11 @@
               <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:2px;"><span style="font-weight:700;font-size:1.02rem;">{{ __('TOTAL') }}</span><span style="font-weight:800;font-size:1.2rem;color:var(--brand);">@money($total, $currency, true)</span></div>
             </div>
 
+            {{-- iMenu 2026 — زر "وصلت" لطلبات السيارة --}}
+            <div style="margin-top:16px;">
+              @include('orders.partials.arrived')
+            </div>
+
             <div style="display:flex;gap:10px;margin-top:16px;">
               @if($showWhatsApp)
               <a href="{{ route('order.success') }}?order={{ $order->id }}&whatsapp=yes" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:13px;background:#25D366;color:#fff;font-weight:700;font-size:.92rem;text-decoration:none;">

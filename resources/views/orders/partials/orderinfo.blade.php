@@ -202,7 +202,7 @@
         <hr />
         <h3>{{ __(config('settings.label_on_custom_fields')) }}</h3>
         @foreach ($custom_data as $keyCutom => $itemValue)
-            <h4>{{ __("custom.".$keyCutom) }}: {{ $itemValue }}</h4>
+            <h4>{{ __("custom.".$keyCutom) }}: {{ $keyCutom == 'pickup_method' ? __('custom.pickup_'.$itemValue) : $itemValue }}</h4>
         @endforeach
      @endif
 

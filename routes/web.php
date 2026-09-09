@@ -388,6 +388,7 @@ Route::get('new/driver/register', [DriverController::class, 'register'])->name('
 Route::post('new/driver/register/store', [DriverController::class, 'registerStore'])->name('driver.register.store');
 
 Route::get('order/success', [OrderController::class, 'success'])->name('order.success');
+Route::post('order/arrived', [OrderController::class, 'arrived'])->name('order.arrived');
 Route::get('order/successwhatsapp/{order}', [OrderController::class, 'silentWhatsAppRedirect'])->name('order.successwhatsapp');
 
 Route::get('order/cancel', [OrderController::class, 'cancel'])->name('order.cancel');

@@ -104,6 +104,9 @@
         </div>
       </section>
 
+      {{-- iMenu 2026 — زر "وصلت" لطلبات السيارة --}}
+      @include('orders.partials.arrived')
+
       @if($showWhatsApp)
         <a href="?order={{ request('order') }}&whatsapp=yes" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:9px;height:52px;border-radius:15px;background:#25D366;color:#fff;font-weight:700;font-size:1rem;text-decoration:none;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>

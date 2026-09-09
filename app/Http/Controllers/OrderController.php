@@ -10,6 +10,7 @@ use App\Events\UpdateOrder;
 use App\Exports\OrdersExport;
 use App\Models\Orderitems;
 use App\Models\SimpleDelivery;
+use App\Notifications\CustomerArrived;
 use App\Notifications\OrderNotification;
 use App\Order;
 use App\Repositories\Orders\OrderRepoGenerator;
@@ -1130,6 +1131,34 @@ class OrderController extends Controller
         $url = 'https://api.whatsapp.com/send?phone='.$order->restorant->whatsapp_phone.'&text='.$message;
 
         return view('orders.success', ['order' => $order, 'showWhatsApp' => false, 'whatsappurl' => $url]);
+    }
+
+    /**
+     * العميل ضغط "وصلت" — يُسجَّل الوصول ويُرسل إشعار للكوفي (طلبات السيارة فقط).
+     */
+    public function arrived(Request $request)
+    {
+        $order = Order::findOrFail($request->order_id);
+
+        //بصمة الطلب — حتى لا يُبلّغ أحد عن طلب غيره
+        abort_unless($order->md.'' === $request->md.'', 403);
+
+        //للسيارة فقط، ومرة واحدة
+        if ($order->getConfig('pickup_method', '') == 'car' && ! $order->getConfig('arrived_at', false)) {
+            $order->setConfig('arrived_at', now()->toDateTimeString());
+
+            try {
+                $order->restorant->user->notify(new CustomerArrived($order));
+
+                foreach ($order->restorant->staff()->get() as $staffMember) {
+                    $staffMember->notify(new CustomerArrived($order));
+                }
+            } catch (\Throwable $th) {
+                \Log::error('CustomerArrived notify failed: '.$th->getMessage());
+            }
+        }
+
+        return redirect()->back()->withStatus(__('The coffee shop has been notified'));
     }
 
     public function success(Request $request)
