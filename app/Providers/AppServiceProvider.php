@@ -110,6 +110,10 @@ class AppServiceProvider extends ServiceProvider
             $modulesWithDashboardInfo = [];
 
             foreach (Module::all() as $key => $module) {
+                //iMenu 2026 - skip disabled modules: their views and routes are not registered
+                if (! $module->enabled()) {
+                    continue;
+                }
                 if ($module->get('isSubscriptionModule')) {
                     $subscriptionsModules[$module->get('name')] = $module->get('name');
                 }

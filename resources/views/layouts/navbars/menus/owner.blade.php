@@ -81,6 +81,8 @@
 
     <!-- Exrta menus -->
     @foreach (auth()->user()->getExtraMenus() as $menu)
+            {{-- iMenu 2026 - never render a menu whose route is gone (disabled module) --}}
+            @continue(!isset($menu['isGroup']) && isset($menu['route']) && !Route::has($menu['route']))
             @if (isset($menu['isGroup']) && $menu['isGroup'])
 
                 <a class="nav-link" href="#navbar-{{  $menu['id'] }}" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-{{  $menu['id'] }}">
@@ -90,6 +92,7 @@
                 <div class="collapse" id="navbar-{{  $menu['id'] }}" style="">
                     <ul class="nav nav-sm flex-column">
                         @foreach ($menu['menus'] as $submenu)
+                            @continue(!Route::has($submenu['route']))
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route($submenu['route'],isset($submenu['params'])?$submenu['params']:[]) }}">
                                     <i class="{{ $submenu['icon'] }}"></i> {{ __($submenu['name']) }}

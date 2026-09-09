@@ -86,6 +86,11 @@ class User extends Authenticatable
         $menus = [];
         if ($this->hasRole('admin')) {
             foreach (Module::all() as $key => $module) {
+                //iMenu 2026 - Module::all() returns disabled modules too, and their routes
+                //are not registered; emitting their menus makes route() throw on every page.
+                if (! $module->enabled()) {
+                    continue;
+                }
                 if (is_array($module->get('adminmenus'))) {
                     foreach ($module->get('adminmenus') as $key => $menu) {
                         if (isset($menu['onlyin'])) {
@@ -101,6 +106,11 @@ class User extends Authenticatable
             }
         } elseif ($this->hasRole('client')) {
             foreach (Module::all() as $key => $module) {
+                //iMenu 2026 - Module::all() returns disabled modules too, and their routes
+                //are not registered; emitting their menus makes route() throw on every page.
+                if (! $module->enabled()) {
+                    continue;
+                }
                 if (is_array($module->get('clientmenus'))) {
                     foreach ($module->get('clientmenus') as $key => $menu) {
                         if (isset($menu['onlyin'])) {
@@ -117,6 +127,11 @@ class User extends Authenticatable
         } elseif ($this->hasRole('owner')) {
             $allowedPluginsPerPlan = auth()->user()->restorant ? auth()->user()->restorant->getPlanAttribute()['allowedPluginsPerPlan'] : null;
             foreach (Module::all() as $key => $module) {
+                //iMenu 2026 - Module::all() returns disabled modules too, and their routes
+                //are not registered; emitting their menus makes route() throw on every page.
+                if (! $module->enabled()) {
+                    continue;
+                }
                 if (is_array($module->get('ownermenus')) && ($allowedPluginsPerPlan == null || in_array($module->get('alias'), $allowedPluginsPerPlan))) {
                     foreach ($module->get('ownermenus') as $key => $menu) {
 
@@ -132,6 +147,11 @@ class User extends Authenticatable
             }
         } elseif ($this->hasRole('staff')) {
             foreach (Module::all() as $key => $module) {
+                //iMenu 2026 - Module::all() returns disabled modules too, and their routes
+                //are not registered; emitting their menus makes route() throw on every page.
+                if (! $module->enabled()) {
+                    continue;
+                }
                 if (is_array($module->get('staffmenus'))) {
                     foreach ($module->get('staffmenus') as $key => $menu) {
                         array_push($menus, $menu);
