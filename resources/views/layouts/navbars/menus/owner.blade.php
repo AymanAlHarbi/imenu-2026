@@ -34,11 +34,13 @@
             <i class="ni ni-shop text-info"></i> {{ __('Restaurant') }}
         </a>
     </li>
+    @if(config('settings.vendor_menu_apps'))
     <li class="nav-item">
        <a class="nav-link" href="{{ route('admin.owner.apps') }}">
            <i class="ni ni-app text-red"></i> {{ __('Apps') }}
        </a>
    </li>
+    @endif
     @if(!config('app.issd')&&!config('settings.makePureSaaS',false))
         <li class="nav-item">
             <a class="nav-link" href="{{ route('items.index') }}">
@@ -54,6 +56,7 @@
         </li>
     @endif
 
+    @if(config('settings.vendor_menu_tables'))
     @if(!config('settings.makePureSaaS',false))
         @if (config('app.isqrsaas') && (!config('settings.qrsaas_disable_odering') || config('settings.enable_guest_log')))
             @if(!config('settings.is_whatsapp_ordering_mode') || in_array("poscloud", config('global.modules',[]))  || in_array("deliveryqr", config('global.modules',[])) )
@@ -72,6 +75,7 @@
                 </a>
             </li>
         @endif
+    @endif
     @endif
    
 

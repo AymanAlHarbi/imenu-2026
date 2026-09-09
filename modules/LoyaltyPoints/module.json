@@ -3,7 +3,7 @@
     "version": "1.0",
     "description": "Loyalty points program - earn points per riyal spent, redeem points for discount coupons.",
     "keywords": ["loyalty", "points", "rewards"],
-    "active": 1,
+    "active": 0,
     "order": 0,
     "providers": [
         "Modules\\LoyaltyPoints\\Providers\\Main"
