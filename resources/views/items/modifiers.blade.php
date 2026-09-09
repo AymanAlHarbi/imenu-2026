@@ -23,7 +23,7 @@
                 <small class="text-muted">{{ __('Size, coffee type, add-ons — with a price difference for each choice') }}</small>
             </div>
             <div class="col-4 text-right">
-                <button type="button" class="btn btn-sm btn-secondary" onclick="mgAddGroup()">{{ __('Add group') }}</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="mgAddGroup()">{{ __('Add group') }}</button>
             </div>
         </div>
     </div>
@@ -31,8 +31,17 @@
         <form method="POST" action="{{ route('items.modifiers.store', $item) }}">
             @csrf
             <div id="mg-list"></div>
-            <div class="text-center mt-3">
-                <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
+
+            {{-- حالة فارغة: البطاقة كانت زر «حفظ» وحده وسط الخلاء --}}
+            <div id="mg-empty" class="text-center py-4" style="display:none">
+                <div style="font-size:26px;line-height:1">&#9776;</div>
+                <div class="mt-2" style="font-weight:600;color:#17324E">{{ __('No option groups yet') }}</div>
+                <div class="text-muted" style="font-size:.85rem">{{ __('Add a group such as Size or Coffee type') }}</div>
+                <button type="button" class="btn btn-sm btn-primary mt-3" onclick="mgAddGroup()">{{ __('Add group') }}</button>
+            </div>
+
+            <div id="mg-save" class="text-center mt-3" style="display:none">
+                <button type="submit" class="btn btn-primary">{{ __('Save option groups') }}</button>
             </div>
         </form>
     </div>
@@ -82,7 +91,7 @@ function mgGroupCard(gi, g){
           '<div><span class="mg-lbl">'+mgT.max+'</span><input type="number" min="0" class="form-control form-control-sm" style="width:110px" name="groups['+gi+'][max]" value="'+(g.max||0)+'"></div>'+
         '</div>'+
         '<div style="flex:0 0 auto"><span class="mg-lbl">&nbsp;</span>'+
-          '<button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest(\'.mg-card\').remove()">'+mgT.removeG+'</button></div>'+
+          '<button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest(\'.mg-card\').remove(); mgSyncEmpty();">'+mgT.removeG+'</button></div>'+
       '</div>'+
       '<div class="mg-options mt-2"></div>'+
       '<button type="button" class="btn btn-sm btn-secondary mt-2">'+mgT.addOption+'</button>'+
@@ -105,15 +114,26 @@ function mgGroupCard(gi, g){
   return card;
 }
 
+/* البطاقة تعرض حالتها: إما مجموعات وزر حفظ، أو دعوة للإضافة — لا كلاهما */
+function mgSyncEmpty(){
+  var list = document.getElementById('mg-list');
+  if (!list) { return; }
+  var has = list.children.length > 0;
+  document.getElementById('mg-empty').style.display = has ? 'none' : 'block';
+  document.getElementById('mg-save').style.display  = has ? 'block' : 'none';
+}
+
 function mgAddGroup(){
   var list = document.getElementById('mg-list');
   if (list.children.length >= mgMaxGroups) { return; }
   list.appendChild(mgGroupCard(list.children.length + Date.now() % 1000, null));
+  mgSyncEmpty();
 }
 
 (function mgInit(){
   var list = document.getElementById('mg-list');
   if (!list) { return; }
   mgData.forEach(function(g, gi){ list.appendChild(mgGroupCard(gi, g)); });
+  mgSyncEmpty();
 })();
 </script>

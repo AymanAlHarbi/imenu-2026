@@ -2062,5 +2062,17 @@
     "Option groups saved.": "حُفظت مجموعات الخيارات.",
     "Please choose": "الرجاء اختيار",
     "Only one choice is allowed in": "يُسمح بخيار واحد في",
-    "Too many choices in": "عدد الخيارات أكثر من المسموح في"
+    "Too many choices in": "عدد الخيارات أكثر من المسموح في",
+    "No option groups yet": "لا مجموعات خيارات بعد",
+    "Add a group such as Size or Coffee type": "أضف مجموعة مثل «الحجم» أو «نوع البن»",
+    "Save option groups": "حفظ المجموعات",
+    "Category": "القسم",
+    "Select category": "اختر القسم",
+    "Discounted price": "السعر قبل الخصم",
+    "Enable variants": "تفعيل المقاسات",
+    "Copy URL": "نسخ الرابط",
+    "Item image": "صورة الصنف",
+    "Choose image": "اختر صورة",
+    "Item is available": "الصنف متاح",
+    "Item price": "سعر الصنف"
 }
