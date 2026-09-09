@@ -174,7 +174,26 @@ a:hover{ color:var(--im-navy-800); }
 .icon-shape.bg-gradient-primary,.icon.bg-gradient-primary{
   background:linear-gradient(180deg,var(--im-navy-700) 0%,var(--im-navy-900) 100%) !important;
 }
-hr{ border-top-color:var(--im-line); }
+hr{ border-top-color:var(--im-line); margin:.9rem 0; }
+
+/* ── ١٣) تفاصيل الطلب: صفوف مضغوطة بدل مكدّس عناوين ───────
+   كانت كل معلومة <h4> بهامش عنوان — فالمجموع والهاتف واللون بحجم واحد
+   والصفحة نصوص متباعدة بلا تراتب. */
+.im-kv{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:0 1.75rem; margin:.5rem 0 1rem; }
+.im-kv > div{ display:flex; justify-content:space-between; align-items:baseline;
+  gap:.75rem; padding:.45rem 0; border-bottom:1px dashed var(--im-line); }
+.im-kv > div > span{ color:var(--im-ink-soft); font-size:.85rem; }
+.im-kv > div > b{ color:var(--im-ink); font-weight:600; font-size:.95rem;
+  font-variant-numeric:tabular-nums; text-align:end; }
+.im-kv-title{ font-family:var(--im-display); font-weight:700; font-size:1.05rem;
+  color:var(--im-navy-900); margin:1.25rem 0 .25rem; }
+.im-total{ display:flex; justify-content:space-between; align-items:baseline;
+  background:var(--im-cream-2); border-radius:var(--im-radius-field);
+  padding:.85rem 1.1rem; margin:.5rem 0 1rem; }
+.im-total > span{ font-family:var(--im-display); font-weight:700; color:var(--im-navy-900); }
+.im-total > b{ font-size:1.5rem; font-weight:700; color:var(--im-navy-900);
+  font-variant-numeric:tabular-nums; }
 
 /* ── ١٢) قلب أدوات الاتجاه لـRTL ─────────────────────────
    Bootstrap 4 أدواته اتجاهية (ml/mr/pl/pr/text-left…) ولا تنقلب

@@ -166,44 +166,68 @@
      <h4>{{ __('Time to prepare') }}: {{ $order->time_to_prepare ." " .__('minutes')}}</h4>
      <br/>
      @endif
-     <h5>{{ __("NET") }}: @money( $order->order_price-$order->vatvalue, $currency ,true)</h5>
-     <h5>{{ __("VAT") }}: @money( $order->vatvalue, $currency,$convert)</h5>
-     <h4>{{ __("Sub Total") }}: @money( $order->order_price, $currency,$convert)</h4>
-     @if($order->delivery_method==1)
-     <h4>{{ __("Delivery") }}: @money( $order->delivery_price, $currency,$convert)</h4>
-     @endif
-     @if ($order->discount>0)
-        <h4>{{ __("Discount") }}: @money( $order->discount, $currency,$convert)</h4>
-        <h4>{{ __("Coupon code") }}: {{$order->coupon}}</h4>
-     @endif
-     @if ($order->tip>0)
-        <h4>{{ __("Tip") }}: @money( $order->tip, $currency,$convert)</h4>
-     @endif
-     <hr />
-     <h3>{{ __("TOTAL") }}: @money( $order->delivery_price+$order->order_price_with_discount, $currency,true)</h3>
-     <hr />
-     <h4>{{ __("Payment method") }}: {{ __(strtoupper($order->payment_method)) }}</h4>
-     <h4>{{ __("Payment status") }}: {{ __(ucfirst($order->payment_status)) }}</h4>
-     @if ($order->payment_status=="unpaid"&&strlen($order->payment_link)>5)
-         <button onclick="location.href='{{$order->payment_link}}'" class="btn btn-success">{{ __('Pay now') }}</button>
-     @endif
-     <hr />
-     @if(config('app.isft') || config('app.iswp'))
-         <h4>{{ __("Delivery method") }}: {{ $order->getExpeditionType() }}</h4>
-         <h3>{{ __("Time slot") }}: @include('orders.partials.time', ['time'=>$order->time_formated])</h3>
-     @else
-         <h4>{{ __("Dine method") }}: {{ $order->getExpeditionType() }}</h4>
-         @if ($order->delivery_method!=3)
-             <h3>{{ __("Time slot") }}: @include('orders.partials.time', ['time'=>$order->time_formated])</h3>
-         @endif
-     @endif
+     {{-- iMenu 2026 — صفوف مضغوطة بدل مكدّس عناوين.
+          كانت كل سطر <h4> بهامش عنوان، فتحوّلت الصفحة إلى نصوص متباعدة
+          بلا تراتب: المجموع والهاتف واللون كلها بحجم واحد. --}}
+     <div class="im-kv">
+        <div><span>{{ __("NET") }}</span><b>@money( $order->order_price-$order->vatvalue, $currency ,true)</b></div>
+        <div><span>{{ __("VAT") }}</span><b>@money( $order->vatvalue, $currency,$convert)</b></div>
+        <div><span>{{ __("Sub Total") }}</span><b>@money( $order->order_price, $currency,$convert)</b></div>
+        @if($order->delivery_method==1)
+            <div><span>{{ __("Delivery") }}</span><b>@money( $order->delivery_price, $currency,$convert)</b></div>
+        @endif
+        @if ($order->discount>0)
+            <div><span>{{ __("Discount") }}</span><b>@money( $order->discount, $currency,$convert)</b></div>
+            <div><span>{{ __("Coupon code") }}</span><b>{{ $order->coupon }}</b></div>
+        @endif
+        @if ($order->tip>0)
+            <div><span>{{ __("Tip") }}</span><b>@money( $order->tip, $currency,$convert)</b></div>
+        @endif
+        @if(!empty($order->time_to_prepare))
+            <div><span>{{ __("Time to prepare") }}</span><b>{{ $order->time_to_prepare." ".__('minutes') }}</b></div>
+        @endif
+     </div>
+
+     <div class="im-total">
+        <span>{{ __("TOTAL") }}</span>
+        <b>@money( $order->delivery_price+$order->order_price_with_discount, $currency,true)</b>
+     </div>
+
+     <div class="im-kv">
+        <div><span>{{ __("Payment method") }}</span><b>{{ __(strtoupper($order->payment_method)) }}</b></div>
+        <div><span>{{ __("Payment status") }}</span><b>{{ __(ucfirst($order->payment_status)) }}</b></div>
+
+        {{-- طريقة الاستلام تُقرأ من pickup_method لا من getExpeditionType العامة --}}
+        @if(config('app.isft') || config('app.iswp'))
+            <div><span>{{ __("Delivery method") }}</span><b>{{ $order->getExpeditionType() }}</b></div>
+        @else
+            <div><span>{{ __("Pickup method") }}</span><b>{{ $order->getConfig('pickup_method','') == 'car' ? __('From my car') : __('From the coffee shop') }}</b></div>
+        @endif
+
+        {{-- الوعد وختم الوصول: معلومتان مفيدتان، بمسمّى مفهوم لا بمفتاح خام --}}
+        @if ($order->getConfig('ready_promise_at', false))
+            <div><span>{{ __("Promised") }}</span><b style="font-variant-numeric:tabular-nums">{{ \Carbon\Carbon::parse($order->getConfig('ready_promise_at'))->format('H:i') }}</b></div>
+        @endif
+        @if ($order->getConfig('arrived_at', false))
+            <div><span>{{ __("Customer has arrived") }}</span><b style="font-variant-numeric:tabular-nums">{{ \Carbon\Carbon::parse($order->getConfig('arrived_at'))->format('H:i') }}</b></div>
+        @endif
+
+        {{-- الفترة الزمنية تُخفى إن كانت فارغة، وكانت تظهر كعنوان بلا قيمة --}}
+        @if (strlen(trim($order->time_formated ?? '')) > 0 && $order->delivery_method != 3)
+            <div><span>{{ __("Time slot") }}</span><b>{{ $order->time_formated }}</b></div>
+        @endif
+     </div>
 
      @if(isset($custom_data)&&count($custom_data)>0)
-        <hr />
-        <h3>{{ __(config('settings.label_on_custom_fields')) }}</h3>
-        @foreach ($custom_data as $keyCutom => $itemValue)
-            <h4>{{ __("custom.".$keyCutom) }}: {{ $keyCutom == 'pickup_method' ? __('custom.pickup_'.$itemValue) : $itemValue }}</h4>
-        @endforeach
+        <div class="im-kv-title">{{ __(config('settings.label_on_custom_fields')) }}</div>
+        <div class="im-kv">
+            @foreach ($custom_data as $keyCutom => $itemValue)
+                <div>
+                    <span>{{ __("custom.".$keyCutom) }}</span>
+                    <b>{{ $keyCutom == 'pickup_method' ? __('custom.pickup_'.$itemValue) : $itemValue }}</b>
+                </div>
+            @endforeach
+        </div>
      @endif
 
      

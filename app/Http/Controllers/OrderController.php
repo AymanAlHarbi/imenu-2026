@@ -510,7 +510,13 @@ class OrderController extends Controller
             return view('orders.show', [
                 'order' => $order,
                 'pdFInvoice' => $pdFInvoice,
-                'custom_data' => $order->getAllConfigs(),
+                //iMenu 2026 - مفاتيح داخلية للنظام لا حقول أدخلها العميل.
+                //بلا هذا الاستبعاد تُطبع خامًا: custom.prep_minutes: 1 …
+                'custom_data' => collect($order->getAllConfigs())->except([
+                    'prep_minutes', 'ready_promise_at', 'arrived_at',
+                    'not_collected_at', 'not_collected_by', 'dispute_at',
+                    'disable_callwaiter', 'disable_ordering', 'disable_continues_ordering',
+                ])->toArray(),
                 'statuses' => Status::pluck('name', 'id'),
                 'drivers' => $drivers,
                 'orderModules' => $orderModules,

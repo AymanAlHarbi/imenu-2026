@@ -57,7 +57,7 @@
         <link type="text/css" href="{{ asset('byadmin') }}/back.css" rel="stylesheet">
 
         {{-- iMenu 2026 — هوية اللوحة. آخر ملف عمدًا ليتجاوز Argon. التراجع: حذف هذا السطر. --}}
-        <link type="text/css" href="{{ asset('custom') }}/css/imenu-admin.css?v=4" rel="stylesheet">
+        <link type="text/css" href="{{ asset('custom') }}/css/imenu-admin.css?v=5" rel="stylesheet">
 
 
 
