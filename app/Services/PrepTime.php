@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\DB;
 class PrepTime
 {
     /** الشرائح اليدوية المعروضة للمقهى */
-    public const SLICES = [5, 10, 15, 20];
+    /** الشرائح اليدوية. القيمة ١ تعني «حالًا» — صنف جاهز كقهوة اليوم. */
+    public const SLICES = [1, 5, 10, 15, 20];
 
     /** يُستخدم قبل توفّر عدد كافٍ من الطلبات المقيسة */
     public const DEFAULT_MINUTES = 10;
@@ -29,7 +30,7 @@ class PrepTime
     public const MIN_SAMPLE = 5;
 
     /** حدود التعقّل — تحمي الوعد من طلب نُسي مفتوحًا يومًا كاملًا */
-    public const MIN_MINUTES = 3;
+    public const MIN_MINUTES = 1;
 
     public const MAX_MINUTES = 45;
 
@@ -105,10 +106,13 @@ class PrepTime
         return self::measured($vendor) ?? self::DEFAULT_MINUTES;
     }
 
-    /** تقريب لأعلى إلى أقرب ٥ دقائق، داخل الحدود — الوعد يُقال بأرقام مستريحة */
+    /**
+     * الوعد يُقال بأرقام مستريحة: تقريب لأعلى إلى أقرب ٥ دقائق.
+     * إلا تحت الخمس — مقهى يجهّز في دقيقة لا يُقال عنه خمس، فيُقرَّب لأقرب دقيقة.
+     */
     private static function round($minutes): int
     {
-        $rounded = (int) (ceil($minutes / 5) * 5);
+        $rounded = $minutes < 5 ? (int) ceil($minutes) : (int) (ceil($minutes / 5) * 5);
 
         return max(self::MIN_MINUTES, min(self::MAX_MINUTES, $rounded));
     }

@@ -62,6 +62,19 @@
 .ck-swatch{width:34px; height:22px; border-radius:5px; border:1px solid rgba(23,21,19,.22); flex:0 0 auto;}
 .ck-plate{font-size:21px; font-weight:700; letter-spacing:.5px;}
 
+/* الأصناف — تُقرأ من مترين: الكمية والاسم كبيران، والتفاصيل تحتهما */
+.ck-items{list-style:none; margin:12px 0 0; padding:0;}
+.ck-items li{padding:7px 0; border-top:1px solid var(--row);}
+.ck-items li:first-child{border-top:0;}
+.ck-qty{display:inline-block; min-width:38px; font-size:22px; font-weight:700; color:var(--primary);}
+.ck-name{font-size:20px; font-weight:700;}
+.ck-opt{display:block; margin-inline-start:38px; font-size:14px; color:var(--ink2);}
+.ck-card.s-arrived .ck-items li{border-color:rgba(255,255,255,.22);}
+.ck-card.s-arrived .ck-qty{color:var(--readydot);}
+.ck-card.s-arrived .ck-opt{color:rgba(255,255,255,.85);}
+.ck-note{margin-top:10px; background:var(--row); border-radius:8px; padding:8px 11px; font-size:15px;}
+.ck-card.s-arrived .ck-note{background:rgba(255,255,255,.16);}
+
 .ck-act{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
 .ck-btn{min-height:56px; padding:0 22px; border:0; border-radius:12px; cursor:pointer;
   font-size:18px; font-weight:700; color:#fff; background:var(--primary);}
@@ -81,14 +94,18 @@ form.ck-f{display:inline; margin:0;}
 
     <div>
       <span class="ck-lbl">{{ __('Preparation time now') }}</span>
-      <span class="ck-big">{{ $prepMinutes }}<span style="font-size:15px"> {{ __('min') }}</span></span>
+      @if ($prepMinutes <= 1)
+        <span class="ck-big">{{ __('Now') }}</span>
+      @else
+        <span class="ck-big">{{ $prepMinutes }}<span style="font-size:15px"> {{ __('min') }}</span></span>
+      @endif
     </div>
 
     <form method="POST" action="{{ route('vendor.preptime') }}" class="ck-f">
       @csrf
       @foreach (\App\Services\PrepTime::SLICES as $slice)
         <button class="ck-slice {{ (! $prepIsAuto && $prepMinutes == $slice) ? 'on' : '' }}"
-                name="minutes" value="{{ $slice }}">{{ $slice }}</button>
+                name="minutes" value="{{ $slice }}">{{ $slice == 1 ? __('Now') : $slice }}</button>
       @endforeach
       <button class="ck-slice auto {{ $prepIsAuto ? 'on' : '' }}" name="minutes" value="0">{{ __('Automatic') }}</button>
     </form>
@@ -130,12 +147,9 @@ form.ck-f{display:inline; margin:0;}
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px">
           <div>
             <div class="ck-id">#{{ $o->id_formated }}</div>
-            <div class="ck-sub">
-              {{ count($o->items) }} {{ __('Items') }}
-              @if ($card['promise_at'])
-                · {{ __('Promised') }} {{ $card['promise_at']->format('H:i') }}
-              @endif
-            </div>
+            @if ($card['promise_at'])
+              <div class="ck-sub">{{ __('Promised') }} {{ $card['promise_at']->format('H:i') }}</div>
+            @endif
           </div>
 
           <div style="text-align:end">
@@ -154,6 +168,31 @@ form.ck-f{display:inline; margin:0;}
             @endif
           </div>
         </div>
+
+        {{-- الأصناف: هذا ما يصنعه العامل. أهم محتوى في البطاقة. --}}
+        <ul class="ck-items">
+          @foreach ($o->items as $item)
+            @if ($item->pivot->qty > 0)
+              <li>
+                <span class="ck-qty">{{ $item->pivot->qty }}×</span>
+                <span class="ck-name">{{ $item->name }}</span>
+                @if (strlen($item->pivot->variant_name) > 1)
+                  <span class="ck-opt">{{ str_replace(',', ' · ', $item->pivot->variant_name) }}</span>
+                @endif
+                @if (strlen($item->pivot->extras) > 2)
+                  @php $imenuExtras = json_decode($item->pivot->extras) ?: []; @endphp
+                  @if (count($imenuExtras))
+                    <span class="ck-opt">+ {{ implode(' · ', array_map('strval', $imenuExtras)) }}</span>
+                  @endif
+                @endif
+              </li>
+            @endif
+          @endforeach
+        </ul>
+
+        @if (strlen(trim($o->comment ?? '')) > 0)
+          <div class="ck-note">{{ __('Note') }}: {{ $o->comment }}</div>
+        @endif
 
         {{-- السيارة: مربع اللون + النوع + اللوحة. هذه ما يخرج به العامل. --}}
         @if ($card['is_car'] && ($v['brand'] || $v['color'] || $v['plate']))
