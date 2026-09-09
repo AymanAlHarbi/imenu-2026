@@ -6,7 +6,7 @@
         @endhasrole
         <th scope="col">{{ __('Client') }}</th>
         <th class="table-web" scope="col">{{ __('Created') }}</th>
-        <th class="table-web" scope="col">{{ !config('settings.is_whatsapp_ordering_mode') ? __('Table / Method') : __('Method') }}</th>
+        <th class="table-web" scope="col">{{ __('Method') }}</th>
         <th class="table-web" scope="col">{{ __('Price') }}</th>
         <th class="table-web" scope="col">{{ __('Payment status') }}</th>
         <th scope="col">{{ __('Last status') }}</th>
@@ -70,71 +70,43 @@
                 <i class="fab fa-whatsapp"></i> {{ $customerPhone }}
             </a>
         @endif
+        {{-- iMenu 2026 — حالة الثقة مع العميل، لا مع طريقة الاستلام --}}
+        @if (!isset($hideAction) && $order->client && \App\Services\Trust::isTrusted($order->client))
+            <br/><small style="color:#2E5C43;font-weight:600">{{ __('Trusted customer') }}</small>
+        @elseif (!isset($hideAction) && $order->client && \App\Services\Trust::isBlocked($order->client))
+            <br/><small style="color:#C0392B;font-weight:600">{{ __('Ordering paused') }}</small>
+        @endif
     </td>
     <td class="table-web">
         <span class="text-sm">{{ $order->created_at->locale(Config::get('app.locale'))->calendar() }}</span>
         <br/>
         <small class="text-muted">{{ $order->created_at->locale(Config::get('app.locale'))->diffForHumans() }}</small>
+        {{-- iMenu 2026 — الوعد مع الوقت، لا مع الطريقة --}}
+        @if (!isset($hideAction) && $order->getConfig('ready_promise_at', false))
+            <br/><small class="text-muted">{{ __('Promised') }}
+                <span style="font-variant-numeric:tabular-nums">{{ \Carbon\Carbon::parse($order->getConfig('ready_promise_at'))->format('H:i') }}</span>
+            </small>
+        @endif
     </td>
     <td class="table-web">
+        {{-- iMenu 2026 — سطران فقط: الطريقة، ثم المركبة مضغوطة في سطر واحد.
+             حالة الثقة انتقلت لخلية العميل، والوعد لخلية التاريخ، و«لم يُستلم»
+             لعمود الإجراءات — فالخلية كانت تجمع ست معلومات غير متجانسة. --}}
         <span class="badge badge-pill badge-{{ $methodColors[$order->delivery_method] ?? 'secondary' }}">
-            {{ $order->table ? $order->table->getFullNameAttribute()." / " : '' }}{{ $order->getExpeditionType() }}
+            {{ $order->table ? $order->table->getFullNameAttribute().' / ' : '' }}{{ $order->getConfig('pickup_method','') == 'car' ? __('From my car') : __('From the coffee shop') }}
         </span>
         @if ($order->getConfig('pickup_method','') == 'car')
-            <br/>
-            <span class="text-sm font-weight-bold"><i class="fa fa-car"></i>
-                {{ trim($order->getConfig('vehicle_brand','').' '.$order->getConfig('vehicle_model','')) }}
-                @if ($order->getConfig('vehicle_color',''))
-                    · {{ $order->getConfig('vehicle_color') }}
-                @endif
-            </span>
-            @if ($order->getConfig('vehicle_plate',''))
-                <br/><small class="text-muted" dir="ltr">{{ $order->getConfig('vehicle_plate') }}</small>
-            @endif
-            @if ($order->getConfig('arrived_at',''))
-                <br/><span class="badge badge-pill badge-success">{{ __('Customer has arrived') }}</span>
-            @endif
-        @endif
-
-        {{-- iMenu 2026 — نظام الثقة: حالة العميل، وعد الجاهزية، و«لم يُستلم» --}}
-        @if (!isset($hideAction) && auth()->user() && (auth()->user()->hasRole('owner') || auth()->user()->hasRole('staff') || auth()->user()->hasRole('admin')))
             @php
-                $imenuClient = $order->client;
-                $imenuTrust = \App\Services\Trust::clientLabel($imenuClient);
-                $imenuPromise = $order->getConfig('ready_promise_at', false);
-                $imenuReportReason = null;
-                $imenuCanReport = \App\Services\Trust::canReport($order, $imenuReportReason);
-                $imenuReported = \App\Services\Trust::isReported($order);
+                $imenuCar = array_filter([
+                    trim($order->getConfig('vehicle_brand','').' '.$order->getConfig('vehicle_model','')),
+                    $order->getConfig('vehicle_color',''),
+                    $order->getConfig('vehicle_plate',''),
+                ]);
             @endphp
-
-            <br/>
-            <span class="badge badge-pill" style="background:{{ $imenuTrust['color'] }};color:#fff">
-                {{ $imenuTrust['text'] }}
-            </span>
-            @if ($imenuTrust['key'] === 'trusted')
-                <small class="text-muted">({{ \App\Services\Trust::streak($imenuClient) }})</small>
-            @endif
-
-            @if ($imenuPromise)
-                <br/><small class="text-muted">{{ __('Promised') }}
-                    <span style="font-variant-numeric: tabular-nums">{{ \Carbon\Carbon::parse($imenuPromise)->format('H:i') }}</span>
-                </small>
-            @endif
-
-            @if ($imenuReported)
-                <br/><span class="badge badge-pill" style="background:#C9B6A6;color:#171513">{{ __('Not collected') }}</span>
-                @if (\App\Services\Trust::isDisputed($order))
-                    <span class="badge badge-pill badge-secondary">{{ __('Objected') }}</span>
-                @endif
-            @elseif ($imenuCanReport)
-                <br/>
-                <form method="POST" action="{{ route('order.notcollected') }}" class="d-inline">
-                    @csrf
-                    <input type="hidden" name="order_id" value="{{ $order->id }}">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary mt-1" style="min-height:44px">
-                        {{ __('Not collected') }}
-                    </button>
-                </form>
+            @if (count($imenuCar))
+                <br/><span class="text-sm font-weight-bold"><i class="fa fa-car text-muted"></i>
+                    {{ implode(' · ', $imenuCar) }}
+                </span>
             @endif
         @endif
     </td>
