@@ -85,13 +85,29 @@ class CartController extends Controller
                 }
             }
 
+            //iMenu 2026 - مجموعات الخيارات: التحقق هنا يعطي العميل رسالة فورية
+            //بدل أن يفشل الطلب عند الدفع
+            $modifierSelection = $request->input('modifiers', []);
+            $modifierError = \App\Services\Modifiers::validate($item, $modifierSelection);
+            if ($modifierError !== null) {
+                return response()->json([
+                    'status' => false,
+                    'errMsg' => $modifierError,
+                ]);
+            }
+            $modifiers = \App\Services\Modifiers::apply($item, $modifierSelection);
+            $cartItemPrice += $modifiers['delta'];
+            foreach ($modifiers['labels'] as $modifierLabel) {
+                $cartItemName .= "\n+ ".$modifierLabel;
+            }
+
             foreach ($request->extras as $key => $value) {
                 $cartItemName .= "\n+ ".$item->extras()->findOrFail($value)->name;
                 $cartItemPrice += $item->extras()->findOrFail($value)->price;
                 $theElement .= $value.' -- '.$item->extras()->findOrFail($value)->name.'  --> '.$cartItemPrice.' ->- ';
             }
 
-            Cart::add((new \DateTime())->getTimestamp(), $cartItemName, $cartItemPrice, $request->quantity, ['id' => $item->id, 'variant' => $request->variantID, 'extras' => $request->extras, 'restorant_id' => $restID, 'image' => $item->icon, 'friendly_price' => Money($cartItemPrice, config('settings.cashier_currency'), config('settings.do_convertion'))->format()]);
+            Cart::add((new \DateTime())->getTimestamp(), $cartItemName, $cartItemPrice, $request->quantity, ['id' => $item->id, 'variant' => $request->variantID, 'extras' => $request->extras, 'modifiers' => $modifierSelection, 'restorant_id' => $restID, 'image' => $item->icon, 'friendly_price' => Money($cartItemPrice, config('settings.cashier_currency'), config('settings.do_convertion'))->format()]);
 
             return response()->json([
                 'status' => true,

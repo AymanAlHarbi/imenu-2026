@@ -56,6 +56,13 @@ class BaseOrderRepository extends Controller
     public $isNewOrder = true;
 
     /**
+     * iMenu 2026 - أول خطأ في مجموعات المُحدِّدات، يُفحص في validateOrder
+     *
+     * @var string|null
+     */
+    public $modifierError = null;
+
+    /**
      * @var string errorMessage - Deliver, DineIn, PickUp
      */
     public $errorMessage = '';
@@ -116,6 +123,16 @@ class BaseOrderRepository extends Controller
 
             return Validator::make(['trust_block' => null], ['trust_block' => ['required']], [
                 'trust_block.required' => __('Ordering is paused until').' '.$until->format('Y-m-d').'. '.__('You can appeal from your orders page.'),
+            ]);
+        }
+
+        //iMenu 2026 - اختيار إلزامي ناقص أو زائد ← يُرفض الطلب برسالة المجموعة
+        if ($this->modifierError !== null) {
+            $message = $this->modifierError;
+            $this->invalidateOrder();
+
+            return Validator::make(['modifiers' => null], ['modifiers' => ['required']], [
+                'modifiers.required' => $message,
             ]);
         }
 
@@ -230,6 +247,17 @@ class BaseOrderRepository extends Controller
                 //Decrement from item
                 $theItem->decrement('qty', $item['qty']);
             }
+
+            //iMenu 2026 - مجموعات المُحدِّدات: فروق أسعار جمعية لا توليفات
+            $modifierSelection = isset($item['modifiers']) ? $item['modifiers'] : [];
+            $modifierError = \App\Services\Modifiers::validate($theItem, $modifierSelection);
+            if ($modifierError !== null && $this->modifierError === null) {
+                $this->modifierError = $modifierError;
+            }
+            $modifiers = \App\Services\Modifiers::apply($theItem, $modifierSelection);
+            $itemSelectedPrice += $modifiers['delta'];
+            //الأسماء تُخزَّن نصًّا مع الإضافات، فتظهر في شاشة الكاشير والفاتورة بلا تعديل
+            $extras = array_merge($extras, $modifiers['labels']);
 
             //Find the extras
             foreach ($item['extrasSelected'] as $key => $extra) {

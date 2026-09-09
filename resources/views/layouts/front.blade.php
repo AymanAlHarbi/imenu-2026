@@ -145,7 +145,7 @@ Coded by www.creative-tim.com
         var PUSHER_APP_CLUSTER = "{{ config('broadcasting.connections.pusher.options.cluster') }}";
         var USER_IS_CLIENT = @json(auth()->check() && auth()->user()->hasRole('client'));
     </script>
-    <script src="{{ asset('custom') }}/js/cartFunctions.js"></script>
+    <script src="{{ asset('custom') }}/js/cartFunctions.js?v=2026091"></script>
 
 
     <!-- Cart custom sidemenu -->

@@ -2045,5 +2045,22 @@
     "Export CSV": "تصدير CSV",
     "Staff": "الموظفون",
     "Back to your account": "رجوع إلى حسابك",
-    "Pickup method": "طريقة الاستلام"
+    "Pickup method": "طريقة الاستلام",
+    "Option groups": "مجموعات الخيارات",
+    "Size, coffee type, add-ons — with a price difference for each choice": "الحجم · نوع البن · الإضافات — ولكل خيار فرق سعر",
+    "Add group": "إضافة مجموعة",
+    "Group name": "اسم المجموعة",
+    "Mandatory": "إلزامي",
+    "Multiple choice": "اختيار متعدد",
+    "Minimum": "الحد الأدنى",
+    "Maximum, 0 = no limit": "الحد الأقصى (٠ = بلا حد)",
+    "Choice": "الخيار",
+    "Price difference": "فرق السعر",
+    "Add choice": "إضافة خيار",
+    "Remove group": "حذف المجموعة",
+    "Example: Size — Small +0 · Large +3": "مثال: الحجم — صغير +٠ · كبير +٣",
+    "Option groups saved.": "حُفظت مجموعات الخيارات.",
+    "Please choose": "الرجاء اختيار",
+    "Only one choice is allowed in": "يُسمح بخيار واحد في",
+    "Too many choices in": "عدد الخيارات أكثر من المسموح في"
 }

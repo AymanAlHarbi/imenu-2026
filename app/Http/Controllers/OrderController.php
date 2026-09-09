@@ -279,6 +279,8 @@ class OrderController extends Controller
                 'qty' => $item->quantity,
                 'variant' => $item->attributes->variant,
                 'extrasSelected' => $extras,
+                //iMenu 2026 - مجموعات الخيارات المختارة تنتقل من السلة إلى الطلب
+                'modifiers' => isset($item->attributes->modifiers) ? $item->attributes->modifiers : [],
             ]);
         }
 

@@ -13,7 +13,7 @@
     var LOCALE="<?php echo  App::getLocale() ?>";
     var IS_POS=false;
 </script>
-<script src="{{ asset('custom') }}/js/cartFunctions.js"></script>
+<script src="{{ asset('custom') }}/js/cartFunctions.js?v=2026091"></script>
 
 @if (isset($showGoogleTranslate)&&$showGoogleTranslate&&!$showLanguagesSelector)
     @include('googletranslate::scripts')
@@ -28,7 +28,7 @@
 
 
  <!-- Custom js -->
- <script src="{{ asset('custom') }}/js/order.js"></script>
+ <script src="{{ asset('custom') }}/js/order.js?v=2026091"></script>
 
  <!-- Interface from PHP items to JS Array -->
  @include('restorants.phporderinterface') 

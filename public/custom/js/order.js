@@ -6,6 +6,7 @@ var lastAdded=null;
 var previouslySelected=[];
 var extrasSelected=[];
 var variantID=null;
+var modifiersSelected={};
 var debug=true;
 
 function debugMe(title,message){
@@ -84,11 +85,11 @@ function setSelectedVariant(element){
     //Set current item price
     currentItemSelectedPrice=element.price;
 
-    //Show QTY
-    $('.quantity-area').show();
-
     //Set variantID
     variantID=element.id;
+
+    //iMenu 2026 - البوابة تفحص المقاس والمجموعات الإلزامية معًا
+    imUpdateGate();
 
     //Empty the extras, and call it
     $('#exrtas-area-inside').empty();
@@ -326,10 +327,14 @@ function setCurrentItem(id){
         });
         $('#exrtas-area').show();
     }
+
+    //iMenu 2026 - مجموعات الخيارات: تُعرض بعد المقاس وقبل الإضافات
+    imRenderModifiers(item);
 }
 
 function recalculatePrice(id,value){
-    var mainPrice=parseFloat(currentItemSelectedPrice);
+    //iMenu 2026 - الأساس + فروق المجموعات + الإضافات
+    var mainPrice=parseFloat(currentItemSelectedPrice)+imModifiersDelta();
     extrasSelected=[];
 
     //Get the selected check boxes
@@ -339,6 +344,96 @@ function recalculatePrice(id,value){
     });
     $('#modalPrice').html(formatPrice(mainPrice));
 
+}
+
+/* ===== iMenu 2026 — مجموعات الخيارات بفروق أسعار =====
+   الحاوية تُنشأ بالـJS مرة واحدة قبل منطقة الإضافات، فتعمل في كل
+   القوالب (Elegant · Ember · Glow · الافتراضي) بلا تعديل أربعة ملفات. */
+
+function imModifiersDelta(){
+    var total=0;
+    $(".im-mg-input:checked").each(function(){ total+=parseFloat($(this).attr("data-delta")||0); });
+    return total;
+}
+
+function imCollectModifiers(){
+    modifiersSelected={};
+    var groups=(currentItem&&currentItem.modifiers)?currentItem.modifiers:[];
+    groups.forEach(function(g,gi){ modifiersSelected[gi]=[]; });
+    $(".im-mg-input:checked").each(function(){
+        var gi=$(this).attr("data-gi"), oi=parseInt($(this).attr("data-oi"),10);
+        if(!modifiersSelected[gi]){ modifiersSelected[gi]=[]; }
+        modifiersSelected[gi].push(oi);
+    });
+}
+
+function imModifiersSatisfied(){
+    var groups=(currentItem&&currentItem.modifiers)?currentItem.modifiers:[];
+    for(var gi=0; gi<groups.length; gi++){
+        var g=groups[gi];
+        var n=(modifiersSelected[gi]||[]).length;
+        var min=g.required?Math.max(1,(g.min||1)):(g.min||0);
+        if(n<min){ return false; }
+        if(g.multiple&&g.max>0&&n>g.max){ return false; }
+    }
+    return true;
+}
+
+/* بوابة واحدة للشراء: المقاس مختار (إن وُجد) والمجموعات الإلزامية مُجابة */
+function imUpdateGate(){
+    var variantOk=!(currentItem&&currentItem.has_variants)||variantID!==null;
+    if(variantOk&&imModifiersSatisfied()){ $(".quantity-area").show(); }
+    else{ $(".quantity-area").hide(); }
+}
+
+function imModifierChanged(gi){
+    imCollectModifiers();
+
+    /* الحد الأقصى يُطبَّق بتعطيل ما لم يُختر، لا برسالة خطأ بعد الضغط */
+    var groups=(currentItem&&currentItem.modifiers)?currentItem.modifiers:[];
+    groups.forEach(function(g,index){
+        if(g.multiple&&g.max>0){
+            var reached=(modifiersSelected[index]||[]).length>=g.max;
+            $(".im-mg[data-gi='"+index+"'] .im-mg-input").each(function(){
+                if(!this.checked){ this.disabled=reached; }
+            });
+        }
+    });
+
+    recalculatePrice(currentItem?currentItem.id:null);
+    imUpdateGate();
+}
+
+function imRenderModifiers(item){
+    if($("#modifiers-area").length===0){
+        if($("#exrtas-area").length){ $("#exrtas-area").before('<div id="modifiers-area" style="display:none"></div>'); }
+        else{ $(".quantity-area").first().before('<div id="modifiers-area" style="display:none"></div>'); }
+    }
+    var host=$("#modifiers-area");
+    host.empty();
+    modifiersSelected={};
+
+    var groups=(item&&item.modifiers)?item.modifiers:[];
+    if(groups.length===0){ host.hide(); return; }
+
+    groups.forEach(function(g,gi){
+        modifiersSelected[gi]=[];
+        var type=g.multiple?"checkbox":"radio";
+        var star=g.required?' <span style="color:#C0392B">*</span>':'';
+        var html='<div class="im-mg mb-3" data-gi="'+gi+'"><label class="form-control-label"><b>'+g.name+'</b>'+star+'</label>';
+        g.options.forEach(function(o,oi){
+            var id="im_mg_"+gi+"_"+oi;
+            var delta=parseFloat(o.delta||0)>0?"&nbsp; + "+formatPrice(o.delta):"";
+            html+='<div class="custom-control custom-'+type+' mb-2">'+
+                  '<input class="custom-control-input im-mg-input" type="'+type+'" id="'+id+'" name="im_mg_'+gi+'" '+
+                  'data-gi="'+gi+'" data-oi="'+oi+'" data-delta="'+(o.delta||0)+'" onchange="imModifierChanged('+gi+')">'+
+                  '<label class="custom-control-label" for="'+id+'">'+o.name+delta+'</label></div>';
+        });
+        html+='</div>';
+        host.append(html);
+    });
+    host.show();
+    imUpdateGate();
 }
 
 function getLocation(callback){

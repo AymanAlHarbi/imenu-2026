@@ -255,6 +255,9 @@ Route::middleware('auth', 'impersonate')->group(function () {
     Route::post('/import/items', [ItemsController::class, 'import'])->name('import.items');
     Route::post('/item/change/{item}', [ItemsController::class, 'change']);
     Route::post('/{item}/extras', [ItemsController::class, 'storeExtras'])->name('extras.store');
+
+    //iMenu 2026 - مجموعات الخيارات بفروق أسعار
+    Route::post('/items/{item}/modifiers', [ItemsController::class, 'storeModifiers'])->name('items.modifiers.store');
     Route::post('/{item}/extras/edit', [ItemsController::class, 'editExtras'])->name('extras.edit');
     Route::delete('/{item}/extras/{extras}', [ItemsController::class, 'deleteExtras'])->name('extras.destroy');
 

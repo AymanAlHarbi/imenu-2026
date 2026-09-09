@@ -629,7 +629,8 @@ window.onload = function () {
                 id: $('#modalID').text(),
                 quantity: $('#quantity').val(),
                 extras:extrasSelected,
-                variantID:variantID
+                variantID:variantID,
+                modifiers:modifiersSelected
               })
               .then(function (response) {
                   if(response.data.status){

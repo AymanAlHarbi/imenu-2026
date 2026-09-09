@@ -201,6 +201,10 @@
 
                         <br />
                     @endif
+                    {{-- iMenu 2026 — مجموعات الخيارات (الحجم · نوع البن …) --}}
+                    @include('items.modifiers')
+                    <br />
+
                     <div class="card card-profile shadow">
                         <div class="card-header">
                             <div class="row align-items-center">

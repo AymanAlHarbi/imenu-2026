@@ -30,6 +30,7 @@
                 'extras'=>$formatedExtras,
                 'options'=>$item->options,
                 'variants'=>$item->availlablevariants,
+                'modifiers'=>\App\Services\Modifiers::groups($item),
                 'has_variants'=>$item->has_variants==1&&$item->options->count()>0,
                 'description'=>$item->description
             ];

@@ -349,6 +349,21 @@ class ItemsController extends Controller
         ]);
     }
 
+    /**
+     * iMenu 2026 - حفظ مجموعات الخيارات. تُنقّى في الخدمة قبل الحفظ،
+     * فلا تُخزَّن مجموعة بلا اسم أو بلا قيم.
+     */
+    public function storeModifiers(Request $request, Items $item): RedirectResponse
+    {
+        \App\Services\Modifiers::save($item, $request->input('groups', []));
+
+        return redirect()->route('items.edit', [
+            'item' => $item,
+            'restorant' => $item->category->restorant,
+            'restorant_id' => $item->category->restorant->id,
+        ])->withStatus(__('Option groups saved.'));
+    }
+
     public function storeExtras(Request $request, Items $item): RedirectResponse
     {
         //dd($request->all());

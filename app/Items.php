@@ -12,9 +12,13 @@ use Illuminate\Support\Str;
 
 class Items extends TranslateAwareModel
 {
+    use \App\Traits\HasConfig;
     use SoftDeletes;
 
     public $translatable = ['name', 'description'];
+
+    //iMenu 2026 - لازم لـHasConfig: مجموعات المُحدِّدات تُخزَّن JSON في configs
+    protected $modelName = \App\Items::class;
 
     protected $table = 'items';
 
