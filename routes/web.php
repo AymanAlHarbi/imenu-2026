@@ -29,6 +29,7 @@ use App\Http\Controllers\RestoareasController;
 use App\Http\Controllers\RestorantController;
 use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\CashierController;
 use App\Http\Controllers\SimpleDeliveryController;
 use App\Http\Controllers\TablesController;
 use App\Http\Controllers\TestimonialsController;
@@ -394,6 +395,15 @@ Route::post('order/arrived', [OrderController::class, 'arrived'])->name('order.a
 Route::post('order/notcollected', [OrderController::class, 'notCollected'])->middleware('auth')->name('order.notcollected');
 Route::post('order/dispute', [OrderController::class, 'disputeNotCollected'])->name('order.dispute');
 Route::post('vendor/preptime', [OrderController::class, 'setPrepTime'])->middleware('auth')->name('vendor.preptime');
+
+//iMenu 2026 - شاشة الكاشير: ثلاثة إجراءات فقط
+Route::middleware('auth')->group(function () {
+    Route::get('cashier', [CashierController::class, 'index'])->name('cashier.index');
+    Route::post('cashier/ready', [CashierController::class, 'ready'])->name('cashier.ready');
+    Route::post('cashier/delivered', [CashierController::class, 'delivered'])->name('cashier.delivered');
+    Route::post('cashier/delay', [CashierController::class, 'delay'])->name('cashier.delay');
+    Route::post('cashier/togglecar', [CashierController::class, 'toggleCar'])->name('cashier.togglecar');
+});
 Route::get('order/successwhatsapp/{order}', [OrderController::class, 'silentWhatsAppRedirect'])->name('order.successwhatsapp');
 
 Route::get('order/cancel', [OrderController::class, 'cancel'])->name('order.cancel');

@@ -12,6 +12,12 @@
                 <i class="ni ni-tv-2 text-primary"></i> {{ __('Dashboard') }}
             </a>
         </li>
+        {{-- iMenu 2026 — شاشة الكاشير: ثلاثة إجراءات فقط --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('cashier.index') }}">
+                <i class="ni ni-tablet-button text-orange"></i> {{ __('Cashier screen') }}
+            </a>
+        </li>
         @if(!config('app.issd'))
             <li class="nav-item">
                 <a class="nav-link" href="/live">

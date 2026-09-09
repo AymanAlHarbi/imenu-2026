@@ -17,10 +17,14 @@
         <i class="fa fa-shopping-bag ck-opt-icon" aria-hidden="true"></i>
       </div>
 
-      <div class="custom-control custom-radio mb-3 ck-opt">
-        <input name="custom[pickup_method]" class="custom-control-input" id="pickupCar" type="radio" value="car">
+      @php $imenuCarOn = \App\Services\CarPickup::isOn($restorant ?? null); @endphp
+      <div class="custom-control custom-radio mb-3 ck-opt" @if(! $imenuCarOn) style="opacity:.55" @endif>
+        <input name="custom[pickup_method]" class="custom-control-input" id="pickupCar" type="radio" value="car" @if(! $imenuCarOn) disabled @endif>
         <label class="custom-control-label" for="pickupCar">{{ __('From my car') }}</label>
         <i class="fa fa-car ck-opt-icon" aria-hidden="true"></i>
+        @if (! $imenuCarOn)
+          <div class="text-muted text-sm mt-1">{{ __('The coffee shop is busy — window pickup only') }}</div>
+        @endif
       </div>
 
       <div id="savedVehicleBox" class="mb-3 p-3 rounded" style="display:none;background:#f6f9fc;">

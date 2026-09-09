@@ -2018,5 +2018,19 @@
     "I did collect it — object": "استلمته فعلًا — اعتراض",
     "The coffee shop marked your order as not collected. If this is a mistake, you can object from your orders page.": "سجّل الكوفي طلبك «لم يُستلم». إن كان هذا خطأً، يمكنك الاعتراض من صفحة طلباتك.",
     "Ordering is paused until": "الطلب موقوف حتى",
-    "You can appeal from your orders page.": "يمكنك التظلّم من صفحة طلباتك."
+    "You can appeal from your orders page.": "يمكنك التظلّم من صفحة طلباتك.",
+    "Cashier screen": "شاشة الكاشير",
+    "Car pickup": "الاستلام من السيارة",
+    "On": "مشتغل",
+    "Turn on now": "تشغيل الآن",
+    "Active orders": "طلبات نشطة",
+    "No active orders": "لا طلبات نشطة",
+    "Ready": "جاهز",
+    "Ready · waiting": "جاهز · بانتظار العميل",
+    "Late": "متأخر",
+    "Handed over": "سُلّم",
+    "Parking spot": "الموقف",
+    "The coffee shop is busy — window pickup only": "الكوفي مشغول — استلام من الشباك فقط",
+    "Your order is running a little late": "طلبك تأخّر قليلًا",
+    "New ready time": "الوقت الجديد"
 }
