@@ -75,6 +75,25 @@
 .ck-note{margin-top:10px; background:var(--row); border-radius:8px; padding:8px 11px; font-size:15px;}
 .ck-card.s-arrived .ck-note{background:rgba(255,255,255,.16);}
 
+.ck-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+.ck-pill.way{background:var(--row); color:var(--ink2); margin-top:4px;}
+.ck-card.s-arrived .ck-pill.way{background:rgba(255,255,255,.18); color:#fff;}
+.ck-car.big{padding:14px 16px;}
+.ck-swatch.big{width:46px; height:30px;}
+.ck-carname{font-weight:700; font-size:21px;}
+.ck-plate.big{font-size:28px;}
+.ck-amount{display:flex; align-items:baseline; gap:10px; margin-top:12px;
+  background:var(--row); border-radius:10px; padding:10px 13px;}
+.ck-amount .ck-lbl{margin:0;}
+.ck-money{font-size:30px; font-weight:700; color:var(--ink);}
+.ck-money.paid{color:var(--ready);}
+.ck-amount.small{background:transparent; padding:8px 0 0; margin-top:8px; border-top:1px solid var(--row);}
+.ck-amount.small .ck-money{font-size:19px; color:var(--ink2);}
+.ck-card.s-arrived .ck-amount{background:rgba(255,255,255,.18);}
+.ck-card.s-arrived .ck-money{color:#fff;}
+.ck-card.s-arrived .ck-money.paid{color:var(--readydot);}
+.ck-oneline{margin-top:10px; font-size:16px; color:var(--ink2);}
+.ck-card.s-arrived .ck-oneline{color:rgba(255,255,255,.85);}
 .ck-act{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
 .ck-btn{min-height:56px; padding:0 22px; border:0; border-radius:12px; cursor:pointer;
   font-size:18px; font-weight:700; color:#fff; background:var(--primary);}
@@ -141,12 +160,18 @@ form.ck-f{display:inline; margin:0;}
 
   <div class="ck-grid">
     @foreach ($cards as $card)
-      @php $o = $card['order']; $v = $card['vehicle']; @endphp
+      @php
+        $o = $card['order'];
+        $v = $card['vehicle'];
+        $handover = $card['emphasis'] === 'handover';
+        $hasCar = $card['is_car'] && ($v['brand'] || $v['color'] || $v['plate']);
+      @endphp
       <div class="ck-card s-{{ $card['is_new'] ? 'new' : $card['state'] }}" data-order="{{ $o->id }}">
 
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px">
+        <div class="ck-head">
           <div>
             <div class="ck-id">#{{ $o->id_formated }}</div>
+            <span class="ck-pill way">{!! $card['is_car'] ? '&#128663; '.__('From my car') : '&#129517; '.__('From the coffee shop') !!}</span>
             @if ($card['promise_at'])
               <div class="ck-sub">{{ __('Promised') }} {{ $card['promise_at']->format('H:i') }}</div>
             @endif
@@ -163,47 +188,86 @@ form.ck-f{display:inline; margin:0;}
             @elseif ($card['state'] === 'not_collected')
               <span class="ck-pill" style="background:var(--faint); color:var(--ink)">{{ __('Not collected') }}</span>
             @elseif ($card['promise_at'])
-              <div class="ck-count" data-until="{{ $card['promise_at']->timestamp }}">—</div>
+              <div class="ck-count" data-until="{{ $card['promise_at']->timestamp }}">&mdash;</div>
               <div class="ck-sub">{{ __('min') }}</div>
             @endif
           </div>
         </div>
 
-        {{-- الأصناف: هذا ما يصنعه العامل. أهم محتوى في البطاقة. --}}
-        <ul class="ck-items">
-          @foreach ($o->items as $item)
-            @if ($item->pivot->qty > 0)
-              <li>
-                <span class="ck-qty">{{ $item->pivot->qty }}×</span>
-                <span class="ck-name">{{ $item->name }}</span>
-                @if (strlen($item->pivot->variant_name) > 1)
-                  <span class="ck-opt">{{ str_replace(',', ' · ', $item->pivot->variant_name) }}</span>
-                @endif
-                @if (strlen($item->pivot->extras) > 2)
-                  @php $imenuExtras = json_decode($item->pivot->extras) ?: []; @endphp
-                  @if (count($imenuExtras))
-                    <span class="ck-opt">+ {{ implode(' · ', array_map('strval', $imenuExtras)) }}</span>
-                  @endif
-                @endif
-              </li>
-            @endif
-          @endforeach
-        </ul>
-
-        @if (strlen(trim($o->comment ?? '')) > 0)
-          <div class="ck-note">{{ __('Note') }}: {{ $o->comment }}</div>
-        @endif
-
-        {{-- السيارة: مربع اللون + النوع + اللوحة. هذه ما يخرج به العامل. --}}
-        @if ($card['is_car'] && ($v['brand'] || $v['color'] || $v['plate']))
-          <div class="ck-car">
-            <span class="ck-swatch" style="background:{{ $card['state'] === 'arrived' ? 'rgba(255,255,255,.9)' : '#D9D2CA' }}"></span>
-            <div>
-              <div style="font-weight:700; font-size:17px">{{ $v['brand'] ?: __('From my car') }} @if($v['color']) · {{ $v['color'] }} @endif</div>
-              @if ($v['plate'])<div class="ck-plate" dir="ltr">{{ $v['plate'] }}</div>@endif
-              @if ($v['spot'])<div class="ck-sub">{{ __('Parking spot') }}: {{ $v['spot'] }}</div>@endif
+        @if ($handover)
+          {{-- لحظة التسليم: «لمين أعطيه وكم آخذ؟» — السيارة والمبلغ يتصدّران --}}
+          @if ($hasCar)
+            <div class="ck-car big">
+              <span class="ck-swatch big" style="background:{{ $card['state'] === 'arrived' ? 'rgba(255,255,255,.9)' : '#D9D2CA' }}"></span>
+              <div>
+                <div class="ck-carname">{{ $v['brand'] ?: __('From my car') }}@if($v['color']) · {{ $v['color'] }}@endif</div>
+                @if ($v['plate'])<div class="ck-plate big" dir="ltr">{{ $v['plate'] }}</div>@endif
+                @if ($v['spot'])<div class="ck-sub">{{ __('Parking spot') }}: {{ $v['spot'] }}</div>@endif
+              </div>
             </div>
+          @endif
+
+          <div class="ck-amount">
+            @if ($o->payment_status == 'paid')
+              <span class="ck-lbl">{{ __('Paid') }}</span>
+              <span class="ck-money paid">@money($o->order_price_with_discount, config('settings.cashier_currency'), config('settings.do_convertion'))</span>
+            @else
+              <span class="ck-lbl">{{ __('Collect') }}</span>
+              <span class="ck-money">@money($o->order_price_with_discount, config('settings.cashier_currency'), config('settings.do_convertion'))</span>
+            @endif
           </div>
+
+          {{-- الأصناف هنا تأكيد لا تعليمات، فسطر واحد يكفي --}}
+          @if ($card['items_line'])
+            <div class="ck-oneline">{{ $card['items_line'] }}</div>
+          @endif
+
+          @if (strlen(trim($o->comment ?? '')) > 0)
+            <div class="ck-note">{{ __('Note') }}: {{ $o->comment }}</div>
+          @endif
+
+          {{-- الجوال: يُحتاج في حالة واحدة — جاهز ولا أحد جاء --}}
+          @if ($card['phone'])
+            <div class="ck-sub" style="margin-top:8px">
+              {{ __('Phone') }}: <a href="tel:{{ $card['phone'] }}" dir="ltr" style="color:inherit; text-decoration:underline">{{ $card['phone'] }}</a>
+            </div>
+          @endif
+
+        @elseif ($card['state'] !== 'not_collected')
+          {{-- لحظة التحضير: «وش أصنع؟» — الأصناف تتصدّر، وما عداها يصغر --}}
+          <ul class="ck-items">
+            @foreach ($o->items as $item)
+              @if ($item->pivot->qty > 0)
+                <li>
+                  <span class="ck-qty">{{ $item->pivot->qty }}×</span>
+                  <span class="ck-name">{{ $item->name }}</span>
+                  @if (strlen($item->pivot->variant_name) > 1)
+                    <span class="ck-opt">{{ str_replace(',', ' · ', $item->pivot->variant_name) }}</span>
+                  @endif
+                  @if (strlen($item->pivot->extras) > 2)
+                    @php $imenuExtras = json_decode($item->pivot->extras) ?: []; @endphp
+                    @if (count($imenuExtras))
+                      <span class="ck-opt">+ {{ implode(' · ', array_map('strval', $imenuExtras)) }}</span>
+                    @endif
+                  @endif
+                </li>
+              @endif
+            @endforeach
+          </ul>
+
+          @if (strlen(trim($o->comment ?? '')) > 0)
+            <div class="ck-note">{{ __('Note') }}: {{ $o->comment }}</div>
+          @endif
+
+          <div class="ck-amount small">
+            <span class="ck-lbl">{{ $o->payment_status == 'paid' ? __('Paid') : __('Collect') }}</span>
+            <span class="ck-money">@money($o->order_price_with_discount, config('settings.cashier_currency'), config('settings.do_convertion'))</span>
+          </div>
+
+        @else
+          @if ($card['items_line'])
+            <div class="ck-oneline">{{ $card['items_line'] }}</div>
+          @endif
         @endif
 
         @if ($card['trust']['key'] !== 'new')
@@ -236,7 +300,6 @@ form.ck-f{display:inline; margin:0;}
               <button class="ck-btn">{{ __('Ready') }}</button>
             </form>
             @if ($card['state'] === 'late')
-              {{-- التأخير: خيارا تمديد فقط. الطريق الوحيد إلى «جاهز» يظل الزر الأصلي. --}}
               @foreach ([5, 10] as $add)
                 <form method="POST" action="{{ route('cashier.delay') }}" class="ck-f">
                   @csrf<input type="hidden" name="order_id" value="{{ $o->id }}">

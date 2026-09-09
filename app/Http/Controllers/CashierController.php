@@ -112,7 +112,27 @@ class CashierController extends Controller
         $reportReason = null;
         $canReport = Trust::canReport($order, $reportReason);
 
+        /**
+         * لحظتان مختلفتان لكل بطاقة، ولكل واحدة معلومة مختلفة:
+         *  - items:    «وش أصنع؟» ← الأصناف تتصدّر، والمبلغ والسيارة تشويش الآن
+         *  - handover: «لمين أعطيه وكم آخذ؟» ← السيارة والمبلغ يتصدّران، والأصناف تُضغط
+         * البطاقة تتغيّر بتغيّر حالتها بدل أن تعرض كل شيء دائمًا.
+         */
+        $emphasis = in_array($state, ['ready', 'arrived'], true) ? 'handover' : 'items';
+
+        //سطر مضغوط للأصناف — يُستخدم في لحظة التسليم حيث الأصناف تأكيد لا تعليمات
+        $lines = [];
+        foreach ($order->items as $item) {
+            if ($item->pivot->qty > 0) {
+                $lines[] = $item->pivot->qty.'× '.$item->name;
+            }
+        }
+
         return [
+            'emphasis' => $emphasis,
+            'items_line' => implode(' · ', $lines),
+            //الجوال يُحتاج في حالة واحدة: الطلب جاهز ولا أحد جاء
+            'phone' => $state === 'ready' ? ($order->phone ?: ($order->client->phone ?? '')) : '',
             'order' => $order,
             'state' => $state,
             'urgency' => self::URGENCY[$state],
