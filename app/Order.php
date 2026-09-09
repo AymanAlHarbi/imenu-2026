@@ -154,7 +154,12 @@ class Order extends Model
                     //Possible when using modules
                     $delivery = __('Delivery');
                 } else {
-                    $delivery = $this->delivery_method == 3 ? __('Dine in') : __('Takeaway');
+                    if ($this->delivery_method == 3) {
+                        $delivery = __('Dine in');
+                    } else {
+                        //iMenu 2026 - pickup: distinguish car pickup from the rest
+                        $delivery = $this->getConfig('pickup_method', '') == 'car' ? __('From my car') : __('Pickup');
+                    }
                 }
 
             }

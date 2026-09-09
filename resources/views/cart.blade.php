@@ -113,13 +113,7 @@ a{ color:var(--es-tang); } a:hover{ color:var(--es-tang-d); }
                           <!-- iMenu 2026 — استلام من الشباك أو من السيارة فقط -->
                           @include('cart.localorder.pickupmethod')
                           
-                          <!-- Takeaway time slot -->
-                   <!-- Takeaway time slot 
-                          <div class="takeaway_picker" style="display: none">
-                              @include('cart.time')
-                          </div>
                       @endif
--->
                       <!-- LOCAL ORDERING -->
                       @include('cart.localorder.table')
 
