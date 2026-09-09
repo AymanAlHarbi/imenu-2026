@@ -159,7 +159,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h6 class="heading-small">{{ __('Phone') }}</h6>
-                                        <p class="heading-small text-muted">{{ $restorant->phone }}</p>
+                                        <p class="heading-small text-muted"><span dir="ltr">{{ $restorant->phone_local }}</span></p>
                                         <br/>
                                         <h6 class="heading-small">{{ __('Address') }}</h6>
                                         <p class="heading-small text-muted">{{ $restorant->address }}</p>

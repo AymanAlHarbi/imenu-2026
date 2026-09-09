@@ -48,6 +48,21 @@ class Restorant extends MyModel
         return $this->subdomain;
     }
 
+    /**
+     * iMenu 2026 - رقم الجوال للعرض: 05XXXXXXXX بلا + وبلا 966.
+     * الخزن يبقى موحّدًا +9665… لأن wa.me و tel: و OTP يحتاجونه.
+     */
+    public function getPhoneLocalAttribute()
+    {
+        return \App\Helpers\SaudiPhone::local($this->phone);
+    }
+
+    /** صيغة واتساب: 9665XXXXXXXX */
+    public function getPhoneWaAttribute()
+    {
+        return \App\Helpers\SaudiPhone::wa($this->whatsapp_phone ?: $this->phone);
+    }
+
     public function getPlanAttribute()
     {
         $planInfo = [

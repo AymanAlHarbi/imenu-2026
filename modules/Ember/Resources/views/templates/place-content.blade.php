@@ -75,7 +75,7 @@
             <div class="em-infocard">
                 <h3><i class="las la-map-marker"></i>{{ __('Address') }}</h3>
                 <p><strong style="color:var(--em-ink)">{{ $restorant->address }}</strong></p>
-                <p>{{ $restorant->phone }}</p>
+                <p><span dir="ltr">{{ $restorant->phone_local }}</span></p>
 
                 <h3 style="margin-top:18px;"><i class="las la-clock"></i>{{ __('Working Hours') }}</h3>
                 <ol class="em-hours">

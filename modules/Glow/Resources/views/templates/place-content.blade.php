@@ -141,7 +141,7 @@
                                 <h3><i class="las la-map-marker"></i>{{ __('Address') }}</h3>
                                 <div class='info'>
                                     <p><strong>{{ $restorant->address }}</strong></p>
-                                    <p>{{ $restorant->phone }}</p>
+                                    <p><span dir="ltr">{{ $restorant->phone_local }}</span></p>
                                 </div>
                             </div>
                             <div class='content'>
@@ -187,7 +187,7 @@
                                 <h3><i class="las la-map-marker"></i>{{ __('Address') }}</h3>
                                 <div class='info'>
                                     <p><strong>{{ $restorant->address }}</strong></p>
-                                    <p>{{ $restorant->phone }}</p>
+                                    <p><span dir="ltr">{{ $restorant->phone_local }}</span></p>
                                 </div>
                             </div>
                             <div class='content'>
