@@ -121,9 +121,9 @@ a:hover{ color:var(--im-navy-800); }
    القاعدة: |mt| يجب أن يبقى أصغر من padding-bottom، وإلا خرجت
    البطاقات فوق الشريط وتراكب العنوان مع الشريط الأعلى.
    لذلك يُقلَّص الحشو الأعلى (٨ ← ٢٫٧٥) ويُترك الأسفل ٧ ولا تُلمس الهوامش. */
-.header.bg-gradient-primary{ padding-top:2.75rem !important; padding-bottom:7rem !important; }
+.header.bg-gradient-primary{ padding-top:5rem !important; padding-bottom:7rem !important; }
 @media (max-width:767.98px){
-  .header.bg-gradient-primary{ padding-top:1.5rem !important; padding-bottom:6.75rem !important; }
+  .header.bg-gradient-primary{ padding-top:4.5rem !important; padding-bottom:6.5rem !important; }
 }
 
 /* ── ٨) الجداول — أرقام متراصفة رأسيًا ───────────────────── */

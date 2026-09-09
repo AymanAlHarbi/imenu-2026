@@ -11,19 +11,19 @@
         .res-cell .nm{font-weight:700;font-size:14px}
         .res-mlink{display:flex;align-items:center;gap:6px;margin-top:3px;direction:ltr;justify-content:flex-end}
         .res-mlink a{font-size:12px}
-        .res-copy{border:0;background:#eef1fd;color:#5e72e4;width:22px;height:22px;border-radius:5px;font-size:11px;cursor:pointer;line-height:1}
-        .res-copy:hover{background:#5e72e4;color:#fff}
-        .res-owner-email{color:#8898aa;font-size:12px;direction:ltr;text-align:right}
+        .res-copy{border:0;background:#F3ECE0;color:#26537C;width:22px;height:22px;border-radius:5px;font-size:11px;cursor:pointer;line-height:1}
+        .res-copy:hover{background:#26537C;color:#fff}
+        .res-owner-email{color:#5A7590;font-size:12px;direction:ltr;text-align:right}
         .res-wa{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#e6f9f1;color:#1faa5c;font-size:12px;margin-right:6px;vertical-align:-6px}
         .res-wa:hover{background:#1faa5c;color:#fff}
-        .res-dt-sub{color:#8898aa;font-size:11.5px;margin-top:2px}
-        .res-act{width:30px;height:30px;border-radius:7px;border:1px solid #e9ecef;background:#fff;color:#8898aa;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
-        .res-act:hover{border-color:#5e72e4;color:#5e72e4}
-        .res-chip{border:1px solid #dee2e6;background:#fff;color:#8898aa;border-radius:20px;padding:5px 15px;font-size:12.5px;font-weight:500}
-        .res-chip.on,.res-chip:hover{background:#5e72e4;border-color:#5e72e4;color:#fff}
+        .res-dt-sub{color:#8FA3B8;font-size:11.5px;margin-top:2px}
+        .res-act{width:32px;height:32px;border-radius:9px;border:1px solid #E6DCCC;background:#fff;color:#5A7590;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+        .res-act:hover{border-color:#E8952F;color:#B96F14}
+        .res-chip{border:1px solid #E6DCCC;background:#fff;color:#5A7590;border-radius:999px;padding:5px 15px;font-size:12.5px;font-weight:500}
+        .res-chip.on,.res-chip:hover{background:#16304C;border-color:#16304C;color:#fff}
         .res-search-input{border:1px solid #dee2e6;border-radius:8px;padding:8px 12px;font-size:13.5px;width:100%;max-width:340px}
-        .res-plan-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:#eef1fd;color:#5e72e4;display:inline-block}
-        .res-plan-badge.none{background:#f1f3f5;color:#8898aa}
+        .res-plan-badge{padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;background:#F3ECE0;color:#26537C;display:inline-block}
+        .res-plan-badge.none{background:#FAF6EF;color:#8FA3B8}
     </style>
     <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
     </div>
