@@ -36,11 +36,22 @@ class VendorController extends Controller
 
     public function getVendors($city_id = 'none'): JsonResponse
     {
-        if ($city_id == 'none') {
-            $restaurants = Restaurant::where(['active' => 1])->get();
-        } else {
-            $restaurants = Restaurant::where(['active' => 1])->where(['city_id' => $city_id])->get();
+        /**
+         * iMenu 2026 — الظهور في التطبيق هو الرافعة، لا تسعير المنيو.
+         * لا يُعرض إلا مقهى خطته تسمح بالطلب ولم يستنفد حدّه، وإلا لمس العميل
+         * مقهى ثم فشل طلبه. والمنيو يظل معروضًا وطنيًا على رابط المقهى نفسه.
+         */
+        $listedIds = \App\Services\AppListing::vendorIds($city_id);
+
+        if (empty($listedIds)) {
+            return response()->json([
+                'data' => [],
+                'status' => true,
+                'errMsg' => '',
+            ]);
         }
+
+        $restaurants = Restaurant::where(['active' => 1])->whereIn('id', $listedIds)->get();
 
         if ($restaurants) {
             return response()->json([
