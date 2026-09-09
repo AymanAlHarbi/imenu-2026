@@ -95,6 +95,48 @@
                 <br/><span class="badge badge-pill badge-success">{{ __('Customer has arrived') }}</span>
             @endif
         @endif
+
+        {{-- iMenu 2026 — نظام الثقة: حالة العميل، وعد الجاهزية، و«لم يُستلم» --}}
+        @if (!isset($hideAction) && auth()->user() && (auth()->user()->hasRole('owner') || auth()->user()->hasRole('staff') || auth()->user()->hasRole('admin')))
+            @php
+                $imenuClient = $order->client;
+                $imenuTrust = \App\Services\Trust::clientLabel($imenuClient);
+                $imenuPromise = $order->getConfig('ready_promise_at', false);
+                $imenuReportReason = null;
+                $imenuCanReport = \App\Services\Trust::canReport($order, $imenuReportReason);
+                $imenuReported = \App\Services\Trust::isReported($order);
+            @endphp
+
+            <br/>
+            <span class="badge badge-pill" style="background:{{ $imenuTrust['color'] }};color:#fff">
+                {{ $imenuTrust['text'] }}
+            </span>
+            @if ($imenuTrust['key'] === 'trusted')
+                <small class="text-muted">({{ \App\Services\Trust::streak($imenuClient) }})</small>
+            @endif
+
+            @if ($imenuPromise)
+                <br/><small class="text-muted">{{ __('Promised') }}
+                    <span style="font-variant-numeric: tabular-nums">{{ \Carbon\Carbon::parse($imenuPromise)->format('H:i') }}</span>
+                </small>
+            @endif
+
+            @if ($imenuReported)
+                <br/><span class="badge badge-pill" style="background:#C9B6A6;color:#171513">{{ __('Not collected') }}</span>
+                @if (\App\Services\Trust::isDisputed($order))
+                    <span class="badge badge-pill badge-secondary">{{ __('Objected') }}</span>
+                @endif
+            @elseif ($imenuCanReport)
+                <br/>
+                <form method="POST" action="{{ route('order.notcollected') }}" class="d-inline">
+                    @csrf
+                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary mt-1" style="min-height:44px">
+                        {{ __('Not collected') }}
+                    </button>
+                </form>
+            @endif
+        @endif
     </td>
     <td class="table-web">
         <span class="font-weight-bold">@money( $order->order_price_with_discount, config('settings.cashier_currency'),config('settings.do_convertion'))</span>

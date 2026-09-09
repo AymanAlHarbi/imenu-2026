@@ -80,6 +80,9 @@ class OrdersController extends Controller
         if ($status->alias.'' == 'delivered') {
             $order->payment_status = 'paid';
             $order->update();
+
+            //iMenu 2026 - نظام الثقة: استلام ناجح يرفع عدّاد العميل
+            \App\Services\Trust::onDelivered($order);
         }
 
         return response()->json([

@@ -10,6 +10,9 @@
     <div class="container-fluid mt--7">
         <div class="row">
             <div class="col">
+                {{-- iMenu 2026 — مدة التجهيز ودقة المقهى --}}
+                @include('orders.partials.preptime')
+
                 <!-- Order Card -->
                 @include('orders.partials.ordercard')
             </div>

@@ -389,6 +389,11 @@ Route::post('new/driver/register/store', [DriverController::class, 'registerStor
 
 Route::get('order/success', [OrderController::class, 'success'])->name('order.success');
 Route::post('order/arrived', [OrderController::class, 'arrived'])->name('order.arrived');
+
+//iMenu 2026 - نظام الثقة
+Route::post('order/notcollected', [OrderController::class, 'notCollected'])->middleware('auth')->name('order.notcollected');
+Route::post('order/dispute', [OrderController::class, 'disputeNotCollected'])->name('order.dispute');
+Route::post('vendor/preptime', [OrderController::class, 'setPrepTime'])->middleware('auth')->name('vendor.preptime');
 Route::get('order/successwhatsapp/{order}', [OrderController::class, 'silentWhatsAppRedirect'])->name('order.successwhatsapp');
 
 Route::get('order/cancel', [OrderController::class, 'cancel'])->name('order.cancel');

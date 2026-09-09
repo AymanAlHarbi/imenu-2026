@@ -109,6 +109,16 @@ class BaseOrderRepository extends Controller
 
     public function validateOrder()
     {
+        //iMenu 2026 - نظام الثقة: الحظر يمنع طلبًا جديدًا، مع سبب صريح وحق تظلّم
+        if (auth()->user() && \App\Services\Trust::isBlocked(auth()->user())) {
+            $until = \App\Services\Trust::blockedUntil(auth()->user());
+            $this->invalidateOrder();
+
+            return Validator::make(['trust_block' => null], ['trust_block' => ['required']], [
+                'trust_block.required' => __('Ordering is paused until').' '.$until->format('Y-m-d').'. '.__('You can appeal from your orders page.'),
+            ]);
+        }
+
         $validator = Validator::make(['order_price' => $this->order->order_price], [
             'order_price' => ['numeric', 'min:'.$this->vendor->minimum],
         ]);
@@ -169,6 +179,16 @@ class BaseOrderRepository extends Controller
 
             //Save order custom fields
             $this->order->setMultipleConfig($this->request->customFields);
+
+            //iMenu 2026 - وعد الجاهزية: مدة التجهيز المعمول بها الآن تُثبَّت على الطلب،
+            //فلا يتغيّر الوعد بعد إنشائه. وهو أساس قياس دقة المقهى لاحقًا.
+            if ($this->vendor) {
+                $prepMinutes = \App\Services\PrepTime::minutes($this->vendor);
+                $this->order->setMultipleConfig([
+                    'prep_minutes' => $prepMinutes,
+                    'ready_promise_at' => \Carbon\Carbon::now()->addMinutes($prepMinutes)->toDateTimeString(),
+                ]);
+            }
 
         } else {
             //Order is already initialized - in case of continues ordering

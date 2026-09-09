@@ -11,6 +11,9 @@ use App\Exports\OrdersExport;
 use App\Models\Orderitems;
 use App\Models\SimpleDelivery;
 use App\Notifications\CustomerArrived;
+use App\Notifications\OrderNotCollected;
+use App\Services\PrepTime;
+use App\Services\Trust;
 use App\Notifications\OrderNotification;
 use App\Order;
 use App\Repositories\Orders\OrderRepoGenerator;
@@ -932,6 +935,11 @@ class OrderController extends Controller
 
         $order->status()->attach([$status_id_to_attach => ['comment' => '', 'user_id' => auth()->user()->id]]);
 
+        //iMenu 2026 - نظام الثقة: استلام ناجح يرفع عدّاد العميل
+        if ($alias.'' == 'delivered') {
+            \App\Services\Trust::onDelivered($order);
+        }
+
         //Dispatch event
         if ($alias == 'accepted_by_restaurant') {
             OrderAcceptedByVendor::dispatch($order);
@@ -1159,6 +1167,93 @@ class OrderController extends Controller
         }
 
         return redirect()->back()->withStatus(__('The coffee shop has been notified'));
+    }
+
+    /**
+     * المقهى يُسجّل «لم يُستلم».
+     * مشروط بختم «جاهز» ونافذة ساعتين — فالطلب الذي لم يُحضَّر لا يُحسب على العميل.
+     */
+    public function notCollected(Request $request)
+    {
+        $order = Order::findOrFail($request->order_id);
+
+        $this->authorizeVendorOnOrder($order);
+
+        $reason = null;
+        if (! Trust::canReport($order, $reason)) {
+            return redirect()->back()->withStatus($reason);
+        }
+
+        Trust::report($order, auth()->user()->id);
+
+        //إبلاغ العميل بالسبب — بدونه لا معنى لحق الاعتراض
+        try {
+            if ($order->client) {
+                $order->client->notify(new OrderNotCollected($order));
+            }
+        } catch (\Throwable $th) {
+            \Log::error('OrderNotCollected notify failed: '.$th->getMessage());
+        }
+
+        return redirect()->back()->withStatus(__('Marked as not collected'));
+    }
+
+    /**
+     * اعتراض العميل — يوقف عدّ هذا البلاغ حتى يُحسم.
+     */
+    public function disputeNotCollected(Request $request)
+    {
+        $order = Order::findOrFail($request->order_id);
+
+        //صاحب الطلب، أو من يحمل بصمته
+        abort_unless(
+            (auth()->user() && auth()->user()->id == $order->client_id) || $order->md.'' === $request->md.'',
+            403
+        );
+
+        if (! Trust::dispute($order)) {
+            return redirect()->back()->withStatus(__('No open report on this order'));
+        }
+
+        return redirect()->back()->withStatus(__('Your objection has been recorded'));
+    }
+
+    /**
+     * مدة التجهيز — حالة للمقهى لا حقل لكل طلب. القيمة صفر تعيدها تلقائية.
+     */
+    public function setPrepTime(Request $request)
+    {
+        $vendor = auth()->user() ? auth()->user()->restorant : null;
+        abort_unless($vendor, 403);
+
+        PrepTime::setOverride($vendor, $request->minutes);
+
+        return redirect()->back()->withStatus(
+            PrepTime::isAuto($vendor)
+                ? __('Preparation time is automatic again')
+                : __('Preparation time set').': '.PrepTime::minutes($vendor).' '.__('min')
+        );
+    }
+
+    private function authorizeVendorOnOrder(Order $order)
+    {
+        $user = auth()->user();
+        abort_unless($user, 403);
+
+        if ($user->hasRole('admin')) {
+            return;
+        }
+        if ($user->hasRole('owner')) {
+            abort_unless($user->id == $order->restorant->user_id, 403);
+
+            return;
+        }
+        if ($user->hasRole('staff')) {
+            abort_unless($user->restaurant_id == $order->restorant->id, 403);
+
+            return;
+        }
+        abort(403);
     }
 
     public function success(Request $request)

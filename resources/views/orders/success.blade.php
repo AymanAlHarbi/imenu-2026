@@ -105,6 +105,7 @@
       </section>
 
       {{-- iMenu 2026 — زر "وصلت" لطلبات السيارة --}}
+      @include('orders.partials.readytime')
       @include('orders.partials.arrived')
 
       @if($showWhatsApp)
