@@ -16,7 +16,8 @@
 - **اشتراكات**: Laravel Cashier + Mollie + Paystack
 - **صور**: Intervention/Image + Spatie Image
 - **أذونات**: Spatie Permission
-- **جوال**: تطبيق React Native / Expo موجود داخل `modules/`
+- **جوال**: تطبيقان منفصلان خارج هذا الريبو — انظر قسم «المشاريع المرتبطة» أدناه.
+  ⚠️ ما بداخل `modules/` من ملفات React Native هو **نسخة قالب ميتة** (`yoursite.com`) — لا تُستخدم.
 - **واجهة**: Blade + Argon preset + webpack mix
 
 ## بنية المشروع (خريطة سريعة)
@@ -35,6 +36,26 @@
 - **التفعيل التلقائي للمطاعم الجديدة موقوف** — التفعيل يدوي من الإدارة.
 - صفحة **cart-checkout** فيها **3 طبقات CSS** على السيرفر؛ التعديلات في **آخر** `imenu-checkout-2026.css` مع رفع رقم الإصدار `?v=`.
 - جدول الحالات اسمه **`status`** (مفرد) وليس `statuses`.
+
+## المشاريع المرتبطة (منظومة iMenu)
+
+المنظومة ثلاثة مجلدات + مشروع معرفة واحد. أي عمل على أحدها قد يمسّ الباقي.
+
+| المسار | الدور | ملاحظات |
+|--------|------|---------|
+| `C:\GitHub\imenu-2026` | **السكربت** (هذا المجلد) — Laravel 10 | remote: `github.com/AymanAlHarbi/imenu-2026` · فرع `main` |
+| `C:\iMenu\vendor_app` | **تطبيق العميل** — Expo 54 / RN 0.81 / React 19 | الاسم مضلّل: محتواه تطبيق عميل وليس تاجر. فيه `design/` (canvas تصميم) |
+| `C:\iMenu\vendor_app_Tablet` | **تطبيق المطعم** لاستقبال الطلبات | `SINGLE_MODE` على المطعم رقم `17` — اكسترا جمبري |
+| مشروع «i Menu 2.0» على claude.ai | الهوية والاستراتيجية | `imenu-brand-identity.md` · `claude/imenu-pickup-strategy.md` · `imenu-home.html` |
+
+### العقد الرابط
+`API_REFERENCE.md` (في هذا المجلد، ونسخة منه في تطبيق العميل) هو **العقد الملزم** بين
+الطرفين. أي تعديل على `routes/api.php` أو `app/Http/Controllers/API/*` يجب أن ينعكس فيه
+**وفي التطبيقين**، وإلا انكسر الربط بصمت.
+
+- كلا التطبيقين يتصلان بـ `https://i-menu.me` عبر `config.js` (`domain` + `APP_SECRET`).
+- `APP_SECRET` في التطبيقين يجب أن يطابق `settings.app_secret` في لوحة التحكم.
+- مسارات التاجر: `routes/api.php` تحت `v2/vendor` (من السطر ~89).
 
 ## أوامر مفيدة
 ```bash
