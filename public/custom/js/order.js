@@ -379,11 +379,20 @@ function imModifiersSatisfied(){
     return true;
 }
 
-/* بوابة واحدة للشراء: المقاس مختار (إن وُجد) والمجموعات الإلزامية مُجابة */
+/* بوابة واحدة للشراء: المقاس مختار (إن وُجد) والمجموعات الإلزامية مُجابة.
+   .quantity-area موجودة في بعض القوالب فقط (وفي Ember لا تُطبع إلا إذا كان
+   الطلب مفعّلًا)، فنُعطّل زر الإضافة نفسه أيضًا — وهو يعمل في كل قالب. */
 function imUpdateGate(){
     var variantOk=!(currentItem&&currentItem.has_variants)||variantID!==null;
-    if(variantOk&&imModifiersSatisfied()){ $(".quantity-area").show(); }
-    else{ $(".quantity-area").hide(); }
+    var ok=variantOk&&imModifiersSatisfied();
+
+    if(ok){ $(".quantity-area").show(); } else { $(".quantity-area").hide(); }
+
+    $("#addToCart1 button, .em-addbtn, #addToCart1 .btn").each(function(){
+        this.disabled=!ok;
+        this.style.opacity=ok?"":"0.45";
+        this.style.pointerEvents=ok?"":"none";
+    });
 }
 
 function imModifierChanged(gi){

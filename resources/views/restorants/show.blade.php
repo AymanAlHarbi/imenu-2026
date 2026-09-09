@@ -312,7 +312,7 @@
         var TEMPLATE_USED="<?php echo config('settings.front_end_template','defaulttemplate') ?>";
         var PID = "{{ isset($_GET['pid']) ? $_GET['pid'] : '' }}";
     </script>
-    <script src="{{ asset('custom') }}/js/order.js?v=2026091"></script>
+    <script src="{{ asset('custom') }}/js/order.js?v=2026092"></script>
     @include('restorants.phporderinterface') 
     @if (isset($showGoogleTranslate)&&$showGoogleTranslate&&!$showLanguagesSelector)
         @include('googletranslate::scripts')
