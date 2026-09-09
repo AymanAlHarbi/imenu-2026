@@ -31,15 +31,9 @@
             }
         }
     }
-    $waPhone = null;
-    if ($customerPhone) {
-        $waPhone = preg_replace('/[^0-9]/', '', $customerPhone);
-        if (substr($waPhone, 0, 2) == '00') {
-            $waPhone = substr($waPhone, 2);
-        } elseif (substr($waPhone, 0, 1) == '0') {
-            $waPhone = '966'.substr($waPhone, 1);
-        }
-    }
+    //iMenu 2026 - العرض 05XXXXXXXX ورابط واتساب 9665… من خدمة واحدة
+    $waPhone = \App\Helpers\SaudiPhone::wa($customerPhone);
+    $customerPhone = \App\Helpers\SaudiPhone::local($customerPhone);
     $methodColors = [1 => 'primary', 2 => 'info', 3 => 'warning'];
 @endphp
 <tr>
@@ -66,7 +60,7 @@
         @endif
         @if ($customerPhone)
             <br/>
-            <a class="text-sm text-success" href="https://wa.me/{{ $waPhone }}" target="_blank" dir="ltr">
+            <a class="text-sm text-success" href="https://wa.me/{{ $waPhone }}" target="_blank" dir="ltr" @if(! $waPhone) style="pointer-events:none;text-decoration:none" @endif>
                 <i class="fab fa-whatsapp"></i> {{ $customerPhone }}
             </a>
         @endif

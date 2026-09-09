@@ -48,6 +48,32 @@ class SaudiPhone
     }
 
     /**
+     * صيغة العرض والإدخال المحلية: 05XXXXXXXX — بلا + وبلا 966.
+     * تقبل أي صيغة مخزّنة (قديمة أو جديدة)، فتعمل على البيانات القائمة.
+     * تُرجع المدخل كما هو إن لم يكن رقمًا سعوديًا صالحًا، فلا تُخفي بيانات.
+     */
+    public static function local(?string $raw): ?string
+    {
+        if ($raw === null || trim($raw) === '') {
+            return $raw;
+        }
+
+        $normalized = self::normalize($raw);
+
+        return $normalized ? '0'.substr($normalized, 4) : $raw;
+    }
+
+    /**
+     * صيغة واتساب: 9665XXXXXXXX — بلا + وبلا صفر، كما يطلبه wa.me
+     */
+    public static function wa(?string $raw): ?string
+    {
+        $normalized = self::normalize($raw);
+
+        return $normalized ? substr($normalized, 1) : null;
+    }
+
+    /**
      * الصيغ المحتملة المخزنة سابقاً في قاعدة البيانات لنفس الرقم.
      * تُستخدم عند البحث لتفادي إنشاء حسابات مكررة لعملاء قدامى.
      *

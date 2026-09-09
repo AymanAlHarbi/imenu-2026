@@ -9,7 +9,7 @@
             ['ftype'=>'input','name'=>"Restaurant Name",'id'=>"name",'placeholder'=>"Restaurant Name",'required'=>true,'value'=>$restorant->name],
             ['ftype'=>'input','name'=>"Restaurant description",'id'=>"description",'placeholder'=>"Restaurant description",'required'=>true,'value'=>$restorant->description],
             ['ftype'=>'input','name'=>"Restaurant address",'id'=>"address",'placeholder'=>"Restaurant address",'required'=>true,'value'=>$restorant->address],
-            ['ftype'=>'input','name'=>"Restaurant phone",'id'=>"phone",'placeholder'=>"Restaurant phone",'required'=>true,'value'=>$restorant->phone],
+            ['ftype'=>'input','name'=>"Restaurant phone",'id'=>"phone",'placeholder'=>"05XXXXXXXX",'required'=>true,'dir'=>'ltr','inputmode'=>'numeric','maxlength'=>10,'value'=>\App\Helpers\SaudiPhone::local($restorant->phone)],
         ]])
         @if(config('settings.multi_city'))
             @include('partials.fields',['fields'=>[

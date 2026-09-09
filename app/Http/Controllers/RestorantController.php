@@ -185,7 +185,8 @@ class RestorantController extends Controller
         $owner = new User;
         $owner->name = strip_tags($request->name_owner);
         $owner->email = strip_tags($request->email_owner);
-        $owner->phone = strip_tags($request->phone_owner) | '';
+        //iMenu 2026 - يُخزَّن موحّدًا +9665… ويُعرض 05… · و `|` كانت OR بتّي لا بديلًا
+        $owner->phone = \App\Helpers\SaudiPhone::normalize(strip_tags($request->phone_owner)) ?: strip_tags($request->phone_owner);
         $owner->api_token = Str::random(80);
 
         $owner->password = Hash::make($generatedPassword);
@@ -199,7 +200,7 @@ class RestorantController extends Controller
         $restaurant->name = strip_tags($request->name);
         $restaurant->user_id = $owner->id;
         $restaurant->description = strip_tags($request->description.'');
-        $restaurant->minimum = $request->minimum | 0;
+        $restaurant->minimum = $request->minimum ?: 0;
         $restaurant->lat = 0;
         $restaurant->lng = 0;
         $restaurant->address = '';
@@ -411,7 +412,8 @@ class RestorantController extends Controller
         $thereIsRestaurantAddressChange = $restaurant->address.'' != $request->address.'';
 
         $restaurant->address = strip_tags($request->address);
-        $restaurant->phone = strip_tags($request->phone);
+        //iMenu 2026 - يُدخل 05… ويُخزَّن موحّدًا، فتبقى روابط واتساب و OTP سليمة
+        $restaurant->phone = \App\Helpers\SaudiPhone::normalize(strip_tags($request->phone)) ?: strip_tags($request->phone);
 
         $restaurant->description = strip_tags($request->description);
         $restaurant->minimum = strip_tags($request->minimum);
@@ -461,7 +463,8 @@ class RestorantController extends Controller
         }
 
         if ($request->has('whatsapp_phone')) {
-            $restaurant->whatsapp_phone = $request->whatsapp_phone;
+            //iMenu 2026 - التوحيد هنا يجعل wa.me يعمل مهما كتب المقهى الرقم
+            $restaurant->whatsapp_phone = \App\Helpers\SaudiPhone::normalize($request->whatsapp_phone) ?: $request->whatsapp_phone;
         }
 
         if (isset($request->city_id)) {
@@ -747,7 +750,8 @@ class RestorantController extends Controller
         $owner = new User;
         $owner->name = strip_tags($request->name_owner);
         $owner->email = strip_tags($request->email_owner);
-        $owner->phone = strip_tags($request->phone_owner) | '';
+        //iMenu 2026 - يُخزَّن موحّدًا +9665… ويُعرض 05… · و `|` كانت OR بتّي لا بديلًا
+        $owner->phone = \App\Helpers\SaudiPhone::normalize(strip_tags($request->phone_owner)) ?: strip_tags($request->phone_owner);
         $owner->active = 0;
         $owner->api_token = Str::random(80);
 
@@ -765,7 +769,7 @@ class RestorantController extends Controller
         $restaurant->name = strip_tags($request->name);
         $restaurant->user_id = $owner->id;
         $restaurant->description = strip_tags($request->description.'');
-        $restaurant->minimum = $request->minimum | 0;
+        $restaurant->minimum = $request->minimum ?: 0;
         $restaurant->lat = config('settings.default_lat', 0);
         $restaurant->lng = config('settings.default_lng', 0);
         $restaurant->address = '';

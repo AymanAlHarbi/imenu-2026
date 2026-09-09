@@ -158,7 +158,7 @@
         <h4>{{ __('Comment') }}: {{ $order->comment }}</h4>
      @endif
      @if(strlen($order->phone)>2)
-        <h4>{{ __('Phone') }}: {{ $order->phone }}</h4>
+        <h4>{{ __('Phone') }}: <span dir="ltr">{{ \App\Helpers\SaudiPhone::local($order->phone) }}</span></h4>
      @endif
      <br />
      @if(!empty($order->time_to_prepare))

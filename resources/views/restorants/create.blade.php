@@ -52,7 +52,7 @@
                                             </span>
                                         @endif
                                     </div>
-                                    @include('partials.input',['type'=>"text", 'name'=>'Owner Phone','id'=>"phone_owner",'placeholder'=>"Owner Phone here",'required'=>true,'value'=>""])
+                                    @include('partials.input',['type'=>"text", 'name'=>'Owner Phone','id'=>"phone_owner",'placeholder'=>"05XXXXXXXX",'required'=>true,'dir'=>'ltr','inputmode'=>'numeric','maxlength'=>10,'additionalInfo'=>'Enter the number starting with 05 — without + or 966','value'=>""])
                                     @if (isset($_GET['cloneWith']))
                                         <input type="hidden" id="cloneWith" name="cloneWith" value="{{ $_GET['cloneWith'] }}" />
                                     @endif

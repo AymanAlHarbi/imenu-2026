@@ -1,3 +1,8 @@
+{{-- iMenu 2026 — أُسقطت واجهة intl-tel-input:
+     كانت تُهيّأ بعد ٣ ثوانٍ فتقسم الرقم أمام المستخدم، وتضيف منتقي دول
+     لمنتج سعودي، وتحمّل utils.js بحجم ٢٤٠ كيلوبايت على كل صفحة إدارة.
+     الأرقام الآن تُدخل 05XXXXXXXX وتُوحَّد في السيرفر عبر SaudiPhone. --}}
+{{--
 <link rel="stylesheet" href="{{ asset('vendor') }}/intltelinput/build/css/intlTelInput.css">
 <style type="text/css">
     .iti__flag {background-image: url("/vendor/intltelinput/build/img/flags.png");}
@@ -49,14 +54,5 @@
 
         }
     }
-    setTimeout(() => {
-            initPhone('whatsapp_phone');
-            //initPhone('phone');
-            initPhone('phone_owner');
-            initPhone('phone_number');
-            //initPhone('phone_driver');
-            
-            
-        }, 3000);
-  
 </script>
+--}}
