@@ -27,7 +27,7 @@ return [
                 ['hideon' => 'isloyalty', 'title' => 'Search radius for vendors', 'help' => 'Maximum distance that vendors are shown to user', 'key' => 'LOCATION_SEARCH_RADIUS', 'value' => 50, 'type' => 'number', 'onlyin' => 'ft'],
                 ['hideon' => 'isloyalty', 'title' => 'Search radius for drivers', 'help' => 'When you have automatic assign to driver, this is a way to show the system for the maximum range to look for driver', 'key' => 'DRIVER_SEARCH_RADIUS', 'value' => 15, 'type' => 'number', 'onlyin' => 'ft'],
                 ['hideon' => 'isloyalty', 'title' => 'Disable continues orders', 'help' => 'If enabled, orders done on same table will be merged, until order is not closed/finished by vendor', 'key' => 'DISABLE_CONTINIUS_ORDERING', 'value' => 'false', 'ftype' => 'bool', 'onlyin' => 'qrsaas'],
-                ['hideon' => 'isloyalty', 'title' => 'Enable pickup , system wide', 'key' => 'ENABLE_PICKUP', 'value' => 'true', 'ftype' => 'bool'],
+                ['hideon' => 'isloyalty', 'title' => 'Enable pickup , system wide', 'key' => 'ENABLE_PICKUP', 'value' => 'true', 'ftype' => 'bool', 'imhide' => true],
                 ['hideon' => 'isloyalty', 'title' => 'Hide cash on delivery, system wide', 'key' => 'HIDE_COD', 'value' => 'false', 'ftype' => 'bool'],
                 ['hideon' => 'isloyalty', 'title' => 'Delivery / time intervals in minutes', 'help' => 'Separate the time slots into N Minutes. ex 09:00-09-15 , 09:15-09:30 - value is 15 ', 'key' => 'DELIVERY_INTERVAL_IN_MINUTES', 'value' => 30, 'type' => 'number'],
                 ['hideon' => 'isloyalty', 'title' => 'Default payment type', 'key' => 'DEFAULT_PAYMENT', 'value' => 'cod', 'ftype' => 'select', 'data' => ['cod' => 'Cash on Delivery', 'stripe' => 'Stripe Card processing']],
@@ -60,7 +60,7 @@ return [
                 ['title' => 'Vendor entity name in plural', 'help' => 'Ex. Companies, Restaurants, Shops, Businesses etc', 'key' => 'VENDOR_ENTITY_NAME_PLURAL', 'value' => 'Restaurants'],
                 ['title' => 'Url route for vendor', 'help' => 'If you want to change the link the vendor is open in. ex yourdomain.com/shop/shopname. shop - should be the value here', 'key' => 'URL_ROUTE', 'value' => 'restaurant'],
                 ['title' => 'Url route for vendor in plural', 'help' => 'If you want to change the link the vendor management is open in. ex yourdomain.com/shops. shops - should be the value here', 'key' => 'URL_ROUTE_PLURAL', 'value' => 'restaurants'],
-                ['title' => 'Demo vendor slug',  'help' => 'Enter the domain - slug of your demo vendor that will show on the landing page', 'key' => 'demo_restaurant_slug', 'value' => 'leukapizza', 'onlyin' => 'qrsaas'],
+                ['title' => 'Demo vendor slug',  'help' => 'Enter the domain - slug of your demo vendor that will show on the landing page', 'key' => 'demo_restaurant_slug', 'value' => 'leukapizza', 'onlyin' => 'qrsaas', 'imhide' => true],
                 ['title' => 'Apps download code', 'help' => 'If you have extended license, or some specific product, we will send you App download code. Send us ticket.', 'key' => 'EXTENDED_LICENSE_DOWNLOAD_CODE', 'value' => ''],
                 ['hideon' => 'isloyalty,iswp,ispc,isag,isdrive', 'title' => 'Print templates images', 'help' => 'Links to images representing the images for the templates. You can use remote images', 'key' => 'templates', 'value' => '/impactfront/img/menu_template_1.jpg,/impactfront/img/menu_template_2.jpg', 'onlyin' => 'qrsaas'],
                 ['hideon' => 'isloyalty,iswp,ispc,isag,isdrive', 'title' => 'Print templates zip', 'help' => 'Link to .zip representing the template for download. You can use remote file', 'key' => 'linkToTemplates', 'value' => '/impactfront/img/templates.zip', 'onlyin' => 'qrsaas'],
@@ -118,7 +118,30 @@ return [
 
             ],
         ],
-        [],
+        /*
+         * كان هذا العنصر مصفوفة فارغة [] فينتج تبويبًا شبحًا بلا اسم ولا محتوى،
+         * كما أن SettingsController يقرأ config('config.env')[2]['fields'][0]['data']
+         * ليعرف اسم لغة الموقع — وكان يعود UNKNOWN دائمًا.
+         * أُعيدت مجموعة اللغة والعملة إلى مكانها، وحقل اللغة أول حقل فيها كما يتوقع الكود.
+         */
+        [
+            'name' => 'Localization',
+            'slug' => 'localization',
+            'icon' => 'ni ni-world-2 mr-2',
+            'fields' => [
+                ['separator' => 'Language', 'title' => 'Site language', 'key' => 'APP_LOCALE', 'value' => 'EN', 'ftype' => 'select', 'data' => require __DIR__.'/languages.php', 'help' => 'The default language of the whole site'],
+                ['title' => 'Languages available on the menu page', 'key' => 'FRONT_LANGUAGES', 'value' => 'EN,English,ar,Arabic', 'help' => 'Pairs of code,Name separated by comma. ex: ar,Arabic,EN,English'],
+
+                ['separator' => 'Currency', 'title' => 'Site currency', 'key' => 'CASHIER_CURRENCY', 'value' => 'usd', 'help' => 'Three letter code. ex SAR, USD, AED'],
+                ['title' => 'Show the currency next to prices', 'key' => 'DO_CONVERTION', 'value' => 'true', 'ftype' => 'bool'],
+
+                ['separator' => 'Time', 'title' => 'Timezone', 'key' => 'TIME_ZONE', 'value' => 'UTC', 'help' => 'ex Asia/Riyadh. Order times and reports depend on this'],
+                ['title' => 'Time format', 'key' => 'TIME_FORMAT', 'value' => '24hours', 'ftype' => 'select', 'data' => ['12hours' => '12 hours', '24hours' => '24 hours']],
+
+                ['separator' => 'Admin panel', 'title' => 'Hide the update screen', 'key' => 'HIDE_UPDATE', 'value' => 'false', 'ftype' => 'bool', 'help' => 'Recommended — the template updater can overwrite customized files'],
+                ['title' => 'Hide the apps panel', 'key' => 'HIDE_APPS_PANEL', 'value' => 'false', 'ftype' => 'bool'],
+            ],
+        ],
         [
             'name' => 'Apps & Plugins',
             'slug' => 'plugins',
@@ -126,10 +149,10 @@ return [
             'fields' => [
 
                 ['separator' => 'WhatsApp ordering', 'title' => 'Enable WhatsApp order submit', 'help' => 'When activated, if owner has entered his whatsapp phone  a send to whatsapp order will be shown on order completed page. Order will be sent to owner whatsapp phone', 'key' => 'WHATSAPP_ORDERING_ENABLED', 'value' => 'true', 'ftype' => 'bool', 'onlyin' => 'qrsaas', 'hideon' => 'isloyalty'],
-                ['separator' => 'WhatsApp ordering', 'title' => 'Enable WhatsApp order submit', 'help' => 'When activated, a send to whatsapp order will be shown on order completed page. Order will be sent to admin whatsapp phone', 'key' => 'WHATSAPP_ORDERING_ENABLED', 'value' => 'true', 'ftype' => 'bool', 'onlyin' => 'ft', 'hideon' => 'isloyalty'],
+                //حُذف تكرار WHATSAPP_ORDERING_ENABLED (نسخة onlyin=ft) — مفتاح واحد بحقلين
 
-                ['separator' => 'Google plugins', 'title' => 'Recaptcha site key', 'help' => "Make empty if you can't make submition on register screen", 'key' => 'RECAPTCHA_SITE_KEY', 'value' => ''],
-                ['title' => 'Recaptcha secret', 'help' => "Make empty if you can't make submition on register screen", 'key' => 'RECAPTCHA_SECRET_KEY', 'value' => ''],
+                ['separator' => 'Google plugins', 'title' => 'Recaptcha site key', 'help' => "Make empty if you can't make submition on register screen", 'key' => 'RECAPTCHA_SITE_KEY', 'value' => '', 'imhide' => true],
+                ['title' => 'Recaptcha secret', 'help' => "Make empty if you can't make submition on register screen", 'key' => 'RECAPTCHA_SECRET_KEY', 'value' => '', 'imhide' => true],
                 ['title' => 'Google maps api key', 'key' => 'GOOGLE_MAPS_API_KEY', 'value' => ''],
                 ['title' => 'Enable location search', 'key' => 'ENABLE_LOCATION_SEARCH', 'value' => 'false', 'ftype' => 'bool', 'onlyin' => 'ft'],
                 ['title' => 'Google analytics key', 'key' => 'GOOGLE_ANALYTICS', 'value' => ''],
@@ -139,31 +162,31 @@ return [
                 ['title' => 'Facebook client id', 'key' => 'FACEBOOK_CLIENT_ID', 'value' => '', 'onlyin' => 'ft'],
                 ['title' => 'Facebook client secret', 'key' => 'FACEBOOK_CLIENT_SECRET', 'value' => '', 'onlyin' => 'ft'],
                 ['title' => 'Facebook redirec', 'key' => 'FACEBOOK_REDIRECT', 'value' => '', 'onlyin' => 'ft'],
-                ['separator' => 'Notifications', 'title' => 'Onesignal App id', 'key' => 'ONESIGNAL_APP_ID', 'value' => ''],
-                ['title' => 'Onesignal rest api key', 'key' => 'ONESIGNAL_REST_API_KEY', 'value' => ''],
-                ['title' => 'Twillo Account SID', 'key' => 'TWILIO_ACCOUNT_SID', 'value' => 'SID'],
-                ['title' => 'Twillo Account auth token', 'key' => 'TWILIO_AUTH_TOKEN', 'value' => 'TOKEN'],
-                ['title' => 'Twillo from number', 'key' => 'TWILIO_FROM', 'value' => 'NUMBER'],
+                ['separator' => 'Notifications', 'title' => 'Onesignal App id', 'key' => 'ONESIGNAL_APP_ID', 'value' => '', 'imhide' => true],
+                ['title' => 'Onesignal rest api key', 'key' => 'ONESIGNAL_REST_API_KEY', 'value' => '', 'imhide' => true],
+                ['title' => 'Twillo Account SID', 'key' => 'TWILIO_ACCOUNT_SID', 'value' => 'SID', 'imhide' => true],
+                ['title' => 'Twillo Account auth token', 'key' => 'TWILIO_AUTH_TOKEN', 'value' => 'TOKEN', 'imhide' => true],
+                ['title' => 'Twillo from number', 'key' => 'TWILIO_FROM', 'value' => 'NUMBER', 'imhide' => true],
                 ['title' => 'System should send sms notifications', 'key' => 'SEND_SMS_NOTIFICATIONS', 'value' => 'false', 'ftype' => 'bool', 'onlyin' => 'ft'],
-                ['separator' => 'Pusher live notifications', 'title' => 'Pusher app id', 'help' => 'Pusher is used for notification for call waiter and new orders available', 'key' => 'PUSHER_APP_ID', 'value' => ''],
-                ['title' => 'Pusher app key', 'key' => 'PUSHER_APP_KEY', 'value' => ''],
-                ['title' => 'Pusher app secret', 'key' => 'PUSHER_APP_SECRET', 'value' => ''],
-                ['title' => 'Pusher app cluster', 'key' => 'PUSHER_APP_CLUSTER', 'value' => 'eu'],
-                ['title' => 'Broadcast Driver', 'key' => 'BROADCAST_DRIVER', 'value' => 'log', 'ftype' => 'select', 'data' => ['log' => 'Log', 'pusher' => 'Pusher']],
+                ['separator' => 'Pusher live notifications', 'title' => 'Pusher app id', 'help' => 'Pusher is used for notification for call waiter and new orders available', 'key' => 'PUSHER_APP_ID', 'value' => '', 'imhide' => true],
+                ['title' => 'Pusher app key', 'key' => 'PUSHER_APP_KEY', 'value' => '', 'imhide' => true],
+                ['title' => 'Pusher app secret', 'key' => 'PUSHER_APP_SECRET', 'value' => '', 'imhide' => true],
+                ['title' => 'Pusher app cluster', 'key' => 'PUSHER_APP_CLUSTER', 'value' => 'eu', 'imhide' => true],
+                ['title' => 'Broadcast Driver', 'key' => 'BROADCAST_DRIVER', 'value' => 'log', 'ftype' => 'select', 'data' => ['log' => 'Log', 'pusher' => 'Pusher'], 'imhide' => true],
 
                 ['separator' => 'Cookies', 'title' => 'Cookie Consent', 'key' => 'ENABLE_DEFAULT_COOKIE_CONSENT', 'value' => 'true', 'ftype' => 'bool', 'help' => 'Cookie consent popup - you can import other via js'],
 
-                ['separator' => 'Share this', 'title' => 'Share this property id', 'help' => 'You can find this number in Share this import link', 'key' => 'SHARE_THIS_PROPERTY', 'value' => ''],
-                ['separator' => 'Futy', 'title' => 'Futy key', 'key' => 'FUTY_KEY', 'value' => ''],
+                ['separator' => 'Share this', 'title' => 'Share this property id', 'help' => 'You can find this number in Share this import link', 'key' => 'SHARE_THIS_PROPERTY', 'value' => '', 'imhide' => true],
+                ['separator' => 'Futy', 'title' => 'Futy key', 'key' => 'FUTY_KEY', 'value' => '', 'imhide' => true],
                 //Add Human captcha settings
-                ['separator' => 'Human captcha','title' => 'Human captcha secret', 'key' => 'HUMAN_CAPTCHA_SECRET', 'value' => ''],
-                ['title' => 'Human captcha site key', 'key' => 'HUMAN_CAPTCHA_SITE_KEY', 'value' => ''],
+                ['separator' => 'Human captcha','title' => 'Human captcha secret', 'key' => 'HUMAN_CAPTCHA_SECRET', 'value' => '', 'imhide' => true],
+                ['title' => 'Human captcha site key', 'key' => 'HUMAN_CAPTCHA_SITE_KEY', 'value' => '', 'imhide' => true],
                 
 
             ],
         ],
         [
-            'name' => 'SMTP',
+            'name' => 'Email',
             'slug' => 'smtp',
             'icon' => 'ni ni-email-83',
             'fields' => [
@@ -177,20 +200,20 @@ return [
                 ['title' => 'From address', 'key' => 'MAIL_FROM_ADDRESS', 'value' => 'bd5d577b7c-be3ae1@inbox.mailtrap.io'],
                 ['title' => 'From Name', 'key' => 'MAIL_FROM_NAME', 'value' => 'Your Site'],
 
-                ['title' => '', 'key' => 'DB_CONNECTION', 'value' => 'mysql', 'data' => ['mysql' => 'MySql'], 'type' => 'hidden'],
-                ['title' => '', 'key' => 'DB_HOST', 'value' => '127.0.0.1', 'hint' => 'Your SMTP send server', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'DB_PORT', 'value' => '3306', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'DB_DATABASE', 'value' => 'laravel', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'DB_USERNAME', 'value' => 'laravel', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'DB_PASSWORD', 'value' => 'laravel', 'type' => 'hidden'],
-
-                ['title' => '', 'key' => 'CACHE_DRIVER', 'value' => 'file', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'SESSION_DRIVER', 'value' => 'file', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'QUEUE_DRIVER', 'value' => 'sync', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'REDIS_HOST', 'value' => '127.0.0.1', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'REDIS_PASSWORD', 'value' => 'null', 'type' => 'hidden'],
-                ['title' => '', 'key' => 'REDIS_PORT', 'value' => '6379', 'type' => 'hidden'],
-
+                /*
+                 * أُزيلت من هنا: DB_CONNECTION، DB_HOST، DB_PORT، DB_DATABASE،
+                 * DB_USERNAME، DB_PASSWORD، CACHE_DRIVER، SESSION_DRIVER،
+                 * QUEUE_DRIVER، REDIS_HOST، REDIS_PASSWORD، REDIS_PORT.
+                 *
+                 * كانت حقولًا مخفية (type=hidden) لا تظهر على الشاشة لكن قيمها
+                 * تُطبع في مصدر صفحة HTML — أي كلمة مرور قاعدة البيانات مقروءة
+                 * بـ«عرض المصدر». والأخطر أنها كانت تُعاد كتابتها في .env مع كل حفظ،
+                 * فلو غاب مفتاح منها عن .env لكُتبت القيمة الافتراضية ('laravel')
+                 * فوقه وسقط الاتصال بقاعدة البيانات.
+                 *
+                 * حذفها من هنا يعني أنها لا تُقرأ ولا تُكتب من هذه الصفحة إطلاقًا،
+                 * وتبقى في .env كما هي. تُحرَّر عند الحاجة من مدير الملفات.
+                 */
             ],
         ],
     ],

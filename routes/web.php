@@ -214,15 +214,17 @@ Route::middleware('auth', 'impersonate')->group(function () {
     Route::get('live', [OrderController::class, 'live'])->middleware('isOwnerOnPro');
     Route::get('/updatestatus/{alias}/{order}', [OrderController::class, 'updateStatus'])->name('update.status');
 
-    Route::resource('settings', SettingsController::class);
+    // الإعدادات تكتب في .env وفي public/byadmin/*.js — لا يجوز أن تكون خارج دور الأدمن.
+    // كانت resource خارج المجموعة، فكان أي مستخدم مسجّل يستطيع PUT /settings/{id}.
     Route::middleware('role:admin')->group(function () {
+        Route::resource('settings', SettingsController::class);
         Route::get('apps', [AppsController::class, 'index'])->name('apps.index');
         Route::get('appremove/{alias}', [AppsController::class, 'remove'])->name('apps.remove');
         Route::post('apps', [AppsController::class, 'store'])->name('apps.store');
+        Route::get('cloudupdate', [SettingsController::class, 'cloudupdate'])->name('settings.cloudupdate');
+        Route::get('systemstatus', [SettingsController::class, 'systemstatus'])->name('systemstatus');
+        Route::get('translatemenu', [SettingsController::class, 'translateMenu'])->name('translatemenu');
     });
-    Route::get('cloudupdate', [SettingsController::class, 'cloudupdate'])->name('settings.cloudupdate');
-    Route::get('systemstatus', [SettingsController::class, 'systemstatus'])->name('systemstatus');
-    Route::get('translatemenu', [SettingsController::class, 'translateMenu'])->name('translatemenu');
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

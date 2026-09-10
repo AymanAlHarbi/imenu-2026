@@ -369,3 +369,76 @@ hr{ border-top-color:var(--im-line); margin:.9rem 0; }
 [dir="rtl"] .navbar-vertical .navbar-nav .nav-link[data-toggle="collapse"]::after{margin-left:0;margin-right:auto}
 [dir="rtl"] .close{float:left}
 
+
+/* ==========================================================================
+   صفحة الإعدادات — إضافات ١٠ سبتمبر ٢٠٢٦
+   ========================================================================== */
+
+/* حقول الكود: لاتينية دائمًا مهما كانت لغة الواجهة */
+textarea.im-code,
+input.im-code {
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: isolate;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important;
+    font-size: 12.5px;
+    line-height: 1.65;
+    tab-size: 4;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+    background: #0f1c2b;
+    color: #e8eef5;
+    border-color: #16304c;
+}
+
+textarea.im-code:focus,
+input.im-code:focus {
+    background: #0f1c2b;
+    color: #e8eef5;
+    border-color: #e8952f;
+    box-shadow: 0 0 0 2px rgba(232, 149, 47, .25);
+}
+
+/* شريط الحفظ الثابت */
+.im-savebar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 24px -1.5rem -1.5rem;
+    padding: 14px 24px;
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(22, 48, 76, .12);
+    border-radius: 0 0 20px 20px;
+}
+
+.im-savebar .btn {
+    min-width: 140px;
+    border-radius: 999px;
+}
+
+.im-savebar-note {
+    font-size: 12.5px;
+    color: #6b7a89;
+}
+
+/* البحث في الإعدادات: يكشف التبويبات غير النشطة أثناء البحث */
+#myTabContent .tab-pane.im-search-open {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+#im-settings-search {
+    border-radius: 999px;
+}
+
+/* الحقول المعلَّمة ltr صراحةً (روابط المتاجر والشبكات) تُحاذى يسارًا.
+   أما dir="auto" فيُترك للمتصفح: عربي يمينًا ولاتيني يسارًا. */
+[dir="rtl"] input[dir="ltr"] {
+    text-align: left;
+}

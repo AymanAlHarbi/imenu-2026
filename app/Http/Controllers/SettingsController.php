@@ -32,6 +32,34 @@ class SettingsController extends Controller
     }
 
     /**
+     * مفاتيح لا تُعرض قيمتها في الصفحة إطلاقًا.
+     * تُرسم فارغة، والقيمة الفارغة عند الحفظ تعني «أبقِ ما هو موجود».
+     */
+    public static function secretKeys(): array
+    {
+        return [
+            'APP_SECRET',
+            'MAIL_PASSWORD',
+            'STRIPE_SECRET',
+            'STRIPE_KEY',
+            'RECAPTCHA_SECRET_KEY',
+            'HUMAN_CAPTCHA_SECRET',
+            'ONESIGNAL_REST_API_KEY',
+            'TWILIO_AUTH_TOKEN',
+            'PUSHER_APP_SECRET',
+            'GOOGLE_CLIENT_SECRET',
+            'FACEBOOK_CLIENT_SECRET',
+            'FUTY_KEY',
+        ];
+    }
+
+    /** حقول Stripe لا معنى لها ما لم يكن معالج الاشتراكات Stripe. */
+    private static function isStripeField(string $key): bool
+    {
+        return in_array($key, ['STRIPE_KEY', 'STRIPE_SECRET', 'ENABLE_STRIPE', 'ENABLE_STRIPE_CONNECT', 'VENDORS_OR_ADMIN_STRIPE'], true);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -188,8 +216,16 @@ class SettingsController extends Controller
         $envConfigs['3']['fields'] = array_merge($extraFields, $envConfigs['3']['fields']);
 
         //Since 2.2.x there is custom modules
+        $secretKeys = self::secretKeys();
+        $isStripeProcessor = strtolower(config('settings.subscription_processor', 'stripe')) === 'stripe';
+
         $envMerged = [];
         foreach ($envConfigs as $key => $group) {
+            //حارس: كان في المصفوفة عنصر فارغ [] ينتج تبويبًا شبحًا بلا اسم ولا محتوى
+            if (! isset($group['slug']) || ! isset($group['fields'])) {
+                continue;
+            }
+
             $theMegedGroupFields = [];
             foreach ($group['fields'] as $key => $field) {
                 if (! (isset($field['onlyin']) && $field['onlyin'] != config('settings.app_project_type'))) {
@@ -205,18 +241,41 @@ class SettingsController extends Controller
                             }
                         }
                     }
+
+                    //إخفاء خاص بـاي منيو: خدمات لا نستخدمها. احذف 'imhide' من الحقل لإعادته
+                    if (isset($field['imhide']) && $field['imhide']) {
+                        $shouldBeAdded = false;
+                    }
+
+                    //حقول Stripe لا تظهر ما لم يكن هو معالج الاشتراكات
+                    if (! $isStripeProcessor && self::isStripeField($field['key'])) {
+                        $shouldBeAdded = false;
+                    }
+
                     if ($shouldBeAdded) {
+                        $isSecret = in_array($field['key'], $secretKeys, true);
+                        $ftype = isset($field['ftype']) ? $field['ftype'] : 'input';
+                        $help = isset($field['help']) ? $field['help'] : null;
+
+                        if ($isSecret) {
+                            //لا تُطبع القيمة في HTML الصفحة
+                            $help = trim(($help ? $help.' — ' : '').__('Leave empty to keep the current value'));
+                        }
+
                         array_push($theMegedGroupFields, [
-                            'ftype' => isset($field['ftype']) ? $field['ftype'] : 'input',
-                            'type' => isset($field['type']) ? $field['type'] : 'text',
+                            'ftype' => $ftype,
+                            'type' => $isSecret ? 'password' : (isset($field['type']) ? $field['type'] : 'text'),
                             'id' => 'env['.$field['key'].']',
                             'name' => isset($field['title']) && $field['title'] != '' ? $field['title'] : $field['key'],
                             'placeholder' => isset($field['placeholder']) ? $field['placeholder'] : '',
-                            'value' => env($field['key'], $field['value']),
+                            'value' => $isSecret ? '' : env($field['key'], $field['value']),
                             'required' => false,
                             'separator' => isset($field['separator']) ? $field['separator'] : null,
-                            'additionalInfo' => isset($field['help']) ? $field['help'] : null,
+                            'additionalInfo' => $help,
                             'data' => isset($field['data']) ? $field['data'] : [],
+                            //قيم .env لاتينية غالبًا (روابط، مفاتيح، أرقام) و«auto» تختار
+                            //الاتجاه من أول حرف، فتبقى العناوين العربية من اليمين
+                            'dir' => 'auto',
                         ]);
                     }
 
@@ -225,7 +284,7 @@ class SettingsController extends Controller
             array_push($envMerged, [
                 'name' => $group['name'],
                 'slug' => $group['slug'],
-                'icon' => $group['icon'],
+                'icon' => isset($group['icon']) ? $group['icon'] : 'ni ni-settings',
                 'fields' => $theMegedGroupFields,
             ]);
         }
@@ -301,7 +360,7 @@ class SettingsController extends Controller
 
             $hasDemoRestaurants = Restorant::where('phone', '(530) 625-9694')->count() > 0;
 
-            if (config('settings.is_demo') | config('settings.is_demo')) {
+            if (config('settings.is_demo')) {
                 $hasDemoRestaurants = false;
             }
 
@@ -361,6 +420,38 @@ class SettingsController extends Controller
         //
     }
 
+    /**
+     * نسخة احتياطية من .env قبل كل كتابة.
+     * قيمة واحدة خاطئة في APP_URL أو DB_* تُسقط الموقع، والرجوع بلا نسخة يحتاج FTP.
+     * نحتفظ بآخر ٥ نسخ فقط.
+     */
+    private function backupEnvironmentFile(): void
+    {
+        try {
+            $envFile = app()->environmentFilePath();
+            if (! file_exists($envFile)) {
+                return;
+            }
+
+            $backupDir = storage_path('app/env-backups');
+            if (! is_dir($backupDir)) {
+                @mkdir($backupDir, 0755, true);
+            }
+
+            @copy($envFile, $backupDir.'/env-'.date('Ymd-His').'.bak');
+
+            $backups = glob($backupDir.'/env-*.bak');
+            if ($backups && count($backups) > 5) {
+                sort($backups);
+                foreach (array_slice($backups, 0, count($backups) - 5) as $old) {
+                    @unlink($old);
+                }
+            }
+        } catch (\Exception $e) {
+            //نسخة احتياطية فاشلة لا تمنع الحفظ
+        }
+    }
+
     public function setEnvironmentValue(array $values)
     {
 
@@ -405,40 +496,88 @@ class SettingsController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
-        if (config('settings.is_demo') | config('settings.is_demo')) {
+        //الطبقة الثانية بعد حارس المسار — هذه الدالة تكتب في .env وفي ملفات public
+        $this->validateAccess();
+
+        if (config('settings.is_demo')) {
             //Demo, don;t allow
             return redirect()->route('settings.index')->withStatus(__('Settings not allowed to be updated in DEMO mode!'));
         }
 
-        $this->setEnvironmentValue($request->env);
+        //الأسرار تُرسل فارغة إذا لم يغيّرها الأدمن — لا نكتب الفراغ فوق القيمة الحالية
+        $envValues = is_array($request->env) ? $request->env : [];
+        foreach (self::secretKeys() as $secretKey) {
+            if (isset($envValues[$secretKey]) && trim($envValues[$secretKey]) === '') {
+                unset($envValues[$secretKey]);
+            }
+        }
+
+        $this->backupEnvironmentFile();
+        $this->setEnvironmentValue($envValues);
         Artisan::call('config:clear');
         Artisan::call('cache:clear');
+        Artisan::call('view:clear');
         Cache::flush();
 
         $settings = Settings::find($id);
 
-        $settings->site_name = strip_tags($request->site_name);
-        $settings->description = strip_tags($request->site_description);
-        $settings->header_title = $request->header_title;
-        $settings->header_subtitle = $request->header_subtitle;
-        $settings->facebook = strip_tags($request->facebook) ? strip_tags($request->facebook) : '';
-        $settings->instagram = strip_tags($request->instagram) ? strip_tags($request->instagram) : '';
-        $settings->playstore = strip_tags($request->playstore) ? strip_tags($request->playstore) : '';
-        $settings->appstore = strip_tags($request->appstore) ? strip_tags($request->appstore) : '';
-        $settings->typeform = strip_tags($request->typeform) ? strip_tags($request->typeform) : '';
-        $settings->mobile_info_title = strip_tags($request->mobile_info_title) ? strip_tags($request->mobile_info_title) : '';
-        $settings->mobile_info_subtitle = strip_tags($request->mobile_info_subtitle) ? strip_tags($request->mobile_info_subtitle) : '';
-        $settings->delivery = (float) $request->delivery;
-        $settings->order_fields = $request->order_fields;
+        if (! $settings) {
+            return redirect()->route('settings.index')->withStatus(__('Settings not found'));
+        }
+
+        /**
+         * حقول لا تُعرض في كل أوضاع المشروع (مثل الوضع qrsaas).
+         * كان الكود يكتبها من طلب فارغ فتُمسح عناوين الترويسة وروابط المتاجر
+         * في كل حفظ. الآن لا يُكتب إلا ما أُرسل فعلًا.
+         */
+        $textFields = [
+            'site_name' => 'site_name',
+            'description' => 'site_description',
+            'header_title' => 'header_title',
+            'header_subtitle' => 'header_subtitle',
+            'facebook' => 'facebook',
+            'instagram' => 'instagram',
+            'playstore' => 'playstore',
+            'appstore' => 'appstore',
+            'typeform' => 'typeform',
+            'mobile_info_title' => 'mobile_info_title',
+            'mobile_info_subtitle' => 'mobile_info_subtitle',
+        ];
+
+        foreach ($textFields as $column => $requestKey) {
+            if ($request->has($requestKey)) {
+                $settings->{$column} = strip_tags((string) $request->input($requestKey));
+            }
+        }
+
+        if ($request->has('delivery')) {
+            $settings->delivery = (float) $request->delivery;
+        }
+
+        if ($request->has('order_fields')) {
+            $settings->order_fields = $request->order_fields;
+        }
+
         $settings->update();
 
-        fwrite(fopen(__DIR__.'/../../../public/byadmin/front.js', 'w'), str_replace('tagscript', 'script', $request->jsfront));
-        fwrite(fopen(__DIR__.'/../../../public/byadmin/back.js', 'w'), str_replace('tagscript', 'script', $request->jsback));
-        fwrite(fopen(__DIR__.'/../../../public/byadmin/front.css', 'w'), str_replace('tagscript', 'script', $request->cssfront));
-        fwrite(fopen(__DIR__.'/../../../public/byadmin/back.css', 'w'), str_replace('tagscript', 'script', $request->cssback));
+        //ملفات CSS/JS المخصصة — تُكتب فقط إذا أُرسل حقلها
+        $customFiles = [
+            'jsfront' => 'front.js',
+            'jsfrontmenu' => 'frontmenu.js',
+            'jsback' => 'back.js',
+            'cssfront' => 'front.css',
+            //كانت تُكتب في frontcss.css بينما القراءة من frontmenu.css، فلم يُحفظ شيء
+            'cssfrontmenu' => 'frontmenu.css',
+            'cssback' => 'back.css',
+        ];
 
-        fwrite(fopen(__DIR__.'/../../../public/byadmin/frontmenu.js', 'w'), str_replace('tagscript', 'script', $request->jsfrontmenu));
-        fwrite(fopen(__DIR__.'/../../../public/byadmin/frontcss.css', 'w'), str_replace('tagscript', 'script', $request->cssfrontmenu));
+        foreach ($customFiles as $requestKey => $fileName) {
+            if (! $request->has($requestKey)) {
+                continue;
+            }
+            $contents = str_replace('tagscript', 'script', (string) $request->input($requestKey));
+            file_put_contents(public_path('byadmin/'.$fileName), $contents, LOCK_EX);
+        }
 
         if ($request->hasFile('site_logo')) {
             $settings->site_logo = $this->saveImageVersions(
