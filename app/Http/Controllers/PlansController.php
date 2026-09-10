@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Akaunting\Module\Facade as Module;
 use App\Plans;
+use App\Services\Subscription;
 use App\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,12 +36,14 @@ class PlansController extends Controller
 
         $plans = Plans::get()->toArray();
         $colCounter = [4, 12, 6, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4];
+        //حارس: المصفوفة مفهرسة بعدد الخطط وكانت تنهار عند تجاوز ١٧ خطة
+        $colCounter = isset($colCounter[count($plans)]) ? $colCounter[count($plans)] : 4;
 
         $currentUserPlan = Plans::withTrashed()->find(auth()->user()->mplanid());
         $planAttribute = auth()->user()->restorant->getPlanAttribute();
 
         $data = [
-            'col' => $colCounter[count($plans)],
+            'col' => $colCounter,
             'plans' => $plans,
             'currentPlan' => $currentUserPlan,
             'planAttribute' => $planAttribute,
@@ -88,17 +91,7 @@ class PlansController extends Controller
     {
         $this->adminOnly();
         //Validate request
-        $rules = [
-            'name' => ['required'],
-            'price' => ['numeric', 'required'],
-            'description' => ['required'],
-            'features' => ['required'],
-            'stripe_id' => ['sometimes'],
-            'limit_items' => ['numeric', 'required'],
-            'limit_orders' => ['numeric', 'required'],
-        ];
-
-        $request->validate($rules);
+        $request->validate($this->planRules());
 
         $plan = new Plans;
         $plan->name = strip_tags($request->name);
@@ -114,7 +107,7 @@ class PlansController extends Controller
         $plan->description = $request->description;
         $plan->features = $request->features;
 
-        $plan->period = $request->period == 'monthly' ? 1 : 2;
+        $plan->period = Subscription::periodFromRequest($request->period);
         $plan->enable_ordering = $request->ordering == 'enabled' ? 1 : 2;
 
         $plan->limit_orders = $request->ordering == 'enabled' ? $request->limit_orders : 0;
@@ -124,6 +117,23 @@ class PlansController extends Controller
         $this->updatePlanPlugins($plan, $request->pluginsSelector);
 
         return redirect()->route('plans.index')->withStatus(__('Plan successfully created!'));
+    }
+
+    /**
+     * قواعد التحقق المشتركة بين الإنشاء والتعديل.
+     * كانت مفقودة تمامًا في update() فكان يمكن حفظ خطة بسعر فارغ.
+     */
+    private function planRules(): array
+    {
+        return [
+            'name' => ['required'],
+            'price' => ['numeric', 'required', 'min:0'],
+            'description' => ['required'],
+            'features' => ['required'],
+            'stripe_id' => ['sometimes'],
+            'limit_items' => ['numeric', 'required', 'min:0'],
+            'limit_orders' => ['numeric', 'required', 'min:0'],
+        ];
     }
 
     /**
@@ -175,6 +185,8 @@ class PlansController extends Controller
     public function update(Request $request, Plans $plan): RedirectResponse
     {
         $this->adminOnly();
+        $request->validate($this->planRules());
+
         $plan->name = strip_tags($request->name);
         $plan->price = strip_tags($request->price);
         $plan->limit_items = strip_tags($request->limit_items);
@@ -191,7 +203,7 @@ class PlansController extends Controller
             $plan->stripe_id = $request->stripe_id;
         }
 
-        $plan->period = $request->period == 'monthly' ? 1 : 2;
+        $plan->period = Subscription::periodFromRequest($request->period);
         $plan->enable_ordering = $request->ordering == 'enabled' ? 1 : 2;
         $plan->limit_orders = $request->ordering == 'enabled' ? $request->limit_orders : 0;
 
@@ -297,6 +309,11 @@ class PlansController extends Controller
         auth()->user()->plan_id = $plan->id;
         auth()->user()->update();
 
+        //النزول للخطة المجانية يلغي أي تاريخ انتهاء سابق
+        if ((int) $plan->id === Subscription::freePlanId()) {
+            Subscription::setExpiry(auth()->user(), null);
+        }
+
         return redirect()->route('plans.current')->withStatus(__('Plan update!'));
     }
 
@@ -304,9 +321,24 @@ class PlansController extends Controller
     {
         $this->adminOnly();
         $user = User::findOrFail($request->user_id);
-        $user->plan_id = $request->plan_id;
+        $previousPlanId = (int) $user->plan_id;
+        $newPlanId = (int) $request->plan_id;
+
+        $user->plan_id = $newPlanId;
         $user->plan_status = 'set_by_admin';
         $user->update();
+
+        //تاريخ انتهاء الاشتراك
+        if ($newPlanId === Subscription::freePlanId()) {
+            //المجانية بلا انتهاء
+            Subscription::setExpiry($user, null);
+        } elseif ($request->has('plan_expires_at')) {
+            //الأدمن حدد تاريخًا، أو تركه فارغًا عمدًا = بلا انتهاء
+            Subscription::setExpiry($user, $request->plan_expires_at ?: null);
+        } elseif ($previousPlanId !== $newPlanId) {
+            //خطة جديدة بلا تاريخ مرسل: اقترح نهاية الفترة
+            Subscription::setExpiry($user, Subscription::defaultExpiry(Plans::find($newPlanId)));
+        }
 
         return redirect()->route('admin.restaurants.edit', $request->restaurant_id)->withStatus(__('Plan successfully updated.'));
     }

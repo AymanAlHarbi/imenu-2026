@@ -2074,5 +2074,17 @@
     "Item image": "صورة الصنف",
     "Choose image": "اختر صورة",
     "Item is available": "الصنف متاح",
-    "Item price": "سعر الصنف"
+    "Item price": "سعر الصنف",
+    "Semi-annual": "نصف سنوي",
+    "6m": "٦ أشهر",
+    "Subscription expires at": "ينتهي الاشتراك في",
+    "Leave empty for a subscription without an end date": "اتركه فارغًا لاشتراك بلا تاريخ انتهاء",
+    "Subscription expired. The vendor is on the free plan now.": "انتهى الاشتراك، والمقهى الآن على الخطة المجانية.",
+    "days left": "يوم متبقٍ",
+    "Your subscription expired on": "انتهى اشتراكك في",
+    "Your subscription is valid until": "اشتراكك ساري حتى",
+    "Are you sure you want to switch to this plan?": "هل أنت متأكد من التحويل إلى هذه الخطة؟",
+    "month": "شهر",
+    "months": "أشهر",
+    "Clear": "مسح"
 }

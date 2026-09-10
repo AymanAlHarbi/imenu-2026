@@ -22,6 +22,14 @@
                     {{ $planAttribute['itemsMessage'] }}
                 </div>
 
+                <!-- SUBSCRIPTION EXPIRY -->
+                @php($subscriptionLabel = \App\Services\Subscription::label(auth()->user()))
+                @if($subscriptionLabel)
+                    <div class="alert alert-{{ \App\Services\Subscription::alertType(auth()->user()) }}" role="alert">
+                        {{ $subscriptionLabel }}
+                    </div>
+                @endif
+
                 
                     
 

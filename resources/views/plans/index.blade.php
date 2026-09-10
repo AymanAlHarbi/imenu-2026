@@ -43,7 +43,7 @@
                                 <tr>
                                     <td><a href="{{ route('plans.edit', $plan) }}">{{ $plan->name }} </a></td>
                                     <td>{{ $plan->price }}</td>
-                                    <td>{{ $plan->period == 1 ? __("Monthly") : __("Anually") }}</td>
+                                    <td>{{ \App\Services\Subscription::periodLabel($plan->period) }}</td>
                                     @if (config('app.issd'))
                                         <td>{{ $plan->limit_orders==0?"∞": $plan->limit_orders }}</td>
                                     @else

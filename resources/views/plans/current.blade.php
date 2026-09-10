@@ -45,7 +45,7 @@
                                         <h3 class="mb-0">{{ $plan['name'] }}</h3>
                                     </div>
                                     <div class="col-4">
-                                        <h3 class="mb-0">@money($plan['price'], config('settings.site_currency','usd'),config('settings.site_do_currency',true))/{{ $plan['period']==1?__('m'):__('y') }}</h3>
+                                        <h3 class="mb-0">@money($plan['price'], config('settings.site_currency','usd'),config('settings.site_do_currency',true))/{{ \App\Services\Subscription::periodShort($plan['period']) }}</h3>
                                     </div>
 
                                 </div>
@@ -86,6 +86,15 @@
                                         <a href="javascript:showStripeCheckout({{ $plan['id'] }} , '{{ $plan['name'] }}')" class="btn btn-primary">{{__('Switch to')." ".$plan['name']}}</a>
                                     @endif
 
+                                    {{-- الخطة المجانية: كان شرط price>0 يمنع ظهور أي زر لها، فلا يستطيع المقهى اختيارها ولا النزول إليها --}}
+                                    @if($plan['price']<=0&&(config('settings.subscription_processor')=='Local'||config('settings.subscription_processor')=='local'))
+                                        <form action="{{ route('plans.subscribe') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="plan_id" value="{{ $plan['id'] }}" />
+                                            <button type="submit" class="btn btn-outline-primary" onclick="return confirm('{{ __('Are you sure you want to switch to this plan?') }}')">{{__('Switch to')." ".$plan['name']}}</button>
+                                        </form>
+                                    @endif
+
                                     @if($plan['price']>0&&(config('settings.subscription_processor')=='Local'||config('settings.subscription_processor')=='local'))
                                         <button  data-toggle="modal" data-target="#paymentModal{{ $plan['id']  }}" class="btn btn-primary">{{__('Switch to')." ".$plan['name']}}</button>
 
@@ -105,7 +114,7 @@
                                                 {{ config('settings.local_transfer_account')}}
                                                 <hr /><br />
                                                 {{ __('Plan price ')}}<br />
-                                                @money($plan['price'], config('settings.site_currency','usd'),config('settings.site_do_currency',true))/{{ $plan['period']==1?__('m'):__('y') }}
+                                                @money($plan['price'], config('settings.site_currency','usd'),config('settings.site_do_currency',true))/{{ \App\Services\Subscription::periodShort($plan['period']) }}
                                                 </div>
                                                 <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>

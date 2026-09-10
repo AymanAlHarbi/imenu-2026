@@ -37,14 +37,18 @@
 <!-- THIS IS SPECIAL -->
 <div class="col-md-6">
     <label class="form-control-label">{{ __("Plan period") }}</label>
-    <div class="custom-control custom-radio mb-3">
-        <input name="period" class="custom-control-input" id="monthly"  @if (isset($plan))  @if ($plan->period == 1) checked @endif @else checked @endif  value="monthly" type="radio">
-        <label class="custom-control-label" for="monthly">{{ __('Monthly') }}</label>
-    </div>
-    <div class="custom-control custom-radio mb-3">
-        <input name="period" class="custom-control-input" id="anually" value="anually" @if (isset($plan) && $plan->period == 2) checked @endif type="radio">
-        <label class="custom-control-label" for="anually">{{ __('Anually') }}</label>
-    </div>
+    @foreach (\App\Services\Subscription::periods() as $periodId => $periodInfo)
+        <div class="custom-control custom-radio mb-3">
+            <input name="period" class="custom-control-input" id="period-{{ $periodInfo['slug'] }}" value="{{ $periodInfo['slug'] }}" type="radio"
+                @if (isset($plan))
+                    @if ((int) $plan->period === $periodId) checked @endif
+                @elseif ($periodId === \App\Services\Subscription::MONTHLY)
+                    checked
+                @endif
+            >
+            <label class="custom-control-label" for="period-{{ $periodInfo['slug'] }}">{{ __($periodInfo['name']) }}</label>
+        </div>
+    @endforeach
 </div>
 
 

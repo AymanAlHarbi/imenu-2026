@@ -114,14 +114,8 @@ class Restorant extends MyModel
             }
 
             //Count orders
-            //Period
-            if ($currentPlan->period == 1) {
-                //Monthly - get start of month
-                $period = Carbon::now()->startOfMonth();
-            } else {
-                //Yearly - get start iof year
-                $period = Carbon::now()->startOfYear();
-            }
+            //بداية فترة الخطة: شهري / نصف سنوي / سنوي
+            $period = \App\Services\Subscription::periodStart($currentPlan->period);
             $orderCount = $this->orders->where('created_at', '>=', $period)->count();
 
             if ($currentPlan->limit_orders != 0 && $currentPlan->enable_ordering == 1) {

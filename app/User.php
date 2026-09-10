@@ -211,9 +211,24 @@ class User extends Authenticatable
         return $this->hasOne(\App\Plans::class, 'id', 'plan_id');
     }
 
+    /**
+     * معرّف الخطة السارية فعليًا.
+     * إذا انتهى تاريخ الاشتراك يُعامَل المستخدم بالخطة المجانية تلقائيًا
+     * دون تعديل plan_id، ليبقى بإمكان الأدمن رؤية الخطة الأصلية وتمديدها.
+     */
     public function mplanid()
     {
-        return $this->plan_id ? $this->plan_id : intval(config('settings.free_pricing_id'));
+        $freePlanId = \App\Services\Subscription::freePlanId();
+
+        if (! $this->plan_id) {
+            return $freePlanId;
+        }
+
+        if (intval($this->plan_id) !== $freePlanId && \App\Services\Subscription::isExpired($this)) {
+            return $freePlanId;
+        }
+
+        return $this->plan_id;
     }
 
     public function addresses(): HasMany
