@@ -1,0 +1,98 @@
+/* iMenu 2026 — مطبوعات الكوفي الجاهزة (ملصق الشباك · كرت الكاونتر · لوحة السيارة · ستيكر الكوب)
+   المقاسات بالمليمتر لتطابق الورق. الألوان من imenu-brand-identity.md */
+:root {
+  --cream: #FAF6EF; --cream-2: #F3ECE0; --line: #E6DCCC;
+  --navy-900: #16304C; --navy-800: #1D3E5E; --navy-700: #26537C;
+  --orange: #E8952F; --orange-deep: #B96F14;
+  --ink: #17324E; --ink-soft: #5A7590; --ink-faint: #8FA3B8;
+  --display: "El Messiri", "IBM Plex Sans Arabic", serif;
+  --body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: #ddd6ca; font-family: var(--body); color: var(--ink); direction: rtl;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+p, h1, h2 { margin: 0; }
+
+/* شريط الأدوات — لا يُطبع */
+.bar { position: fixed; top: 0; right: 0; left: 0; height: 56px; background: #fff; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; }
+.bar .title { font-family: var(--display); font-weight: 700; color: var(--navy-900); font-size: 17px; }
+.bar .title small { font-family: var(--body); font-weight: 400; color: var(--ink-faint); font-size: 12px; margin-inline-start: 10px; }
+.bar .actions { display: flex; gap: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; font-family: var(--body);
+  font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 0; }
+.btn.primary { background: linear-gradient(180deg, #F2A94A, #E8952F); color: #fff; box-shadow: 0 6px 18px rgba(232,149,47,.3); }
+.btn.outline { background: #fff; color: var(--navy-900); border: 1.5px solid var(--navy-900); }
+.stage { padding: 80px 20px 40px; display: flex; justify-content: center; }
+
+/* الورقة */
+.sheet { background: var(--cream); box-shadow: 0 10px 40px rgba(22,48,76,.18); overflow: hidden; position: relative;
+  display: flex; flex-direction: column; }
+.qr-plate { background: #fff; border: 0.3mm solid var(--line); display: block; }
+.qr-plate svg, .qr-plate canvas { display: block; width: 100% !important; height: 100% !important; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 3mm; }
+.foot .by { display: flex; align-items: center; gap: 1.6mm; color: var(--ink-soft); font-size: 9pt; }
+.foot .url { direction: ltr; color: var(--ink-faint); font-size: 9pt; }
+.mark { display: inline-flex; align-items: center; justify-content: center; width: 4.8mm; height: 4.8mm; border-radius: 1mm;
+  background: var(--navy-900); color: var(--orange); font-family: var(--display); font-weight: 700; font-size: 8.5pt; line-height: 1; }
+
+/* ملصق الشباك — A5 قائم */
+.t-window .sheet { width: 148mm; height: 210mm; }
+.t-window .band { position: relative; background: var(--navy-900); color: #fff; padding: 10.5mm 11.5mm 9.5mm; overflow: hidden;
+  display: flex; flex-direction: column; gap: 2.5mm; }
+.t-window .band .c1 { position: absolute; width: 69mm; height: 69mm; border-radius: 50%; background: var(--navy-800); left: -24mm; top: -32mm; }
+.t-window .band .c2 { position: absolute; width: 42mm; height: 42mm; border-radius: 50%; background: var(--navy-700); left: 32mm; bottom: -29mm; }
+.t-window .band .cafe { position: relative; font-family: var(--display); font-size: 15pt; font-weight: 600; color: var(--orange); }
+.t-window .band h1 { position: relative; font-family: var(--display); font-size: 40pt; font-weight: 700; line-height: 1.12; color: #fff; }
+.t-window .body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 8mm 11.5mm 7.5mm; }
+.t-window .lead { font-size: 14pt; font-weight: 500; text-align: center; line-height: 1.55; }
+.t-window .qr-plate { width: 79mm; height: 79mm; padding: 5.3mm; border-radius: 5.8mm; }
+.t-window .scan { display: flex; flex-direction: column; align-items: center; gap: 1.5mm; }
+.t-window .scan b { font-size: 13pt; font-weight: 600; color: var(--navy-900); }
+.t-window .scan span { font-size: 10.5pt; color: var(--ink-soft); }
+.t-window .foot { width: 100%; }
+
+/* كرت الكاونتر — A6 قائم */
+.t-counter .sheet { width: 105mm; height: 148mm; align-items: center; justify-content: space-between; padding: 9.5mm 8.5mm 6.5mm; }
+.t-counter .top { display: flex; flex-direction: column; align-items: center; gap: 3mm; }
+.t-counter .cafe { font-size: 10pt; font-weight: 600; color: var(--orange-deep); }
+.t-counter h1 { font-family: var(--display); font-size: 27pt; font-weight: 700; color: var(--navy-900); text-align: center; line-height: 1.15; }
+.t-counter .rule { width: 12.7mm; height: 1mm; border-radius: 1mm; background: var(--orange); }
+.t-counter .qr-plate { width: 62.5mm; height: 62.5mm; padding: 4.2mm; border-radius: 5.3mm; }
+.t-counter .scan { display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.t-counter .scan b { font-size: 11pt; font-weight: 600; color: var(--navy-900); }
+.t-counter .scan span { font-size: 10pt; color: var(--ink-soft); }
+.t-counter .foot { width: 100%; }
+
+/* لوحة السيارة — A5 عرضي */
+.t-car .sheet { width: 210mm; height: 148mm; justify-content: space-between; padding: 11.5mm 12.7mm 7.5mm; }
+.t-car .main { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 10mm; }
+.t-car .text { display: flex; flex-direction: column; gap: 4.8mm; max-width: 100mm; }
+.t-car .chip { align-self: flex-start; font-size: 10.5pt; font-weight: 600; color: var(--orange-deep); background: #FCEEDA;
+  border: 0.3mm solid #F4DCBB; border-radius: 99mm; padding: 1.6mm 3.7mm; }
+.t-car h1 { font-family: var(--display); font-size: 48pt; font-weight: 700; color: var(--navy-900); line-height: 1.05; }
+.t-car .lead { font-size: 16pt; font-weight: 500; line-height: 1.5; }
+.t-car .sub { font-size: 11pt; color: var(--ink-soft); line-height: 1.5; }
+.t-car .side { display: flex; flex-direction: column; align-items: center; gap: 3mm; }
+.t-car .qr-plate { width: 79mm; height: 79mm; padding: 5.3mm; border-radius: 5.8mm; }
+.t-car .side b { font-size: 10.5pt; font-weight: 600; color: var(--navy-900); }
+
+/* ستيكر الكوب — A4 · ١٥ قطعة ٤×٤ سم */
+.t-cup .sheet { width: 210mm; height: 297mm; padding: 12.7mm 14.8mm 10.5mm; gap: 5.8mm; }
+.t-cup .head { display: flex; justify-content: space-between; align-items: baseline; }
+.t-cup .head b { font-family: var(--display); font-size: 13.5pt; font-weight: 700; color: var(--navy-900); }
+.t-cup .head span { font-size: 9pt; color: var(--ink-faint); }
+.t-cup .grid { display: grid; grid-template-columns: repeat(3, 40mm); justify-content: space-between; gap: 9mm 0; flex: 1; align-content: start; }
+.t-cup .cell { width: 40mm; height: 40mm; border: 0.3mm dashed #C9B6A6; border-radius: 4.2mm; background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.3mm; padding: 2mm; }
+.t-cup .cell .qr-plate { width: 23.3mm; height: 23.3mm; padding: 1mm; border: 0; border-radius: 1.5mm; }
+.t-cup .cell b { font-family: var(--display); font-size: 10pt; font-weight: 700; color: var(--navy-900); line-height: 1; }
+.t-cup .cell span { font-size: 9pt; color: var(--ink-soft); line-height: 1; }
+
+@media print {
+  body { background: #fff; }
+  .bar { display: none; }
+  .stage { padding: 0; display: block; }
+  .sheet { box-shadow: none; margin: 0; page-break-after: always; }
+}

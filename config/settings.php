@@ -126,6 +126,8 @@ return [
     // iMenu 2026 - حقول السوق (نسبة الرسوم · رسوم ثابتة · مميز) مخفية افتراضيًا لأن النموذج صفر عمولة.
     // MARKETPLACE_FIELDS=true يعيدها.
     'marketplace_fields' => env('MARKETPLACE_FIELDS', false),
+    // iMenu 2026 - صفحة QR الإصدار الثاني (مولّد محلي + مطبوعات جاهزة). QR_PAGE_V2=false يعيد صفحة React الأصلية.
+    'qr_page_v2' => env('QR_PAGE_V2', true),
     'enable_default_cookie_consent' => env('ENABLE_DEFAULT_COOKIE_CONSENT', true),
     'datetime_display_format' => env('DATETIME_DISPLAY_FORMAT', 'd M Y H:i'),
     'datetime_workinghours_display_format_new' => env('DATETIME_WORKING_HOURS_DISPLAY_FORMAT_NEW', 'E HH:mm'),

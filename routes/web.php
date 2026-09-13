@@ -292,6 +292,8 @@ Route::middleware('auth', 'impersonate')->group(function () {
     Route::post('/subscribe/update', [PlansController::class, 'adminupdate'])->name('update.plan');
 
     Route::get('qr', [QRController::class, 'index'])->name('qr');
+    // iMenu 2026 - مطبوعات الكوفي الجاهزة للطباعة (صفحة QR الإصدار الثاني)
+    Route::get('qr/print/{template}', [QRController::class, 'print'])->name('qr.print');
 
     Route::post('/pay', [PaymentController::class, 'redirectToGateway'])->name('pay');
     Route::get('/payment/callback', [PaymentController::class, 'handleGatewayCallback']);
