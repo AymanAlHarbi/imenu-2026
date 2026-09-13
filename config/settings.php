@@ -120,6 +120,12 @@ return [
     'admin_email' => env('ADMIN_EMAIL', 'admin@example.com'),
     'admin_password' => env('ADMIN_PASSWORD', 'secret'),
     'enable_pickup' => env('ENABLE_PICKUP', true),
+    // iMenu 2026 - استلام فقط: يخفي التوصيل / توصيل مجاني / تناول في المطعم / الطلبات المستمرة / الحد الأدنى
+    // من نموذج تعديل المطعم. الكود باقٍ في القوالب؛ PICKUP_ONLY=false في .env يعيد الحقول كما كانت.
+    'pickup_only' => env('PICKUP_ONLY', true),
+    // iMenu 2026 - حقول السوق (نسبة الرسوم · رسوم ثابتة · مميز) مخفية افتراضيًا لأن النموذج صفر عمولة.
+    // MARKETPLACE_FIELDS=true يعيدها.
+    'marketplace_fields' => env('MARKETPLACE_FIELDS', false),
     'enable_default_cookie_consent' => env('ENABLE_DEFAULT_COOKIE_CONSENT', true),
     'datetime_display_format' => env('DATETIME_DISPLAY_FORMAT', 'd M Y H:i'),
     'datetime_workinghours_display_format_new' => env('DATETIME_WORKING_HOURS_DISPLAY_FORMAT_NEW', 'E HH:mm'),

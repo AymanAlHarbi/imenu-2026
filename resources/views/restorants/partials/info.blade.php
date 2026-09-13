@@ -17,7 +17,23 @@
             ]])
         @endif
        
+        {{--
+            iMenu 2026 — حقول السوق (تعطيل لا حذف).
+
+            settings.marketplace_fields = false يخفي «نسبة الرسوم» و«رسوم ثابتة» و«مميز»:
+            نموذج الربح اشتراك لا عمولة، ورقم يُكتب سهوًا في الرسوم يعني عمولة وُعد بعدمها.
+            الكود الأصلي باقٍ في فرع @else؛ MARKETPLACE_FIELDS=true في .env يعيده كما كان.
+
+            الرسوم آمنة الإخفاء لأن الكنترولر يحرسها بـ if ($request->has('fee')) فلا تُمسّ.
+            أما «مميز» فيصفّره الكنترولر عند غياب الحقل، فيُرسل مخفيًا حين يكون مفعّلًا
+            — تبقى القيمة كما هي، ويبقى الحقل صالحًا لتثبيت المقهى في قائمة التطبيق لاحقًا.
+        --}}
         @if(auth()->user()->hasRole('admin'))
+            @if(!config('settings.marketplace_fields'))
+                @if($restorant->is_featured == 1)
+                    <input type="hidden" name="is_featured" value="1">
+                @endif
+            @else
             <br/>
             <div class="row">
                 <div class="col-6 form-group{{ $errors->has('fee') ? ' has-danger' : '' }}">
@@ -48,6 +64,7 @@
                 </label>
             </div>
             <br/>
+            @endif
         @endif
         <br/>
         @if (!config('app.issd',false))

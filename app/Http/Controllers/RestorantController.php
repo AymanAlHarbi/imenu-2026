@@ -416,7 +416,8 @@ class RestorantController extends Controller
         $restaurant->phone = \App\Helpers\SaudiPhone::normalize(strip_tags($request->phone)) ?: strip_tags($request->phone);
 
         $restaurant->description = strip_tags($request->description);
-        $restaurant->minimum = strip_tags($request->minimum);
+        //iMenu 2026 - «الحد الأدنى» مخفي ويُرسل صفرًا؛ التحصين يمنع strip_tags(null) لو غاب الحقل من أي مسار آخر
+        $restaurant->minimum = strip_tags((string) ($request->minimum ?? 0));
 
         if ($request->has('fee')) {
             $restaurant->fee = $request->fee;
