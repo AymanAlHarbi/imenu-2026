@@ -39,7 +39,7 @@
         <a href="{{ route('admin.restaurants.edit', auth()->user()->restorant->id) }}" class="dropdown-item">{{ __('Restaurant') }}</a>
         <a href="/items" class="dropdown-item">{{ __('Menu') }}</a>
         @if(config('app.ordering')&&config('settings.enable_finances_owner'))
-            <a href="{{ route('finances.owner') }}" class="dropdown-item">{{ __('Finances') }}</a>
+            <a href="{{ route('finances.owner') }}" class="dropdown-item">{{ config('settings.pickup_only') ? __('Sales') : __('Finances') }}</a>
         @endif
         @if(config('settings.enable_pricing'))
             <a href="{{ route('plans.current') }}" class="dropdown-item">{{ __('Plan') }}</a>

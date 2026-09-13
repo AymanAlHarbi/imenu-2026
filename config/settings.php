@@ -139,8 +139,9 @@ return [
     'enable_pricing' => env('ENABLE_PRICING', false),
     'enable_search_bar' => env('ENABLE_SEARCH_BAR', true),
     'enable_finances_admin' => env('ENABLE_FINANCES_ADMIN', true) && ! env('MAKE_PURE_SAAS', false),
-    // iMenu 2026 - hidden by default for the pickup-only vendor panel; set ENABLE_FINANCES_OWNER=true to restore
-    'enable_finances_owner' => env('ENABLE_FINANCES_OWNER', false) && ! env('MAKE_PURE_SAAS', false),
+    // iMenu 2026 - أُعيد تفعيلها: البند صار صفحة «المبيعات» (استلام فقط) لا لوحة المالية.
+    // ENABLE_FINANCES_OWNER=false يخفي البند من قائمة الكوفي.
+    'enable_finances_owner' => env('ENABLE_FINANCES_OWNER', true) && ! env('MAKE_PURE_SAAS', false),
 
     // iMenu 2026 - vendor sidebar items, off by default (set the env var to true to show again)
     'vendor_menu_apps' => env('VENDOR_MENU_APPS', false),

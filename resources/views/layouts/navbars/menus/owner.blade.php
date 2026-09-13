@@ -153,7 +153,8 @@
         @if(config('app.ordering')&&config('settings.enable_finances_owner'))
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('finances.owner') }}">
-                    <i class="ni ni-money-coins text-blue"></i> {{ __('Finances') }}
+                    {{-- iMenu 2026 - «المبيعات» في وضع الاستلام فقط، و«المالية» في الوضع الأصلي --}}
+                    <i class="ni ni-money-coins text-blue"></i> {{ config('settings.pickup_only') ? __('Sales') : __('Finances') }}
                 </a>
             </li>
         @endif

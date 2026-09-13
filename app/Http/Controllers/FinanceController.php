@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\FinancesExport;
+use App\Exports\SalesExport;
 use App\Order;
 use App\Restorant;
 use App\Status;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Stripe\Account;
 use Stripe\AccountLink;
@@ -17,9 +20,13 @@ class FinanceController extends Controller
 {
     private function getResources()
     {
-        $restorants = Restorant::where(['active' => 1])->get();
-        $drivers = User::role('driver')->where(['active' => 1])->get();
-        $clients = User::role('client')->where(['active' => 1])->get();
+        //iMenu 2026 - هذه القوائم تغذّي فلاتر المدير وحده. تحميلها لصاحب المطعم كان ثلاثة
+        //استعلامات ثقيلة (كل المطاعم وكل العملاء وكل السائقين) في كل فتح للصفحة، بلا أي استخدام.
+        $loadFilterLists = auth()->user()->hasAnyRole(['admin', 'driver']);
+
+        $restorants = $loadFilterLists ? Restorant::where(['active' => 1])->get() : collect();
+        $drivers = $loadFilterLists ? User::role('driver')->where(['active' => 1])->get() : collect();
+        $clients = $loadFilterLists ? User::role('client')->where(['active' => 1])->get() : collect();
 
         $orders = Order::orderBy('created_at', 'desc');
 
@@ -161,6 +168,12 @@ class FinanceController extends Controller
         //Change currency
         \App\Services\ConfChanger::switchCurrency($restaurant);
 
+        // iMenu 2026 - صفحة «المبيعات» (استلام فقط، صفر عمولة).
+        // الصفحة الأصلية أسفل باقية كما هي؛ PICKUP_ONLY=false يعيدها بكل بطاقاتها.
+        if (config('settings.pickup_only')) {
+            return $this->ownerSales($restaurant);
+        }
+
         //Check if Owner has completed
         $stripe_details_submitted = __('No');
         if (auth()->user()->stripe_account) {
@@ -252,6 +265,173 @@ class FinanceController extends Controller
         ];
 
         return view('finances.index', $displayParam);
+    }
+
+    /**
+     * iMenu 2026 - الفترة المختارة.
+     * ?range=today|yesterday|week|month|lastmonth|custom — والافتراضي هذا الشهر،
+     * فلا تُحمَّل كل طلبات المقهى منذ التأسيس في كل فتح للصفحة.
+     */
+    private function resolveRange(): array
+    {
+        $today = Carbon::today();
+        $range = request()->query('range');
+        $from = (string) request()->query('fromDate');
+        $to = (string) request()->query('toDate');
+
+        if (! $range && (strlen($from) > 3 || strlen($to) > 3)) {
+            $range = 'custom';
+        }
+
+        $parse = function ($value, $fallback) {
+            try {
+                return strlen((string) $value) > 3 ? Carbon::parse($value)->startOfDay() : $fallback;
+            } catch (\Exception $e) {
+                return $fallback;
+            }
+        };
+
+        switch ($range) {
+            case 'today':
+                return [$today->copy(), $today->copy(), 'today'];
+            case 'yesterday':
+                return [$today->copy()->subDay(), $today->copy()->subDay(), 'yesterday'];
+            case 'week':
+                //الأسبوع يبدأ الأحد في السوق السعودي
+                return [$today->copy()->startOfWeek(Carbon::SUNDAY), $today->copy(), 'week'];
+            case 'lastmonth':
+                $month = $today->copy()->subMonthNoOverflow();
+
+                return [$month->copy()->startOfMonth(), $month->copy()->endOfMonth(), 'lastmonth'];
+            case 'custom':
+                return [
+                    $parse($from, $today->copy()->startOfMonth()),
+                    $parse($to, $today->copy()),
+                    'custom',
+                ];
+            default:
+                return [$today->copy()->startOfMonth(), $today->copy(), 'month'];
+        }
+    }
+
+    /**
+     * iMenu 2026 - صفحة المبيعات لصاحب الكوفي.
+     * لا رسوم منصة ولا معالج دفع ولا توصيل ولا سائقين — الأسئلة الثلاثة فقط:
+     * كم طلبًا؟ كم بِعت؟ وأين يستلم عملاؤك؟
+     */
+    private function ownerSales($restaurant)
+    {
+        [$from, $to, $range] = $this->resolveRange();
+
+        $base = Order::where('restorant_id', $restaurant->id)
+            ->whereDate('created_at', '>=', $from->toDateString())
+            ->whereDate('created_at', '<=', $to->toDateString());
+
+        //المستلَمة والمدفوعة — شاشة الكاشير تضبط payment_status عند «سُلّم»
+        $paid = (clone $base)->where('payment_status', 'paid')->whereNotNull('payment_method');
+
+        //جولة واحدة على طلبات الفترة: العدد والمبيعات والضريبة
+        $count = 0;
+        $sales = 0;
+        $vat = 0;
+        $paidIds = [];
+        foreach ((clone $paid)->get() as $order) {
+            $count++;
+            $sales += $order->order_price_with_discount;
+            $vat += $order->vatvalue ?: 0;
+            $paidIds[] = $order->id;
+        }
+
+        //طريقة الاستلام محفوظة في configs الطلب - استعلام واحد لا استعلام لكل طلب
+        $fromCar = count($paidIds) ? DB::table('configs')
+            ->where('model_type', Order::class)
+            ->whereIn('model_id', $paidIds)
+            ->where('key', 'pickup_method')
+            ->where('value', 'car')
+            ->count() : 0;
+
+        //«لم يُستلم» - على كل طلبات الفترة لا المدفوعة فقط، والمعترَض عليه لا يُعدّ
+        $notCollected = 0;
+        $allIds = (clone $base)->pluck('id');
+        if ($allIds->isNotEmpty()) {
+            $reported = DB::table('configs')
+                ->where('model_type', Order::class)
+                ->whereIn('model_id', $allIds)
+                ->where('key', 'not_collected_at')
+                ->pluck('model_id');
+
+            if ($reported->isNotEmpty()) {
+                $disputed = DB::table('configs')
+                    ->where('model_type', Order::class)
+                    ->whereIn('model_id', $reported)
+                    ->where('key', 'dispute_at')
+                    ->pluck('model_id')
+                    ->all();
+
+                $notCollected = $reported->reject(fn ($id) => in_array($id, $disputed))->count();
+            }
+        }
+
+        $withVat = $vat > 0;
+
+        //تنزيل التقرير
+        if (request()->has('report')) {
+            $rows = [];
+            $exportPickup = count($paidIds) ? DB::table('configs')
+                ->where('model_type', Order::class)
+                ->whereIn('model_id', $paidIds)
+                ->where('key', 'pickup_method')
+                ->pluck('value', 'model_id') : collect();
+
+            foreach ((clone $paid)->with('items')->orderBy('id', 'desc')->get() as $order) {
+                $row = [
+                    $order->id_formated,
+                    $order->created_at->format('Y-m-d'),
+                    $order->created_at->format('H:i'),
+                    ($exportPickup[$order->id] ?? '') == 'car' ? __('From my car') : __('Pickup'),
+                    $order->items->sum('pivot.qty'),
+                ];
+
+                if ($withVat) {
+                    $row[] = $order->vatvalue ?: 0;
+                    $row[] = $order->order_price_with_discount - ($order->vatvalue ?: 0);
+                }
+
+                $row[] = $order->order_price_with_discount;
+                array_push($rows, $row);
+            }
+
+            return Excel::download(new SalesExport($rows, $withVat), 'sales_'.$from->format('Y-m-d').'_'.$to->format('Y-m-d').'.xlsx');
+        }
+
+        $orders = (clone $paid)->with('items')->orderBy('id', 'desc')->paginate(10);
+
+        $pickupMethods = $orders->count() ? DB::table('configs')
+            ->where('model_type', Order::class)
+            ->whereIn('model_id', $orders->pluck('id'))
+            ->where('key', 'pickup_method')
+            ->pluck('value', 'model_id') : collect();
+
+        return view('finances.sales', [
+            'restaurant' => $restaurant,
+            'orders' => $orders,
+            'pickupMethods' => $pickupMethods,
+            'range' => $range,
+            'from' => $from,
+            'to' => $to,
+            'withVat' => $withVat,
+            'stats' => [
+                'count' => $count,
+                'sales' => $sales,
+                'average' => $count > 0 ? $sales / $count : 0,
+                'vat' => $vat,
+                'net' => $sales - $vat,
+                'fromCar' => $fromCar,
+                'fromShop' => max(0, $count - $fromCar),
+                'notCollected' => $notCollected,
+                'notCollectedPercent' => $count > 0 ? round($notCollected / $count * 100, 1) : 0,
+            ],
+        ]);
     }
 
     public function connect(): RedirectResponse
