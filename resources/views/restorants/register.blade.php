@@ -113,6 +113,9 @@
     .url-control{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;transition:border-color .15s, box-shadow .15s}
     .url-control:focus-within{border-color:var(--green-500);box-shadow:0 0 0 4px rgba(44,130,196,.12)}
     .url-control .url-prefix{display:flex;align-items:center;padding:0 14px;background:var(--cream-deep);color:var(--ink-soft);font-size:.9rem;white-space:nowrap;border-inline-end:1.5px solid var(--line)}
+    /* اللاحقة تأتي بعد الحقل في وضع الدومين الفرعي، فالحدّ ينتقل للجهة المقابلة */
+    .url-control .url-suffix{border-inline-end:0;border-inline-start:1.5px solid var(--line);font-weight:600;color:var(--green-900)}
+    .url-control input{flex:1;min-width:0}
     .url-control input{border:none !important;box-shadow:none !important;border-radius:0;padding:14px !important;text-align:left}
     .field.has-danger .url-control{border-color:var(--coral)}
     .url-hint{display:block;color:var(--ink-soft);font-size:.85rem;margin-top:7px}
@@ -186,18 +189,39 @@
             <span class="err">{{ $errors->first('name') }}</span>
           @endif
         </div>
+        {{--
+          iMenu 2026 — شكل الرابط يتبع الإعداد لا النص المثبّت.
+          WILDCARD_DOMAIN_READY=true  ←  دومين فرعي:  albik.i-menu.me
+          WILDCARD_DOMAIN_READY=false ←  مسار:        i-menu.me/m/albik
+          والنطاق نفسه يُقرأ من APP_URL، فلا يُكتب في القالب.
+        --}}
+        @php
+            $rootHost = preg_replace('#^https?://#i', '', rtrim(config('settings.app_url') ?: config('app.url'), '/'));
+            $rootHost = preg_replace('#[/:].*$#', '', $rootHost);
+            $useSubdomain = (bool) config('settings.wildcard_domain_ready');
+            $pathPrefix = $rootHost . '/' . config('settings.url_route') . '/';
+        @endphp
         <div class="field {{ $errors->has('subdomain') ? 'has-danger' : '' }}">
           <label for="subdomain">رابط المنيو الإلكتروني</label>
           <div class="control url-control" dir="ltr">
-            <span class="url-prefix">i-menu.me/m/</span>
+            @unless ($useSubdomain)
+              <span class="url-prefix">{{ $pathPrefix }}</span>
+            @endunless
             <input type="text" id="subdomain" name="subdomain" dir="ltr"
                    placeholder="albik"
                    value="{{ old('subdomain') }}"
                    required
-                   oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]+/g,'-'); document.getElementById('slugEcho').textContent=this.value||'extra';">
+                   oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]+/g,'-'); document.getElementById('slugEcho').textContent=this.value||'albik';">
+            @if ($useSubdomain)
+              <span class="url-prefix url-suffix">.{{ $rootHost }}</span>
+            @endif
           </div>
-          <span class="url-hint">رابط منيو مطعمك سيكون:
-            <b dir="ltr">https://i-menu.me/m/<span id="slugEcho">{{ old('subdomain', 'albik') }}</span></b>
+          <span class="url-hint">رابط منيو كوفيك سيكون:
+            @if ($useSubdomain)
+              <b dir="ltr">https://<span id="slugEcho">{{ old('subdomain', 'albik') }}</span>.{{ $rootHost }}</b>
+            @else
+              <b dir="ltr">https://{{ $pathPrefix }}<span id="slugEcho">{{ old('subdomain', 'albik') }}</span></b>
+            @endif
           </span>
           @if ($errors->has('subdomain'))
             <span class="err">{{ $errors->first('subdomain') }}</span>
