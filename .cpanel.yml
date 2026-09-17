@@ -1,0 +1,39 @@
+---
+# =============================================================================
+# iMenu 2026 — نشر محافظ من GitHub إلى الموقع الحي
+#
+# الاستخدام: git push من الجهاز  ←  cPanel > Git Version Control
+#            ←  Update from Remote  ←  Deploy HEAD Commit
+#
+# ما يُنسخ: الكود وحده.
+# ما لا يُلمس إطلاقًا: .env · storage · vendor · bootstrap/cache
+#                     · public/uploads · قاعدة البيانات
+#
+# ملاحظة: «cp -R المصدر/. الهدف/» دمج لا استبدال — لا يحذف أي ملف
+# موجود على السيرفر وغير موجود في المستودع.
+#
+# إن فشل النشر عند سطري artisan، فالسبب مسار PHP.
+# نفّذ «which php» في Terminal وضع الناتج مكان PHPBIN أدناه.
+# =============================================================================
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/imengofu/public_html
+    - export PHPBIN=/usr/local/bin/php
+
+    # الكود
+    - /bin/cp -R app/.       $DEPLOYPATH/app/
+    - /bin/cp -R config/.    $DEPLOYPATH/config/
+    - /bin/cp -R routes/.    $DEPLOYPATH/routes/
+    - /bin/cp -R lang/.      $DEPLOYPATH/lang/
+    - /bin/cp -R resources/. $DEPLOYPATH/resources/
+
+    # الهجرات — تُنسخ ولا تُشغَّل. التشغيل يبقى قرارك اليدوي.
+    - /bin/cp -R database/migrations/. $DEPLOYPATH/database/migrations/
+
+    # أصول iMenu العامة (صفحة QR وصفحة المبيعات)
+    - /bin/cp -R public/imenu/. $DEPLOYPATH/public/imenu/
+
+    # تنظيف الكاش — بدونه لا يظهر أي تعديل على القوالب أو الإعدادات
+    - $PHPBIN $DEPLOYPATH/artisan config:clear
+    - $PHPBIN $DEPLOYPATH/artisan view:clear
+    - $PHPBIN $DEPLOYPATH/artisan route:clear
