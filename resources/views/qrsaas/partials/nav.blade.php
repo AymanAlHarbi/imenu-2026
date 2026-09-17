@@ -15,7 +15,10 @@
       <a href="#how">كيف يعمل</a>
       <a href="#product">المميزات</a>
       <a href="#pricing">الأسعار</a>
-      <a href="#testimonials">آراء العملاء</a>
+      {{-- iMenu 2026 — يتبع علم الشهادات: بلا القسم يصير الرابط ميتًا --}}
+      @if(config('settings.fake_testimonials'))
+        <a href="#testimonials">آراء العملاء</a>
+      @endif
       <a href="#demo">تجربة حية</a>
     </nav>
 

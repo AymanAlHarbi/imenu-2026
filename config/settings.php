@@ -128,6 +128,14 @@ return [
     'marketplace_fields' => env('MARKETPLACE_FIELDS', false),
     // iMenu 2026 - صفحة QR الإصدار الثاني (مولّد محلي + مطبوعات جاهزة). QR_PAGE_V2=false يعيد صفحة React الأصلية.
     'qr_page_v2' => env('QR_PAGE_V2', true),
+    // iMenu 2026 - الشهادات الأربع في الصفحة القديمة بأسماء ووجوه غير حقيقية. مُعطَّلة ولم تُحذف.
+    // FAKE_TESTIMONIALS=true يعيدها — والأصح استبدالها بشهادات حقيقية قبل التشغيل.
+    'fake_testimonials' => env('FAKE_TESTIMONIALS', false),
+    // iMenu 2026 - رقم واتساب المبيعات في الصفحة الرئيسية الجديدة (بصيغة دولية بلا + ولا مسافات، مثل 9665XXXXXXXX).
+    // فارغ = يُخفى زر واتساب تمامًا بدل أن يظهر رابطًا مكسورًا.
+    'sales_whatsapp' => env('SALES_WHATSAPP', ''),
+    // iMenu 2026 - الصفحة الرئيسية الجديدة تُختار بـ QR_LANDING=home_v2 في .env (القديمة: home).
+    // لا يلزم مفتاح جديد — 'qr_landing' أعلاه هو المبدّل، والملفان يتعايشان.
     'enable_default_cookie_consent' => env('ENABLE_DEFAULT_COOKIE_CONSENT', true),
     'datetime_display_format' => env('DATETIME_DISPLAY_FORMAT', 'd M Y H:i'),
     'datetime_workinghours_display_format_new' => env('DATETIME_WORKING_HOURS_DISPLAY_FORMAT_NEW', 'E HH:mm'),

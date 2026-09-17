@@ -1,3 +1,11 @@
+{{--
+  iMenu 2026 — مُعطَّل ولم يُحذف.
+  الشهادات الأربع أدناه بأسماء ووجوه غير حقيقية، ونشرها على الموقع الحي مخاطرة
+  مصداقية مباشرة: كوفي واحد يسأل «مين هذا؟» ولا جواب.
+  يُعاد تشغيل القسم بـ FAKE_TESTIMONIALS=true في .env — والأصح استبدال النصوص
+  بشهادات حقيقية من أول المقاهي المشتركة ثم تشغيله.
+--}}
+@if(config('settings.fake_testimonials'))
 <section class="testimonials" id="testimonials">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -29,3 +37,4 @@
     </div>
   </div>
 </section>
+@endif
