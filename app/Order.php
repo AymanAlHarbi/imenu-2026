@@ -157,8 +157,9 @@ class Order extends Model
                     if ($this->delivery_method == 3) {
                         $delivery = __('Dine in');
                     } else {
-                        //iMenu 2026 - pickup: distinguish car pickup from the rest
-                        $delivery = $this->getConfig('pickup_method', '') == 'car' ? __('From my car') : __('Pickup');
+                        //iMenu 2026 - pickup: distinguish car pickup from the rest.
+                        //17 Sep 2026: only two methods exist - car or cashier. No window/counter.
+                        $delivery = $this->getConfig('pickup_method', '') == 'car' ? __('From my car') : __('From the cashier');
                     }
                 }
 

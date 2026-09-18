@@ -10,8 +10,8 @@ use App\Events\UpdateOrder;
 use App\Exports\OrdersExport;
 use App\Models\Orderitems;
 use App\Models\SimpleDelivery;
-use App\Notifications\CustomerArrived;
 use App\Notifications\OrderNotCollected;
+use App\Services\PickupFlow;
 use App\Services\PrepTime;
 use App\Services\Trust;
 use App\Notifications\OrderNotification;
@@ -1159,20 +1159,8 @@ class OrderController extends Controller
         //بصمة الطلب — حتى لا يُبلّغ أحد عن طلب غيره
         abort_unless($order->md.'' === $request->md.'', 403);
 
-        //للسيارة فقط، ومرة واحدة
-        if ($order->getConfig('pickup_method', '') == 'car' && ! $order->getConfig('arrived_at', false)) {
-            $order->setConfig('arrived_at', now()->toDateTimeString());
-
-            try {
-                $order->restorant->user->notify(new CustomerArrived($order));
-
-                foreach ($order->restorant->staff()->get() as $staffMember) {
-                    $staffMember->notify(new CustomerArrived($order));
-                }
-            } catch (\Throwable $th) {
-                \Log::error('CustomerArrived notify failed: '.$th->getMessage());
-            }
-        }
+        //للسيارة فقط، ومرة واحدة — المنطق في PickupFlow ليشترك الويب والتطبيق فيه
+        PickupFlow::markArrived($order);
 
         return redirect()->back()->withStatus(__('The coffee shop has been notified'));
     }

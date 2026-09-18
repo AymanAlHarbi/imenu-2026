@@ -215,20 +215,23 @@ class RestorantController extends Controller
 
             $shift = '_shift'.$request->shift_id;
 
-            $hours->{'0_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'0_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
-            $hours->{'1_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'1_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
-            $hours->{'2_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'2_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
-            $hours->{'3_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'3_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
-            $hours->{'4_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'4_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
-            $hours->{'5_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'5_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
-            $hours->{'6_from'} = config('settings.time_format') == 'AM/PM' ? '9:00 AM' : '09:00';
-            $hours->{'6_to'} = config('settings.time_format') == 'AM/PM' ? '5:00 PM' : '17:00';
+            /**
+             * ساعات العمل الافتراضية — 06:00 إلى 23:59 (config/settings.php).
+             * كانت 09:00–17:00 من القالب الأصلي، فكان كل مقهى جديد يظهر «مغلق»
+             * للعميل معظم اليوم ويُمنع الطلب بلا سبب ظاهر. أُصلحت 17 سبتمبر 2026.
+             */
+            $defaultFrom = config('settings.default_hours_from', '06:00');
+            $defaultTo = config('settings.default_hours_to', '23:59');
+
+            if (config('settings.time_format') == 'AM/PM') {
+                $defaultFrom = date('g:i A', strtotime($defaultFrom));
+                $defaultTo = date('g:i A', strtotime($defaultTo));
+            }
+
+            for ($day = 0; $day < 7; $day++) {
+                $hours->{$day.'_from'} = $defaultFrom;
+                $hours->{$day.'_to'} = $defaultTo;
+            }
 
             $hours->save();
         }

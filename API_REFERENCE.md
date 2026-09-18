@@ -158,6 +158,74 @@ GET /api/v2/client/auth/deactivate?api_token=XXX
 
 ---
 
+## 5-ب. مسار الاستلام ونظام الثقة — Client  — محمي
+
+> **أُضيفت 18 سبتمبر 2026.** كانت هذه الأفعال على الويب فقط (`routes/web.php`)،
+> فبقيت شاشات التتبّع الأربع في التطبيق معطّلة. المنطق مشترك الآن:
+> `App\Services\PickupFlow` و`App\Services\Trust` — لا نسختين تفترقان.
+>
+> **التحقق بملكية الطلب** (`client_id`) لا ببصمة `md` كما في الويب، لأن كل نداء هنا
+> مصادَق بـ`auth:api`. التطبيق لا يحتاج تمرير `md` إطلاقًا.
+
+### `GET /api/v2/client/orders/{order}/state`
+حالة الاستلام والثقة لطلب واحد — **ما تبنى عليه شاشات التتبّع الأربع**.
+
+```json
+{ "status": true, "message": "", "data": {
+    "order_id": 812,
+    "state": "preparing | ready | delivered | not_collected",
+    "pickup_method": "car | counter",
+    "is_car": true,
+    "ready_at": "2026-09-18 16:35:00",
+    "arrived_at": null,
+    "can_mark_arrived": true,
+    "is_reported": false,
+    "is_disputed": false,
+    "can_dispute": false
+} }
+```
+
+- **`can_mark_arrived`** يحكم ظهور زر «وصلت»: للسيارة فقط، ومرة واحدة، وقبل التسليم.
+- **`can_dispute`** يحكم ظهور زر الاعتراض: يوجد بلاغ ولم يُعترض عليه بعد.
+- `pickup_method` **يعود موحّدًا دائمًا**: أي طلب قديم مخزّن بـ`window` يعود `counter`.
+
+### `POST /api/v2/client/orders/arrived`   `{ api_token, order_id }`
+«وصلت — أنا في الموقف». لطلبات السيارة فقط، ويُشعَر المقهى وطاقمه.
+النداء المكرر **لا يُخطئ** — يعود `status:true` برسالة «سبق إشعار الكوفي»، فلا حاجة
+لحجب الزر في التطبيق خوفًا من التكرار.
+طلب من الكاشير يعود `status:false` برسالة توضّح السبب.
+الرد يحمل نفس شكل `state` أعلاه بعد التحديث.
+
+### `POST /api/v2/client/orders/dispute`   `{ api_token, order_id }`
+اعتراض العميل على بلاغ «لم يُستلم» — يوقف عدّ البلاغ حتى يُحسم.
+`status:false` إن لم يكن على الطلب بلاغ مفتوح أو كان معترضًا عليه سلفًا.
+الرد يحمل `state` بعد التحديث.
+
+> **حق الاعتراض متطلب نظامي** (نظام حماية البيانات الشخصية) لا تحسين اختياري:
+> إيقاف الحساب يُعرض دائمًا بالسبب والمدة وزر الاعتراض.
+
+### `GET /api/v2/client/trust/me`
+حالة ثقة العميل نفسه — لشاشة «حسابي».
+
+```json
+{ "status": true, "message": "", "data": {
+    "state": "normal | trusted | blocked",
+    "label": { "key": "trusted", "text": "عميل موثوق", "color": "#2E5C43" },
+    "pickups_to_trusted": 1,
+    "trusted_streak_target": 3,
+    "is_trusted": false,
+    "blocked_until": null,
+    "blocked_days_left": 0,
+    "block_reason": null
+} }
+```
+
+> ⚠️ **لا تطلب من هذه النقطة عدّاد بلاغات ولا عدد طلبات تراكمي — غير موجود عمدًا.**
+> قاعدة «كل رقم عن سلوك العميل: للأمام لا للخلف» (`imenu-brand-identity.md` §9).
+> المتاح هو `pickups_to_trusted` — ما تبقّى للوصول، لا ما مضى.
+
+---
+
 ## 6. العناوين — Client Addresses  (`/api/v2/client/addresses`) — محمي
 
 | الطلب | Body | الوصف |

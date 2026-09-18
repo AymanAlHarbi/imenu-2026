@@ -189,6 +189,24 @@ Route::prefix('v2/client')->group(function () {
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [API\Client\OrdersController::class, 'index']);
             Route::post('/', [API\Client\OrdersController::class, 'store'])->name('storeapi');
+
+            /**
+             * مسار الاستلام ونظام الثقة — فُتحت للتطبيق 18 سبتمبر 2026.
+             * كانت على الويب فقط (routes/web.php) فبقيت شاشات التتبّع معطّلة.
+             * نفس الأفعال، والتحقق هنا بملكية الطلب لا ببصمة md لأن النداء مصادَق.
+             */
+            Route::get('/{order}/state', [API\Client\TrustController::class, 'orderState'])->name('state');
+            Route::post('arrived', [API\Client\TrustController::class, 'arrived'])->name('arrived');
+            Route::post('dispute', [API\Client\TrustController::class, 'dispute'])->name('dispute');
+        });
+
+        /**
+         * Trust
+         */
+
+        //Trust /api/v2/client/trust
+        Route::prefix('trust')->name('trust.')->group(function () {
+            Route::get('me', [API\Client\TrustController::class, 'me'])->name('me');
         });
 
         /**

@@ -5,6 +5,6 @@
         <span>{{ __('From my car') }}</span>
     @else
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M4 21h13"/></svg>
-        <span>{{ __('From the cafe') }}</span>
+        <span>{{ __('From the cashier') }}</span>
     @endif
 </span>

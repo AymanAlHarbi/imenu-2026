@@ -171,7 +171,7 @@ form.ck-f{display:inline; margin:0;}
         <div class="ck-head">
           <div>
             <div class="ck-id">#{{ $o->id_formated }}</div>
-            <span class="ck-pill way">{!! $card['is_car'] ? '&#128663; '.__('From my car') : '&#129517; '.__('From the coffee shop') !!}</span>
+            <span class="ck-pill way">{!! $card['is_car'] ? '&#128663; '.__('From my car') : '&#129517; '.__('From the cashier') !!}</span>
             @if ($card['promise_at'])
               <div class="ck-sub">{{ __('Promised') }} {{ $card['promise_at']->format('H:i') }}</div>
             @endif

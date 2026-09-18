@@ -268,7 +268,7 @@ class Trust
     public static function clientLabel(?User $client): array
     {
         if (self::isBlocked($client)) {
-            return ['key' => 'blocked', 'text' => __('Ordering paused'), 'color' => '#C0392B'];
+            return ['key' => 'blocked', 'text' => __('Ordering paused'), 'color' => '#B3261E'];
         }
         if (self::isTrusted($client)) {
             return ['key' => 'trusted', 'text' => __('Trusted customer'), 'color' => '#2E5C43'];
